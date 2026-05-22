@@ -12,7 +12,7 @@ function Contact() {
       {/* CONTAINER */}
       <div className="max-w-6xl mx-auto flex flex-col md:flex-row-reverse items-stretch gap-0 overflow-hidden rounded-2xl shadow-lg">
 
-        {/* IMAGE RIGHT */}
+        {/* IMAGE */}
         <div className="flex-1 overflow-hidden">
           <img
             src={contactImg}
@@ -21,10 +21,9 @@ function Contact() {
           />
         </div>
 
-        {/* CARD LEFT */}
+        {/* CONTENT */}
         <div className="flex-1 bg-white p-10 text-right flex flex-col justify-between">
 
-          {/* TOP CONTENT */}
           <div>
 
             <h3 className="text-2xl font-bold text-[#1E3A5F] mb-6">
@@ -32,7 +31,7 @@ function Contact() {
             </h3>
 
             {/* ADDRESS */}
-            <div className="mb-8 text-gray-700 leading-8" dir="rtl">
+            <div className="mb-6 text-gray-700 leading-8" dir="rtl">
 
               <p className="font-bold text-[#1E3A5F] mb-2">
                 📍 العنوان
@@ -45,7 +44,19 @@ function Contact() {
 
             </div>
 
-            {/* SOCIAL LINKS */}
+            {/* PHONE NUMBERS */}
+            <div className="mb-6 text-gray-700 leading-8" dir="rtl">
+
+              <p className="font-bold text-[#1E3A5F] mb-2">
+                📞 أرقام التواصل
+              </p>
+
+              <p>01039207809</p>
+              <p>0403294777</p>
+
+            </div>
+
+            {/* SOCIAL */}
             <div className="flex flex-col gap-4 text-gray-700">
 
               <a
@@ -70,7 +81,7 @@ function Contact() {
 
           </div>
 
-          {/* WHATSAPP BOX */}
+          {/* WHATSAPP */}
           <div className="mt-8 bg-green-50 p-6 rounded-xl border border-green-200">
 
             <p className="text-green-700 font-semibold mb-4">
@@ -89,7 +100,6 @@ function Contact() {
           </div>
 
         </div>
-
       </div>
     </div>
   );
