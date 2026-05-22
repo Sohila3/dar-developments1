@@ -24,7 +24,7 @@ function Contact() {
         {/* CARD LEFT */}
         <div className="flex-1 bg-white p-10 text-right flex flex-col justify-between">
 
-          {/* TOP */}
+          {/* TOP CONTENT */}
           <div>
 
             <h3 className="text-2xl font-bold text-[#1E3A5F] mb-6">
@@ -45,14 +45,24 @@ function Contact() {
 
             </div>
 
-            {/* SOCIAL */}
+            {/* SOCIAL LINKS */}
             <div className="flex flex-col gap-4 text-gray-700">
 
-              <a href="#" className="hover:text-[#1E3A5F] transition">
+              <a
+                href="https://www.facebook.com/share/1XgDRDMitV/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-[#1E3A5F] transition"
+              >
                 📘 فيسبوك
               </a>
 
-              <a href="#" className="hover:text-[#1E3A5F] transition">
+              <a
+                href="https://www.instagram.com/dar.developments?igsh=N202dXdhaWEyaW85"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-[#1E3A5F] transition"
+              >
                 📸 إنستجرام
               </a>
 
@@ -60,7 +70,7 @@ function Contact() {
 
           </div>
 
-          {/* WHATSAPP */}
+          {/* WHATSAPP BOX */}
           <div className="mt-8 bg-green-50 p-6 rounded-xl border border-green-200">
 
             <p className="text-green-700 font-semibold mb-4">
