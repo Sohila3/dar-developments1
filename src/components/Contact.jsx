@@ -34,7 +34,7 @@ function Contact() {
             <div className="mb-6 text-gray-700 leading-8" dir="rtl">
 
               <p className="font-bold text-[#1E3A5F] mb-2">
-                📍 العنوان
+                📍 مقر الشركة
               </p>
 
               <p>
@@ -48,7 +48,7 @@ function Contact() {
             <div className="mb-6 text-gray-700 leading-8" dir="rtl">
 
               <p className="font-bold text-[#1E3A5F] mb-2">
-                📞 أرقام التواصل
+                📞 أو تواصل معنا من خلال ارقامنا
               </p>
 
               <p>01039207809</p>
