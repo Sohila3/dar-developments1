@@ -5,8 +5,8 @@ function Hero() {
   return (
     <div className="w-full">
 
-      {/* HERO SECTION */}
-      <div className="relative w-full h-screen overflow-hidden">
+      {/* HERO */}
+      <div className="relative w-full h-[85vh] md:h-screen overflow-hidden">
 
         {/* BACKGROUND IMAGE */}
         <img
@@ -19,13 +19,28 @@ function Hero() {
         <div className="absolute inset-0 bg-black/40"></div>
 
         {/* NAVBAR */}
-        <nav className="fixed top-0 left-0 w-full z-50 flex flex-wrap items-center justify-between px-4 md:px-12 py-4 md:py-6 bg-black/20 backdrop-blur-md gap-4">
+        <nav className="fixed top-0 left-0 w-full z-50 flex items-center justify-between px-4 md:px-12 py-3 md:py-6 bg-black/20 backdrop-blur-md">
+
+          {/* LOGO + NAME (RIGHT SIDE) */}
+          <div className="flex items-center gap-2 md:gap-3 text-right">
+
+            <h1 className="text-white text-lg md:text-2xl font-semibold tracking-[3px] md:tracking-[6px]">
+              DAR
+            </h1>
+
+            <img
+              src={logo}
+              alt="logo"
+              className="w-8 h-8 md:w-12 md:h-12 object-contain"
+            />
+
+          </div>
 
           {/* LINKS */}
-          <div className="flex flex-wrap gap-4 md:gap-8 text-white text-xs md:text-sm uppercase font-medium">
+          <div className="flex flex-wrap gap-3 md:gap-8 text-white text-xs md:text-sm uppercase font-medium justify-center">
 
             <a href="#about" className="hover:text-gray-300 transition">
-              About Us
+              About
             </a>
 
             <a href="#projects" className="hover:text-gray-300 transition">
@@ -37,21 +52,9 @@ function Hero() {
             </a>
 
             <a href="#contact" className="hover:text-gray-300 transition">
-              Contact Us
+              Contact
             </a>
 
-          </div>
-
-          {/* LOGO */}
-          <div className="flex items-center gap-2 md:gap-3">
-            <img
-              src={logo}
-              alt="logo"
-              className="w-8 h-8 md:w-12 md:h-12 object-contain"
-            />
-            <h1 className="text-white text-lg md:text-2xl tracking-[4px] md:tracking-[6px] font-semibold">
-              DAR
-            </h1>
           </div>
 
         </nav>
@@ -59,11 +62,11 @@ function Hero() {
         {/* HERO TEXT */}
         <div className="relative z-10 flex flex-col items-center justify-center h-full text-center px-4">
 
-          <h1 className="text-white text-3xl md:text-7xl font-bold leading-tight">
+          <h1 className="text-white text-3xl md:text-6xl font-bold leading-tight">
             دار للاستثمار العقاري
           </h1>
 
-          <p className="mt-4 md:mt-6 text-gray-200 text-base md:text-2xl">
+          <p className="mt-3 md:mt-6 text-gray-200 text-base md:text-2xl">
             مستقبل عقاري يليق بطموحك
           </p>
 
