@@ -5,24 +5,24 @@ function Hero() {
   return (
     <div className="w-full">
 
-      {/* HERO */}
-      <div className="relative h-screen w-full overflow-hidden">
+      {/* HERO SECTION */}
+      <div className="relative w-full h-screen overflow-hidden">
 
-        {/* Background */}
+        {/* BACKGROUND IMAGE */}
         <img
           src={cover}
           alt="cover"
           className="absolute inset-0 w-full h-full object-cover"
         />
 
-        {/* Overlay */}
-        <div className="absolute inset-0 bg-black/30"></div>
+        {/* OVERLAY */}
+        <div className="absolute inset-0 bg-black/40"></div>
 
         {/* NAVBAR */}
-        <nav className="fixed top-0 left-0 w-full z-50 flex items-center justify-between px-12 py-6 bg-black/20 backdrop-blur-md">
+        <nav className="fixed top-0 left-0 w-full z-50 flex flex-wrap items-center justify-between px-4 md:px-12 py-4 md:py-6 bg-black/20 backdrop-blur-md gap-4">
 
           {/* LINKS */}
-          <div className="flex gap-8 text-white text-sm uppercase font-medium">
+          <div className="flex flex-wrap gap-4 md:gap-8 text-white text-xs md:text-sm uppercase font-medium">
 
             <a href="#about" className="hover:text-gray-300 transition">
               About Us
@@ -43,9 +43,13 @@ function Hero() {
           </div>
 
           {/* LOGO */}
-          <div className="flex items-center gap-3">
-            <img src={logo} alt="logo" className="w-12 h-12 object-contain" />
-            <h1 className="text-white text-2xl tracking-[6px] font-semibold">
+          <div className="flex items-center gap-2 md:gap-3">
+            <img
+              src={logo}
+              alt="logo"
+              className="w-8 h-8 md:w-12 md:h-12 object-contain"
+            />
+            <h1 className="text-white text-lg md:text-2xl tracking-[4px] md:tracking-[6px] font-semibold">
               DAR
             </h1>
           </div>
@@ -55,11 +59,11 @@ function Hero() {
         {/* HERO TEXT */}
         <div className="relative z-10 flex flex-col items-center justify-center h-full text-center px-4">
 
-          <h1 className="text-white text-5xl md:text-7xl font-bold leading-tight">
+          <h1 className="text-white text-3xl md:text-7xl font-bold leading-tight">
             دار للاستثمار العقاري
           </h1>
 
-          <p className="mt-6 text-gray-200 text-lg md:text-2xl">
+          <p className="mt-4 md:mt-6 text-gray-200 text-base md:text-2xl">
             مستقبل عقاري يليق بطموحك
           </p>
 
