@@ -8,15 +8,22 @@ import p6 from "../assets/project-6.jpeg";
 import p7 from "../assets/project-7.jpeg";
 import p8 from "../assets/project-8.jpeg";
 
-const whatsappLink = "https://wa.me/201039207908";
-
 function Projects() {
+
+  // WHATSAPP FUNCTION
+  const openWhatsApp = (projectName) => {
+    const message = `مرحباً، أريد الاستفسار عن مشروع ${projectName}`;
+    const url = `https://wa.me/201039207908?text=${encodeURIComponent(message)}`;
+
+    window.open(url, "_blank");
+  };
+
   return (
     <div id="projects" className="w-full bg-gray-50 py-24 px-6 md:px-16">
 
       {/* MAIN TITLE */}
       <h2 className="text-center text-4xl md:text-5xl font-bold text-[#1E3A5F] mb-16">
-        مشاريعنا الحالية 
+        مشاريعنا الحالية
       </h2>
 
       {/* CURRENT PROJECTS */}
@@ -24,24 +31,35 @@ function Projects() {
 
         {/* CARD 1 */}
         <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-          <img src={p1} className="w-full h-56 object-cover" />
+
+          <img
+            src={p1}
+            alt="Dar Damac"
+            className="w-full h-56 object-cover"
+          />
+
           <div className="p-5 text-center">
 
             <h3 className="text-xl font-bold text-[#1E3A5F] whitespace-nowrap">
-              Dar Damac 
+              Dar Damac
             </h3>
 
-            <p className="text-gray-600 mt-2 text-right leading-relaxed" dir="rtl">
+            <p
+              className="text-gray-600 mt-2 text-right leading-relaxed"
+              dir="rtl"
+            >
               📍 طنطا / الكورنيش
             </p>
 
             <div className="mt-4">
+
               <button
-                onClick={() => window.open(whatsappLink, "_blank")}
+                onClick={() => openWhatsApp("Dar Damac")}
                 className="bg-[#1E3A5F] text-white px-6 py-2 rounded-full hover:bg-blue-800 transition"
               >
                 احجز الآن
               </button>
+
             </div>
 
           </div>
@@ -49,24 +67,35 @@ function Projects() {
 
         {/* CARD 2 */}
         <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-          <img src={p2} className="w-full h-56 object-cover" />
+
+          <img
+            src={p2}
+            alt="Dar Landmark"
+            className="w-full h-56 object-cover"
+          />
+
           <div className="p-5 text-center">
 
             <h3 className="text-xl font-bold text-[#1E3A5F] whitespace-nowrap">
-              Dar Landmark 
+              Dar Landmark
             </h3>
 
-            <p className="text-gray-600 mt-2 text-right leading-relaxed" dir="rtl">
+            <p
+              className="text-gray-600 mt-2 text-right leading-relaxed"
+              dir="rtl"
+            >
               📍 طنطا / طريق القاهرة - الإسكندرية
             </p>
 
             <div className="mt-4">
+
               <button
-                onClick={() => window.open(whatsappLink, "_blank")}
+                onClick={() => openWhatsApp("Dar Landmark")}
                 className="bg-[#1E3A5F] text-white px-6 py-2 rounded-full hover:bg-blue-800 transition"
               >
                 احجز الآن
               </button>
+
             </div>
 
           </div>
@@ -74,24 +103,35 @@ function Projects() {
 
         {/* CARD 3 */}
         <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-          <img src={p3} className="w-full h-56 object-cover" />
+
+          <img
+            src={p3}
+            alt="Dar Elwrood"
+            className="w-full h-56 object-cover"
+          />
+
           <div className="p-5 text-center">
 
             <h3 className="text-xl font-bold text-[#1E3A5F] whitespace-nowrap">
-              Dar Elwrood 
+              Dar Elwrood
             </h3>
 
-            <p className="text-gray-600 mt-2 text-right leading-relaxed" dir="rtl">
+            <p
+              className="text-gray-600 mt-2 text-right leading-relaxed"
+              dir="rtl"
+            >
               📍 طنطا / خلف عمارات الأطباء
             </p>
 
             <div className="mt-4">
+
               <button
-                onClick={() => window.open(whatsappLink, "_blank")}
+                onClick={() => openWhatsApp("Dar Elwrood")}
                 className="bg-[#1E3A5F] text-white px-6 py-2 rounded-full hover:bg-blue-800 transition"
               >
                 احجز الآن
               </button>
+
             </div>
 
           </div>
@@ -107,45 +147,92 @@ function Projects() {
       {/* COMPLETED PROJECTS */}
       <div className="max-w-6xl mx-auto space-y-10">
 
+        {/* TOP 3 */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
 
           <div className="bg-white rounded-2xl shadow-md overflow-hidden">
-            <img src={p4} className="w-full h-52 object-cover" />
+
+            <img
+              src={p4}
+              alt="BET ELWATAN - J52"
+              className="w-full h-52 object-cover"
+            />
+
             <div className="p-4 text-center">
-              <h4 className="font-bold text-[#1E3A5F]">BET ELWATAN - J52</h4>
+              <h4 className="font-bold text-[#1E3A5F]">
+                BET ELWATAN - J52
+              </h4>
             </div>
+
           </div>
 
           <div className="bg-white rounded-2xl shadow-md overflow-hidden">
-            <img src={p5} className="w-full h-52 object-cover" />
+
+            <img
+              src={p5}
+              alt="ELNARGAS - F72"
+              className="w-full h-52 object-cover"
+            />
+
             <div className="p-4 text-center">
-              <h4 className="font-bold text-[#1E3A5F]">ELNARGAS - F72</h4>
+              <h4 className="font-bold text-[#1E3A5F]">
+                ELNARGAS - F72
+              </h4>
             </div>
+
           </div>
 
           <div className="bg-white rounded-2xl shadow-md overflow-hidden">
-            <img src={p6} className="w-full h-52 object-cover" />
+
+            <img
+              src={p6}
+              alt="PALM TOWERS 1"
+              className="w-full h-52 object-cover"
+            />
+
             <div className="p-4 text-center">
-              <h4 className="font-bold text-[#1E3A5F]">PALM TOWERS 1</h4>
+              <h4 className="font-bold text-[#1E3A5F]">
+                PALM TOWERS 1
+              </h4>
             </div>
+
           </div>
 
         </div>
 
+        {/* BOTTOM 2 */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
 
           <div className="bg-white rounded-2xl shadow-md overflow-hidden">
-            <img src={p7} className="w-full h-60 object-cover" />
+
+            <img
+              src={p7}
+              alt="MOLTAQA HAGRAS"
+              className="w-full h-60 object-cover"
+            />
+
             <div className="p-4 text-center">
-              <h4 className="font-bold text-[#1E3A5F]">MOLTAQA HAGRAS</h4>
+              <h4 className="font-bold text-[#1E3A5F]">
+                MOLTAQA HAGRAS
+              </h4>
             </div>
+
           </div>
 
           <div className="bg-white rounded-2xl shadow-md overflow-hidden">
-            <img src={p8} className="w-full h-60 object-cover" />
+
+            <img
+              src={p8}
+              alt="DAR ELBOUSERY"
+              className="w-full h-60 object-cover"
+            />
+
             <div className="p-4 text-center">
-              <h4 className="font-bold text-[#1E3A5F]">DAR ELBOUSERY</h4>
+              <h4 className="font-bold text-[#1E3A5F]">
+                DAR ELBOUSERY
+              </h4>
             </div>
+
           </div>
 
         </div>
