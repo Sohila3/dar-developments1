@@ -56,27 +56,34 @@ function Contact() {
 
             </div>
 
-            {/* SOCIAL */}
-            <div className="flex flex-col gap-4 text-gray-700">
+            {/* SOCIAL MEDIA NEW SECTION */}
+            <div className="mb-6 text-gray-700 leading-8" dir="rtl">
 
-              <a
-                href="https://www.facebook.com/share/1XgDRDMitV/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-[#1E3A5F] transition"
-              >
-                📘 فيسبوك
-              </a>
+              <p className="font-bold text-[#1E3A5F] mb-3">
+                🌐 تابعونا على السوشيال ميديا
+              </p>
 
-              <a
-                href="https://www.instagram.com/dar.developments?igsh=N202dXdhaWEyaW85"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-[#1E3A5F] transition"
-              >
-                📸 إنستجرام
-              </a>
+              <div className="flex flex-col gap-3">
 
+                <a
+                  href="https://www.facebook.com/share/1XgDRDMitV/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:text-blue-800 transition font-medium"
+                >
+                  📘 فيسبوك
+                </a>
+
+                <a
+                  href="https://www.instagram.com/dar.developments?igsh=N202dXdhaWEyaW85"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-pink-600 hover:text-pink-800 transition font-medium"
+                >
+                  📸 إنستجرام
+                </a>
+
+              </div>
             </div>
 
           </div>
