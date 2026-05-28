@@ -1,33 +1,22 @@
-import Hero from "./components/Hero";
-import Installments from "./components/Installments";
-import About from "./components/About";
-import Projects from "./components/Projects";
-import Services from "./components/Services";
-import Contact from "./components/Contact";
+import { Routes, Route } from "react-router-dom";
+
+import Home from "./pages/Home";
+import JoinUsPage from "./pages/JoinUsPage";
+import AboutMore from "./pages/AboutMore";
 
 function App() {
   return (
-    <div className="font-sans">
 
-      {/* HERO */}
-      <Hero />
+    <Routes>
 
-      {/* INSTALLMENTS BANNER */}
-      <Installments />
+      <Route path="/" element={<Home />} />
 
-      {/* ABOUT */}
-      <About />
+      <Route path="/join-us" element={<JoinUsPage />} />
 
-      {/* PROJECTS */}
-      <Projects />
+      <Route path="/about-more" element={<AboutMore />} />
 
-      {/* SERVICES */}
-      <Services />
+    </Routes>
 
-      {/* CONTACT */}
-      <Contact />
-
-    </div>
   );
 }
 
