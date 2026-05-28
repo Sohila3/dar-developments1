@@ -1,22 +1,20 @@
 import { Routes, Route } from "react-router-dom";
 
 import Home from "./pages/Home";
-import JoinUsPage from "./pages/JoinUsPage";
 import AboutMore from "./pages/AboutMore";
+
+import ScrollToTop from "./components/ScrollToTop";
 
 function App() {
   return (
+    <>
+      <ScrollToTop />
 
-    <Routes>
-
-      <Route path="/" element={<Home />} />
-
-      <Route path="/join-us" element={<JoinUsPage />} />
-
-      <Route path="/about-more" element={<AboutMore />} />
-
-    </Routes>
-
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/about-more" element={<AboutMore />} />
+      </Routes>
+    </>
   );
 }
 
