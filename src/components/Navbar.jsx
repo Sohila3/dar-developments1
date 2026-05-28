@@ -7,10 +7,8 @@ function Navbar() {
 
   return (
     <>
-
       {/* NAVBAR */}
-      <nav className="w-full fixed top-0 left-0 z-50 bg-black/20 backdrop-blur-md">
-
+      <nav className="w-full fixed top-0 left-0 z-[100] bg-black/20 backdrop-blur-md">
         <div className="flex items-center justify-between px-6 md:px-12 py-4">
 
           {/* LANG */}
@@ -21,7 +19,7 @@ function Navbar() {
           </div>
 
           {/* LOGO */}
-          <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-3">
+          <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-3 z-[101]">
             <img src={logo} className="w-10 h-10 rounded-full" alt="logo" />
             <h1 className="text-white tracking-[4px]">DAR</h1>
           </div>
@@ -29,7 +27,7 @@ function Navbar() {
           {/* MENU BUTTON */}
           <button
             onClick={() => setOpen(true)}
-            className="text-white text-3xl"
+            className="text-white text-3xl z-[101] relative"
           >
             ☰
           </button>
@@ -40,14 +38,14 @@ function Navbar() {
       {/* OVERLAY */}
       {open && (
         <div
-          className="fixed inset-0 bg-black/40 z-40"
+          className="fixed inset-0 bg-black/40 z-[200]"
           onClick={() => setOpen(false)}
         />
       )}
 
       {/* SIDEBAR */}
       <div
-        className={`fixed top-0 right-0 h-full w-[300px] bg-white z-50 shadow-2xl transition-transform duration-300 ${
+        className={`fixed top-0 right-0 h-full w-[300px] bg-white z-[300] shadow-2xl transition-transform duration-300 ${
           open ? "translate-x-0" : "translate-x-full"
         }`}
       >
@@ -69,20 +67,16 @@ function Navbar() {
         >
 
           <Link
-  to="/"
-  onClick={() => {
-    setOpen(false);
-
-    setTimeout(() => {
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth",
-      });
-    }, 50);
-  }}
->
-  الرئيسية
-</Link>
+            to="/"
+            onClick={() => {
+              setOpen(false);
+              setTimeout(() => {
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }, 50);
+            }}
+          >
+            الرئيسية
+          </Link>
 
           <Link to="/about" onClick={() => setOpen(false)}>
             عن دار
@@ -101,7 +95,6 @@ function Navbar() {
           </a>
 
         </div>
-
       </div>
     </>
   );
