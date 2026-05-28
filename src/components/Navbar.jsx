@@ -68,9 +68,21 @@ function Navbar() {
           dir="rtl"
         >
 
-          <Link to="/" onClick={() => setOpen(false)}>
-            الرئيسية
-          </Link>
+          <Link
+  to="/"
+  onClick={() => {
+    setOpen(false);
+
+    setTimeout(() => {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    }, 50);
+  }}
+>
+  الرئيسية
+</Link>
 
           <Link to="/about" onClick={() => setOpen(false)}>
             عن دار
