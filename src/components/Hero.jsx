@@ -18,17 +18,16 @@ function Hero() {
           alt="دار للاستثمار العقاري"
           className="
             absolute inset-0 w-full h-full
-            object-contain md:object-cover
-            bg-black
+            object-cover
+            object-[60%_center] md:object-center
           "
         />
 
-        {/* OVERLAY */}
+        {/* DARK OVERLAY */}
         <div className="absolute inset-0 bg-black/40"></div>
 
         {/* NAVBAR */}
         <nav className="fixed top-0 left-0 w-full z-50 bg-black/20 backdrop-blur-md">
-
           <div className="flex items-center justify-between px-6 md:px-12 py-4">
 
             {/* LANG */}
