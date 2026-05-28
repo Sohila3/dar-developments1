@@ -10,7 +10,7 @@ function Hero() {
     <div className="w-full">
 
       {/* HERO */}
-      <div className="relative w-full h-[100vh] md:h-screen overflow-hidden">
+      <div className="relative w-full h-screen overflow-hidden">
 
         {/* BACKGROUND IMAGE */}
         <img
@@ -18,10 +18,8 @@ function Hero() {
           alt="دار للاستثمار العقاري"
           className="
             absolute inset-0 w-full h-full
-            object-cover
-            object-center md:object-center
-            scale-110 md:scale-100
-            transition-transform duration-700
+            object-contain md:object-cover
+            bg-black
           "
         />
 
