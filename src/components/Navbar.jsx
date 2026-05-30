@@ -20,8 +20,14 @@ function Navbar() {
 
           {/* LOGO */}
           <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-3 z-[101]">
-            <img src={logo} className="w-10 h-10 rounded-full" alt="logo" />
-            <h1 className="text-white tracking-[4px]">DAR</h1>
+            <img
+              src={logo}
+              className="w-10 h-10 rounded-full"
+              alt="logo"
+            />
+            <h1 className="text-white tracking-[4px]">
+              DAR
+            </h1>
           </div>
 
           {/* MENU BUTTON */}
@@ -66,35 +72,48 @@ function Navbar() {
           dir="rtl"
         >
 
-          <Link
-            to="/"
-            onClick={() => {
-              setOpen(false);
-              setTimeout(() => {
-                window.scrollTo({ top: 0, behavior: "smooth" });
-              }, 50);
-            }}
+          {/* الرئيسية */}
+          <a
+            href="/"
+            onClick={() => setOpen(false)}
           >
             الرئيسية
-          </Link>
+          </a>
 
-          <Link to="/about" onClick={() => setOpen(false)}>
+          {/* عن دار */}
+          <a
+            href="/#about"
+            onClick={() => setOpen(false)}
+          >
             عن دار
-          </Link>
+          </a>
 
-          <Link to="/about-more" onClick={() => setOpen(false)}>
-            التفاصيل
-          </Link>
-
-          <a href="#projects" onClick={() => setOpen(false)}>
+          {/* مشاريعنا */}
+          <a
+            href="/#projects"
+            onClick={() => setOpen(false)}
+          >
             مشاريعنا
           </a>
 
-          <a href="#contact" onClick={() => setOpen(false)}>
+          {/* شركاء النجاح */}
+          <a
+            href="/#partners"
+            onClick={() => setOpen(false)}
+          >
+            شركاء النجاح
+          </a>
+
+          {/* تواصل معنا */}
+          <a
+            href="/#contact"
+            onClick={() => setOpen(false)}
+          >
             تواصل معنا
           </a>
 
         </div>
+
       </div>
     </>
   );
