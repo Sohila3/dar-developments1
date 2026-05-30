@@ -24,22 +24,44 @@ function ProjectElwroodPage() {
     window.open(url, "_blank");
   };
 
-  // 🔥 SAME LANDMARK VIDEO BEHAVIOR
+  // ================= VIDEO AUTO PLAY (LANDMARK STYLE FIXED FOR MOBILE) =================
   useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    video.muted = true;
+    video.playsInline = true;
+
+    let isPlaying = false;
+
+    const playVideo = () => {
+      if (!isPlaying) {
+        isPlaying = true;
+        video.play().catch(() => {});
+      }
+    };
+
+    const pauseVideo = () => {
+      if (isPlaying) {
+        isPlaying = false;
+        video.pause();
+      }
+    };
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          videoRef.current?.play();
+          playVideo();
         } else {
-          videoRef.current?.pause();
+          pauseVideo();
         }
       },
-      { threshold: 0.5 }
+      {
+        threshold: 0.5,
+      }
     );
 
-    if (videoRef.current) {
-      observer.observe(videoRef.current);
-    }
+    observer.observe(video);
 
     return () => observer.disconnect();
   }, []);
@@ -67,19 +89,17 @@ function ProjectElwroodPage() {
           </h1>
 
           <p className="text-gray-700 leading-loose text-base md:text-lg text-justify">
-يقدم مشروع دار الورود من دار للاستثمار العقاري تجربة سكنية واستثمارية متكاملة تجمع بين الموقع المميز والهدوء والقيمة الحقيقية للاستثمار. صُمم المشروع ليوفر بيئة مريحة بعيدًا عن زحام المدينة، مع وحدات سكنية بمساحات تبدأ من 120 م² وأنظمة سداد مرنة تناسب مختلف الاحتياجات. ويعد دار الورود فرصة مثالية للراغبين في الحفاظ على قيمة استثماراتهم وتحقيق عائد مستقبلي في موقع واعد ومجتمع سكني متكامل.
+           يقدم مشروع دار الورود من دار للاستثمار العقاري تجربة سكنية واستثمارية متكاملة تجمع بين الموقع المميز والهدوء والقيمة الحقيقية للاستثمار. صُمم المشروع ليوفر بيئة مريحة بعيدًا عن زحام المدينة، مع وحدات سكنية بمساحات تبدأ من 120 م² وأنظمة سداد مرنة تناسب مختلف الاحتياجات. ويعد دار الورود فرصة مثالية للراغبين في الحفاظ على قيمة استثماراتهم وتحقيق عائد مستقبلي في موقع واعد ومجتمع سكني متكامل.
           </p>
 
         </div>
       </section>
 
-      {/* ================= VIDEO (LANDMARK STYLE) ================= */}
+      {/* ================= VIDEO (FIXED LANDMARK STYLE) ================= */}
       <section className="w-full py-28 flex justify-center items-center relative">
 
-        {/* glow */}
         <div className="absolute w-[80%] md:w-[60%] h-[300px] md:h-[420px] bg-blue-500/30 blur-3xl rounded-full"></div>
 
-        {/* video */}
         <div className="relative w-[92%] md:w-[70%] group transition-all duration-700">
 
           <video
@@ -88,21 +108,19 @@ function ProjectElwroodPage() {
             controls
             muted
             playsInline
+            preload="auto"
             className="
               w-full rounded-2xl shadow-2xl
               transition-all duration-700
               group-hover:scale-110
               group-hover:shadow-blue-400/40
-              group-hover:shadow-2xl
               group-hover:brightness-110
             "
           />
 
-          {/* border glow */}
           <div className="absolute inset-0 rounded-2xl border border-white/20 group-hover:border-blue-400/60 transition-all duration-500 pointer-events-none"></div>
 
         </div>
-
       </section>
 
       {/* ================= INFO + FORM ================= */}
@@ -125,6 +143,7 @@ function ProjectElwroodPage() {
           >
             عرض البرشور
           </button>
+
         </div>
 
         <div className="bg-white shadow-2xl rounded-2xl p-8">
@@ -161,7 +180,7 @@ function ProjectElwroodPage() {
 
       </section>
 
-      {/* ================= BROCHURE MODAL ================= */}
+      {/* ================= BROCHURE ================= */}
       {showBrochure && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
 
@@ -179,21 +198,19 @@ function ProjectElwroodPage() {
               className="w-full h-full"
               title="Brochure"
             />
-          </div>
 
+          </div>
         </div>
       )}
 
-      {/* ================= BACK BUTTON ================= */}
+      {/* ================= BACK ================= */}
       <div className="text-center py-24">
-
         <a
           href="/#projects"
           className="inline-block bg-gradient-to-r from-[#1E3A5F] to-blue-500 text-white px-8 py-3 rounded-full shadow-lg hover:scale-105 transition"
         >
           تعرف على المشاريع الأخرى
         </a>
-
       </div>
 
     </div>
