@@ -2,7 +2,7 @@ import Navbar from "../components/Navbar";
 import cover from "../assets/werood.jpeg";
 import video from "../assets/werood.mp4";
 import brochure from "../assets/brochure_wrood.pdf";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
 function ProjectElwroodPage() {
   const [formData, setFormData] = useState({
@@ -11,6 +11,8 @@ function ProjectElwroodPage() {
   });
 
   const [showBrochure, setShowBrochure] = useState(false);
+
+  const videoRef = useRef(null);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -22,16 +24,35 @@ function ProjectElwroodPage() {
     window.open(url, "_blank");
   };
 
+  // 🔥 SAME LANDMARK VIDEO BEHAVIOR
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          videoRef.current?.play();
+        } else {
+          videoRef.current?.pause();
+        }
+      },
+      { threshold: 0.5 }
+    );
+
+    if (videoRef.current) {
+      observer.observe(videoRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <div className="w-full bg-gray-50">
+    <div className="w-full bg-gray-50 overflow-x-hidden">
 
       <Navbar />
 
       {/* ================= HERO ================= */}
-      <section className="flex flex-col md:flex-row min-h-screen pt-28 md:pt-32 gap-10 px-4 md:px-10 animate-fadeIn">
+      <section className="flex flex-col md:flex-row min-h-screen pt-32 md:pt-40 gap-12 px-6 md:px-16">
 
-        {/* IMAGE */}
-        <div className="w-full md:w-1/2 h-[350px] md:h-[80vh] overflow-hidden rounded-2xl shadow-xl">
+        <div className="w-full md:w-1/2 h-[360px] md:h-[80vh] rounded-2xl overflow-hidden shadow-2xl">
           <img
             src={cover}
             alt="Dar Elwrood"
@@ -39,40 +60,55 @@ function ProjectElwroodPage() {
           />
         </div>
 
-        {/* TEXT */}
-        <div
-          className="w-full md:w-1/2 p-2 md:p-6 text-right flex flex-col justify-center"
-          dir="rtl"
-        >
-          <h1 className="text-3xl md:text-5xl font-bold text-[#1E3A5F] mb-6 animate-slideUp">
+        <div className="w-full md:w-1/2 flex flex-col justify-center text-right" dir="rtl">
+
+          <h1 className="text-3xl md:text-5xl font-bold text-[#1E3A5F] mb-6">
             مشروع دار الورود
           </h1>
 
-          <p className="text-gray-700 leading-loose text-base md:text-lg text-justify animate-fadeIn">
-            يقدم مشروع دار الورود من دار للاستثمار العقاري تجربة سكنية واستثمارية متكاملة
-            تجمع بين الموقع المميز والهدوء والقيمة الحقيقية للاستثمار. صُمم المشروع
-            ليوفر بيئة مريحة بعيدًا عن زحام المدينة، مع وحدات سكنية بمساحات تبدأ من
-            120 م² وأنظمة سداد مرنة تناسب مختلف الاحتياجات. ويعد دار الورود فرصة مثالية
-            للراغبين في الحفاظ على قيمة استثماراتهم وتحقيق عائد مستقبلي في موقع واعد
-            ومجتمع سكني متكامل.
+          <p className="text-gray-700 leading-loose text-base md:text-lg text-justify">
+يقدم مشروع دار الورود من دار للاستثمار العقاري تجربة سكنية واستثمارية متكاملة تجمع بين الموقع المميز والهدوء والقيمة الحقيقية للاستثمار. صُمم المشروع ليوفر بيئة مريحة بعيدًا عن زحام المدينة، مع وحدات سكنية بمساحات تبدأ من 120 م² وأنظمة سداد مرنة تناسب مختلف الاحتياجات. ويعد دار الورود فرصة مثالية للراغبين في الحفاظ على قيمة استثماراتهم وتحقيق عائد مستقبلي في موقع واعد ومجتمع سكني متكامل.
           </p>
+
         </div>
       </section>
 
-      {/* ================= VIDEO ================= */}
-      <section className="w-full py-24 flex justify-center animate-fadeIn">
-        <video
-          src={video}
-          controls
-          className="w-[92%] md:w-[70%] rounded-2xl shadow-2xl"
-        />
+      {/* ================= VIDEO (LANDMARK STYLE) ================= */}
+      <section className="w-full py-28 flex justify-center items-center relative">
+
+        {/* glow */}
+        <div className="absolute w-[80%] md:w-[60%] h-[300px] md:h-[420px] bg-blue-500/30 blur-3xl rounded-full"></div>
+
+        {/* video */}
+        <div className="relative w-[92%] md:w-[70%] group transition-all duration-700">
+
+          <video
+            ref={videoRef}
+            src={video}
+            controls
+            muted
+            playsInline
+            className="
+              w-full rounded-2xl shadow-2xl
+              transition-all duration-700
+              group-hover:scale-110
+              group-hover:shadow-blue-400/40
+              group-hover:shadow-2xl
+              group-hover:brightness-110
+            "
+          />
+
+          {/* border glow */}
+          <div className="absolute inset-0 rounded-2xl border border-white/20 group-hover:border-blue-400/60 transition-all duration-500 pointer-events-none"></div>
+
+        </div>
+
       </section>
 
       {/* ================= INFO + FORM ================= */}
-      <section className="grid grid-cols-1 md:grid-cols-2 gap-16 px-6 md:px-20 py-24 animate-fadeIn">
+      <section className="grid grid-cols-1 md:grid-cols-2 gap-16 px-6 md:px-24 py-28">
 
-        {/* INFO */}
-        <div className="bg-white shadow-2xl rounded-2xl p-8 text-right hover:shadow-3xl transition duration-500" dir="rtl">
+        <div className="bg-white shadow-2xl rounded-2xl p-8 text-right" dir="rtl">
 
           <h2 className="text-2xl font-bold text-[#1E3A5F] mb-6">
             تفاصيل المشروع
@@ -91,8 +127,7 @@ function ProjectElwroodPage() {
           </button>
         </div>
 
-        {/* FORM */}
-        <div className="bg-white shadow-2xl rounded-2xl p-8 hover:shadow-3xl transition duration-500">
+        <div className="bg-white shadow-2xl rounded-2xl p-8">
 
           <h2 className="text-2xl font-bold text-[#1E3A5F] mb-6 text-center">
             احجز / استفسر
@@ -101,7 +136,7 @@ function ProjectElwroodPage() {
           <input
             name="name"
             placeholder="الاسم"
-            className="w-full border p-3 rounded mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="w-full border p-3 rounded mb-4"
             onChange={handleChange}
           />
 
@@ -117,22 +152,24 @@ function ProjectElwroodPage() {
 
           <button
             onClick={openWhatsApp}
-            className="w-full bg-green-600 text-white py-3 rounded-full hover:bg-green-700 transition hover:scale-105"
+            className="w-full bg-green-600 text-white py-3 rounded-full hover:bg-green-700 transition"
           >
             تواصل واتساب
           </button>
+
         </div>
+
       </section>
 
       {/* ================= BROCHURE MODAL ================= */}
       {showBrochure && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
 
-          <div className="relative w-[95%] md:w-[80%] h-[90%] bg-white rounded-xl overflow-hidden shadow-2xl animate-fadeIn">
+          <div className="relative w-[95%] md:w-[80%] h-[90%] bg-white rounded-xl overflow-hidden">
 
             <button
               onClick={() => setShowBrochure(false)}
-              className="absolute top-3 right-3 z-50 bg-white text-black w-10 h-10 rounded-full shadow"
+              className="absolute top-3 right-3 bg-white w-10 h-10 rounded-full shadow"
             >
               ×
             </button>
@@ -143,11 +180,12 @@ function ProjectElwroodPage() {
               title="Brochure"
             />
           </div>
+
         </div>
       )}
 
       {/* ================= BACK BUTTON ================= */}
-      <div className="text-center pb-24 pt-10 animate-fadeIn">
+      <div className="text-center py-24">
 
         <a
           href="/#projects"
@@ -157,29 +195,6 @@ function ProjectElwroodPage() {
         </a>
 
       </div>
-
-      {/* ================= SIMPLE ANIMATIONS ================= */}
-      <style>
-        {`
-          .animate-fadeIn {
-            animation: fadeIn 1s ease-in-out;
-          }
-
-          .animate-slideUp {
-            animation: slideUp 1s ease-out;
-          }
-
-          @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-          }
-
-          @keyframes slideUp {
-            from { transform: translateY(30px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-          }
-        `}
-      </style>
 
     </div>
   );
