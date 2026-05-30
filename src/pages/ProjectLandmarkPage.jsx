@@ -24,27 +24,69 @@ function ProjectLandmarkPage() {
     window.open(url, "_blank");
   };
 
-  // ================= VIDEO AUTO PLAY / PAUSE (FINAL FIX) =================
+  // ================= VIDEO AUTO PLAY / PAUSE (FIXED + MOBILE SAFE) =================
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
+    video.muted = true;
+    video.playsInline = true;
+
+    let isPlaying = false;
+
+    const playVideo = () => {
+      if (!isPlaying) {
+        isPlaying = true;
+        const playPromise = video.play();
+        if (playPromise !== undefined) {
+          playPromise.catch(() => {});
+        }
+      }
+    };
+
+    const pauseVideo = () => {
+      if (isPlaying) {
+        isPlaying = false;
+        video.pause();
+      }
+    };
+
+    // 1) Intersection Observer (primary)
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          video.play().catch(() => {});
+          playVideo();
         } else {
-          video.pause();
+          pauseVideo();
         }
       },
       {
-        threshold: 0.5,
+        threshold: 0.4,
       }
     );
 
     observer.observe(video);
 
-    return () => observer.disconnect();
+    // 2) Scroll fallback (important for mobile Safari)
+    const handleScroll = () => {
+      const rect = video.getBoundingClientRect();
+
+      const inView =
+        rect.top < window.innerHeight * 0.75 &&
+        rect.bottom > window.innerHeight * 0.25;
+
+      if (inView) playVideo();
+      else pauseVideo();
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    handleScroll(); // run on load
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("scroll", handleScroll);
+    };
   }, []);
 
   return (
@@ -72,14 +114,9 @@ function ProjectLandmarkPage() {
           </h1>
 
           <p className="text-gray-700 leading-loose text-base md:text-lg text-justify">
-            Dar Landmark هو مشروع سكني متكامل يقدم تجربة معيشية هادئة واستثمارًا ذكيًا في موقع مميز بالقرب من أهم المناطق الحيوية في طنطا، مما يضعك على بُعد دقائق من كل ما تحتاجه.
-
-            يتميز المشروع بتنوع المساحات التي تصل إلى 199 م²، ليناسب مختلف الاحتياجات العائلية، مع تصميم يراعي الراحة وجودة الحياة في كل تفصيلة.
-
-            يوفر Dar Landmark أنظمة سداد مرنة تبدأ بمقدم 35% وتقسيط يصل حتى 30 شهر، مع فترة استلام خلال 24 شهر، مما يجعله فرصة مناسبة للراغبين في السكن أو الاستثمار.
-
-            اختيارك لـ Dar Landmark هو خطوة نحو حياة أكثر هدوءًا واستثمار أكثر استقرارًا وقيمة مستقبلية أفضل.
-          </p>
+مشروع سكني متكامل يقدم تجربة معيشية هادئة واستثمارًا ذكيًا في موقع مميز بالقرب من أهم المناطق الحيوية في طنطا، مما يضعك على بُعد دقائق من كل ما تحتاجه.
+يتميز المشروع بتنوع المساحات التي تصل إلى 199 م²، ليناسب مختلف الاحتياجات العائلية، مع تصميم يراعي الراحة وجودة الحياة في كل تفصيلة.
+اختيارك لـ Dar Landmark هو خطوة نحو حياة أكثر هدوءًا واستثمار أكثر استقرارًا وقيمة مستقبلية أفضل.          </p>
         </div>
 
       </section>
