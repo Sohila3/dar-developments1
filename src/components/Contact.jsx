@@ -1,204 +1,229 @@
 import { useState } from "react";
 
 function Contact() {
-
   const [showForm, setShowForm] = useState(false);
-
   const [name, setName] = useState("");
-
   const [project, setProject] = useState("");
 
   const handleWhatsApp = () => {
-
-    const message =
-      `مرحبا، اسمي ${name} وأريد معرفة المزيد عن مشروع ${project}`;
-
-    const whatsappURL =
-      `https://wa.me/201039207908?text=${encodeURIComponent(message)}`;
-
+    const message = `مرحبا، اسمي ${name} وأريد معرفة المزيد عن مشروع ${project}`;
+    const whatsappURL = `https://wa.me/201039207908?text=${encodeURIComponent(message)}`;
     window.open(whatsappURL, "_blank");
   };
 
   return (
-
     <div
       id="contact"
-      className="w-full bg-gray-50 py-24 px-6 md:px-16"
+      className="w-full py-24 px-6 md:px-16"
+      style={{
+        background: "#FAF6EE",
+        fontFamily: "'Noto Naskh Arabic', serif",
+        direction: "rtl",
+      }}
     >
 
-      <div className="max-w-6xl mx-auto bg-white rounded-3xl shadow-xl overflow-hidden grid grid-cols-1 md:grid-cols-2">
+      {/* ================= STYLE ================= */}
+      <style>{`
+        .contact-wrap { animation: fadeUp 0.7s ease forwards; }
 
-        {/* LEFT SIDE */}
-        <div className="p-10 md:p-16 text-right flex flex-col justify-center">
+        @keyframes fadeUp {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
 
-          <h3 className="text-3xl font-bold text-[#1E3A5F] mb-8">
-            تواصل معنا
+        .social-link {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          color: #4A4A4A;
+          text-decoration: none;
+          font-size: 15px;
+        }
+        .social-link:hover {
+          color: #C9A84C;
+          gap: 12px;
+        }
+
+        .cta-btn {
+          background: #C9A84C;
+          color: #0B1A2E;
+          border: none;
+          border-radius: 6px;
+          padding: 14px 30px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: 0.3s;
+        }
+        .cta-btn:hover {
+          background: #E8C96A;
+          transform: translateY(-2px);
+        }
+
+        .popup-overlay {
+          position: fixed;
+          inset: 0;
+          background: rgba(0,0,0,0.6);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 50;
+        }
+
+        .popup-box {
+          background: #FAF6EE;
+          width: 100%;
+          max-width: 420px;
+          border-radius: 10px;
+          padding: 35px;
+        }
+
+        .popup-input {
+          width: 100%;
+          padding: 12px;
+          margin-top: 10px;
+          border: 1px solid rgba(201,168,76,0.3);
+          border-radius: 6px;
+        }
+
+        .popup-submit {
+          width: 100%;
+          margin-top: 15px;
+          padding: 12px;
+          background: #0B1A2E;
+          color: white;
+          border-radius: 6px;
+          cursor: pointer;
+        }
+        .popup-submit:hover {
+          background: #C9A84C;
+          color: #0B1A2E;
+        }
+      `}</style>
+
+      <div
+        className="contact-wrap max-w-6xl mx-auto"
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+          borderRadius: "10px",
+          overflow: "hidden",
+        }}
+      >
+
+        {/* ================= LEFT ================= */}
+        <div style={{ background: "white", padding: "40px", textAlign: "right" }}>
+
+          <h3 style={{ fontSize: "32px", fontWeight: 700 }}>
+            تواصل <span style={{ color: "#C9A84C" }}>معنا</span>
           </h3>
 
-          {/* ADDRESS */}
-          <div className="mb-8 text-gray-700 leading-8" dir="rtl">
-
-            <p className="font-bold text-[#1E3A5F] mb-2">
-              📍 العنوان
+          {/* ✨ NEW LOCATION SECTION */}
+          <div style={{ marginTop: "25px" }}>
+            <p style={{ fontWeight: 600, color: "#C9A84C", marginBottom: "8px" }}>
+              مقر الشركة
             </p>
 
-            <p>
-              طنطا – شارع توت عنخ آمون
-              <br />
-              فوق مخبز الزهراء
+            <p style={{ color: "#444", lineHeight: 1.8 }}>
+              طنطا - شارع توت عنخ آمون من محمد فريد فوق مخبز الزهراء
             </p>
 
-          </div>
-
-          {/* PHONE */}
-          <div className="mb-8 text-gray-700 leading-8" dir="rtl">
-
-            <p className="font-bold text-[#1E3A5F] mb-2">
-              📞 أرقام التواصل
-            </p>
-
-            <p>01039207809</p>
-
-            <p>0403294777</p>
-
+            <a
+              href="https://maps.app.goo.gl/CjGnSencAK6vsoh19?g_st=aw"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="social-link"
+              style={{ marginTop: "10px", display: "inline-block", color: "#C9A84C" }}
+            >
+               افتح على الخريطة
+            </a>
           </div>
 
           {/* SOCIAL */}
-          <div className="text-gray-700" dir="rtl">
-
-            <p className="font-bold text-[#1E3A5F] mb-4">
-              🌐 تابعنا على السوشيال ميديا
+          <div style={{ marginTop: "30px" }}>
+            <p style={{ fontWeight: 600, color: "#C9A84C", marginBottom: "10px" }}>
+              تابعنا على السوشيال ميديا
             </p>
 
-            <div className="flex flex-col gap-3">
-
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
               <a
                 href="https://www.facebook.com/share/1XgDRDMitV/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-[#1E3A5F]"
+                className="social-link"
               >
-                Facebook
+                ← Facebook
               </a>
 
               <a
                 href="https://www.instagram.com/dar.developments?igsh=N202dXdhaWEyaW85"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-[#1E3A5F]"
+                className="social-link"
               >
-                Instagram
+                ← Instagram
               </a>
-
             </div>
-
           </div>
-
         </div>
 
-        {/* RIGHT SIDE */}
-        <div className="bg-[#1E3A5F] text-white p-10 md:p-16 flex flex-col justify-center text-right">
+        {/* ================= RIGHT ================= */}
+        <div style={{ background: "#0B1A2E", padding: "45px", color: "#fff" }}>
 
-          <h2 className="text-4xl md:text-6xl font-bold mb-8 leading-tight text-right">
+          <h2 style={{ fontSize: "34px", fontWeight: 700 }}>
+            لنتحدث
+          </h2>
 
-  <span className="block">
-    أعرف أكثر
-  </span>
+          {/* ✨ NEW TEXT */}
+          <p style={{ color: "rgba(255,255,255,0.6)", marginTop: "8px" }}>
+            اعرف أكتر عن المشروع
+          </p>
 
-  <span className="block mt-3 text-3xl md:text-5xl font-semibold">
-    عن المشروع
-  </span>
+          <p style={{ color: "rgba(255,255,255,0.5)", marginTop: "10px", lineHeight: 1.8 }}>
+            احنا هنا عشان نساعدك تختار أفضل مشروع يناسب احتياجك واستثمارك
+          </p>
 
-</h2>
-
-          <button
-            onClick={() => setShowForm(true)}
-            className="bg-white text-[#1E3A5F] px-8 py-4 rounded-full text-lg font-semibold hover:bg-gray-200 transition w-fit"
-          >
+          <button className="cta-btn" onClick={() => setShowForm(true)}>
             لنتحدث
           </button>
-
         </div>
-
       </div>
 
-      {/* POPUP */}
+      {/* ================= POPUP ================= */}
       {showForm && (
+        <div className="popup-overlay">
+          <div className="popup-box">
 
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center px-4">
+            <button onClick={() => setShowForm(false)}>×</button>
 
-          <div className="bg-white w-full max-w-md rounded-3xl p-8 relative">
-
-            {/* CLOSE */}
-            <button
-              onClick={() => setShowForm(false)}
-              className="absolute top-4 left-4 text-3xl text-gray-500"
-            >
-              ×
-            </button>
-
-            <h3 className="text-3xl font-bold text-[#1E3A5F] mb-8 text-center">
+            <h3 style={{ textAlign: "center", marginBottom: "10px" }}>
               لنتحدث
             </h3>
 
-            {/* NAME */}
-            <div className="mb-6" dir="rtl">
+            <input
+              className="popup-input"
+              placeholder="الاسم"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
 
-              <label className="block mb-3 font-semibold text-[#1E3A5F]">
-                الاسم
-              </label>
-
-              <input
-                type="text"
-                placeholder="أدخل اسمك"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="w-full border border-gray-300 rounded-xl p-4 focus:outline-none focus:border-[#1E3A5F]"
-              />
-
-            </div>
-
-            {/* PROJECT */}
-            <div className="mb-8" dir="rtl">
-
-              <label className="block mb-3 font-semibold text-[#1E3A5F]">
-                المشروع
-              </label>
-
-              <select
-                value={project}
-                onChange={(e) => setProject(e.target.value)}
-                className="w-full border border-gray-300 rounded-xl p-4 focus:outline-none focus:border-[#1E3A5F]"
-              >
-
-                <option value="">
-                  اختر المشروع الذي تريده
-                </option>
-
-                <option value="Dar Damac">Dar Damac</option>
-
-                <option value="Dar Landmark">Dar Landmark</option>
-
-                <option value="Dar Elwrood">Dar Elwrood</option>
-
-              </select>
-
-            </div>
-
-            {/* BUTTON */}
-            <button
-              onClick={handleWhatsApp}
-              className="w-full bg-[#1E3A5F] text-white py-4 rounded-xl text-lg hover:bg-blue-900 transition"
+            <select
+              className="popup-input"
+              value={project}
+              onChange={(e) => setProject(e.target.value)}
             >
+              <option value="">اختر المشروع</option>
+              <option value="Dar Damac">Dar Damac</option>
+              <option value="Dar Landmark">Dar Landmark</option>
+              <option value="Dar Elwrood">Dar Elwrood</option>
+            </select>
+
+            <button className="popup-submit" onClick={handleWhatsApp}>
               إرسال عبر واتساب
             </button>
 
           </div>
-
         </div>
-
       )}
-
     </div>
   );
 }

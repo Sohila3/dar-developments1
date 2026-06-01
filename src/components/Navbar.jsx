@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
 import logo from "../assets/logo.jpeg";
 
 function Navbar() {
@@ -8,8 +7,8 @@ function Navbar() {
   return (
     <>
       {/* NAVBAR */}
-      <nav className="w-full fixed top-0 left-0 z-[100] bg-black/20 backdrop-blur-md">
-        <div className="flex items-center justify-between px-6 md:px-12 py-4">
+      <nav className="fixed top-0 left-0 w-full h-20 z-[100] bg-black/20 backdrop-blur-md">
+        <div className="relative flex items-center justify-between h-full px-6 md:px-12">
 
           {/* LANG */}
           <div className="flex items-center gap-3 text-white text-sm">
@@ -22,10 +21,10 @@ function Navbar() {
           <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-3 z-[101]">
             <img
               src={logo}
-              className="w-10 h-10 rounded-full"
               alt="logo"
+              className="w-10 h-10 rounded-full"
             />
-            <h1 className="text-white tracking-[4px]">
+            <h1 className="text-white tracking-[4px] font-semibold">
               DAR
             </h1>
           </div>
@@ -33,7 +32,7 @@ function Navbar() {
           {/* MENU BUTTON */}
           <button
             onClick={() => setOpen(true)}
-            className="text-white text-3xl z-[101] relative"
+            className="text-white text-3xl relative z-[101]"
           >
             ☰
           </button>
@@ -55,7 +54,6 @@ function Navbar() {
           open ? "translate-x-0" : "translate-x-full"
         }`}
       >
-
         {/* CLOSE */}
         <div className="flex justify-end p-5">
           <button
@@ -71,49 +69,26 @@ function Navbar() {
           className="flex flex-col items-end gap-6 px-8 text-[#1E3A5F] text-lg font-semibold"
           dir="rtl"
         >
-
-          {/* الرئيسية */}
-          <a
-            href="/"
-            onClick={() => setOpen(false)}
-          >
+          <a href="/" onClick={() => setOpen(false)}>
             الرئيسية
           </a>
 
-          {/* عن دار */}
-          <a
-            href="/#about"
-            onClick={() => setOpen(false)}
-          >
+          <a href="/#about" onClick={() => setOpen(false)}>
             عن دار
           </a>
 
-          {/* مشاريعنا */}
-          <a
-            href="/#projects"
-            onClick={() => setOpen(false)}
-          >
+          <a href="/#projects" onClick={() => setOpen(false)}>
             مشاريعنا
           </a>
 
-          {/* شركاء النجاح */}
-          <a
-            href="/#partners"
-            onClick={() => setOpen(false)}
-          >
+          <a href="/#partners" onClick={() => setOpen(false)}>
             شركاء النجاح
           </a>
 
-          {/* تواصل معنا */}
-          <a
-            href="/#contact"
-            onClick={() => setOpen(false)}
-          >
+          <a href="/#contact" onClick={() => setOpen(false)}>
             تواصل معنا
           </a>
-
         </div>
-
       </div>
     </>
   );

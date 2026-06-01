@@ -1,194 +1,130 @@
-import { useEffect, useState } from "react";
-
-import cover1 from "../assets/cover1.png";
-import cover2 from "../assets/cover2.png";
-import cover3 from "../assets/cover3.png";
-
-import logo from "../assets/logo.jpeg";
-
 function Hero() {
-
-  const [menuOpen, setMenuOpen] = useState(false);
-
-  const images = [cover1, cover2, cover3];
-
-  const [currentImage, setCurrentImage] = useState(0);
-
-  useEffect(() => {
-
-    const interval = setInterval(() => {
-
-      setCurrentImage((prev) =>
-        prev === images.length - 1 ? 0 : prev + 1
-      );
-
-    }, 3000);
-
-    return () => clearInterval(interval);
-
-  }, []);
-
   return (
+    <div
+      id="home"
+      className="w-full min-h-screen relative overflow-hidden flex flex-col justify-center"
+      style={{
+        background: "#0B1A2E",
+        fontFamily: "'Noto Naskh Arabic', serif",
+        direction: "rtl",
+      }}
+    >
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap');
 
-    <div id="home" className="w-full">
+        @keyframes fadeUp {
+          from { opacity: 0; transform: translateY(22px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50%       { opacity: 0.3; }
+        }
 
-      {/* HERO */}
-      <div className="relative w-full h-screen overflow-hidden">
+        .hero-badge { opacity:0; animation: fadeUp 0.7s 0.2s forwards; }
+        .hero-title { opacity:0; animation: fadeUp 0.8s 0.45s forwards; }
+        .hero-sub   { opacity:0; animation: fadeUp 0.8s 0.65s forwards; }
+        .hero-cta   { opacity:0; animation: fadeUp 0.8s 0.85s forwards; }
 
-        {/* SLIDER IMAGES */}
-        {images.map((img, index) => (
+        .btn-primary:hover {
+          background: #E8C96A !important;
+          transform: translateY(-3px);
+        }
 
-          <img
-            key={index}
-            src={img}
-            alt="DAR"
-            className={`absolute inset-0 w-full h-full object-cover object-center transition-opacity duration-1000 pointer-events-none ${
-              currentImage === index
-                ? "opacity-100"
-                : "opacity-0"
-            }`}
-          />
+        .btn-outline:hover {
+          border-color: #C9A84C !important;
+          color: #C9A84C !important;
+          transform: translateY(-3px);
+        }
+      `}</style>
 
-        ))}
+      {/* CONTENT */}
+      <div className="relative z-10 max-w-3xl mx-auto w-full px-8 md:px-16 py-32">
 
-        {/* OVERLAY */}
-        <div className="absolute inset-0 bg-black/40 z-10"></div>
-
-        {/* NAVBAR */}
-        <nav className="fixed top-0 left-0 w-full z-[999] bg-black/20 backdrop-blur-md">
-
-          <div className="flex items-center justify-between px-6 md:px-12 py-4">
-
-            {/* LANG */}
-            <div className="flex items-center gap-3 text-white text-sm font-medium z-[1000] relative">
-
-              <button>عربي</button>
-
-              <span>|</span>
-
-              <button>English</button>
-
-            </div>
-
-            {/* LOGO */}
-            <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-3 z-[1000]">
-
-              <img
-                src={logo}
-                alt="DAR Logo"
-                className="w-10 h-10 md:w-12 md:h-12 rounded-full object-cover"
-              />
-
-              <h1 className="text-white text-xl md:text-2xl tracking-[4px] font-semibold">
-                DAR
-              </h1>
-
-            </div>
-
-            {/* MENU BUTTON */}
-            <button
-              onClick={() => setMenuOpen(true)}
-              className="text-white text-3xl relative z-[1000]"
-            >
-              ☰
-            </button>
-
-          </div>
-
-        </nav>
-
-        {/* OVERLAY SIDEBAR */}
-        {menuOpen && (
-          <div
-            className="fixed inset-0 bg-black/40 z-[1000]"
-            onClick={() => setMenuOpen(false)}
-          />
-        )}
-
-        {/* SIDEBAR */}
-        <div
-          className={`fixed top-0 right-0 h-full w-[300px] bg-white z-[1001] shadow-2xl transition-transform duration-300 ${
-            menuOpen ? "translate-x-0" : "translate-x-full"
-          }`}
+        {/* BADGE */}
+        <div className="hero-badge inline-flex items-center gap-2 mb-6"
+          style={{
+            background: "rgba(201,168,76,0.12)",
+            border: "1px solid rgba(201,168,76,0.35)",
+            borderRadius: "50px",
+            padding: "5px 16px",
+            fontSize: "13px",
+            color: "#E8C96A",
+          }}
         >
-
-          {/* CLOSE */}
-          <div className="flex justify-end p-5">
-
-            <button
-              onClick={() => setMenuOpen(false)}
-              className="text-3xl text-[#1E3A5F]"
-            >
-              ×
-            </button>
-
-          </div>
-
-          {/* LINKS */}
-          <div
-            className="flex flex-col items-end gap-6 px-8 pt-6 text-[#1E3A5F] text-lg font-semibold"
-            dir="rtl"
-          >
-
-            <a
-              href="#home"
-              onClick={() => setMenuOpen(false)}
-              className="hover:text-blue-700 transition"
-            >
-              الرئيسية
-            </a>
-
-            <a
-              href="#about"
-              onClick={() => setMenuOpen(false)}
-              className="hover:text-blue-700 transition"
-            >
-              عن دار
-            </a>
-
-            <a
-              href="#projects"
-              onClick={() => setMenuOpen(false)}
-              className="hover:text-blue-700 transition"
-            >
-              مشاريعنا
-            </a>
-
-            <a
-              href="#partners"
-              onClick={() => setMenuOpen(false)}
-              className="hover:text-blue-700 transition"
-            >
-              شركاء النجاح
-            </a>
-
-            <a
-              href="#contact"
-              onClick={() => setMenuOpen(false)}
-              className="hover:text-blue-700 transition"
-            >
-              تواصل معنا
-            </a>
-
-          </div>
-
+          <span style={{
+            width: 7,
+            height: 7,
+            borderRadius: "50%",
+            background: "#C9A84C",
+            animation: "pulse 2s infinite",
+          }} />
+          <span>دار للاستثمار العقاري</span>
         </div>
 
-        {/* HERO TEXT */}
-        <div className="relative z-20 flex flex-col items-center justify-center h-full text-center px-4">
+        {/* TITLE */}
+        <h1 className="hero-title font-bold"
+          style={{
+            fontSize: "clamp(32px, 5vw, 58px)",
+            lineHeight: 1.4,
+            color: "#FAF6EE",
+            marginBottom: "14px",
+          }}
+        >
+          <span>ثق بنا في بناء </span>
+          <span style={{ color: "#C9A84C" }}>مستقبلك العقاري</span>
+        </h1>
 
-          <h1 className="text-white text-3xl md:text-7xl font-bold leading-tight">
-            دار للاستثمار العقاري
-          </h1>
+        {/* SUB */}
+        <p className="hero-sub"
+          style={{
+            color: "rgba(250,246,238,0.62)",
+            lineHeight: 2,
+            marginBottom: "34px",
+          }}
+        >
+          شريكك الموثوق في اختيار العقارات الأمثل
+        </p>
 
-          <p className="mt-4 md:mt-6 text-gray-200 text-base md:text-2xl">
-            مستقبل عقاري يليق بطموحك
-          </p>
+        {/* BUTTONS (FIXED HERE 🔥) */}
+        <div className="hero-cta flex gap-3 flex-wrap">
+
+          <a
+            href="#projects"
+            className="btn-primary"
+            style={{
+              background: "#C9A84C",
+              color: "#0B1A2E",
+              padding: "13px 30px",
+              borderRadius: "4px",
+              textDecoration: "none",
+              display: "inline-block",
+              transition: "0.3s",
+            }}
+          >
+            استعرض مشاريعنا
+          </a>
+
+          <a
+            href="#contact"
+            className="btn-outline"
+            style={{
+              background: "transparent",
+              color: "#FAF6EE",
+              border: "1px solid rgba(201,168,76,0.4)",
+              padding: "13px 30px",
+              borderRadius: "4px",
+              textDecoration: "none",
+              display: "inline-block",
+              transition: "0.3s",
+            }}
+          >
+            تواصل معنا
+          </a>
 
         </div>
 
       </div>
-
     </div>
   );
 }

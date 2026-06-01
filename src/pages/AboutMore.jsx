@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-
 import Navbar from "../components/Navbar";
 
 import aboutImg from "../assets/about-uspage.jpeg";
@@ -7,16 +6,22 @@ import contactImg from "../assets/contact-us.jpeg";
 import cover from "../assets/cover.png";
 
 function AboutMore() {
-
   const statsRef = useRef(null);
   const [visible, setVisible] = useState(false);
 
+  const [count, setCount] = useState({
+    projects: 0,
+    years: 0,
+    clients: 0,
+  });
+
+  // ================= OBSERVER =================
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) setVisible(true);
       },
-      { threshold: 0.3 }
+      { threshold: 0.4 }
     );
 
     if (statsRef.current) observer.observe(statsRef.current);
@@ -26,33 +31,56 @@ function AboutMore() {
     };
   }, []);
 
-  return (
-    <div className="w-full bg-white">
+  // ================= COUNTER =================
+  useEffect(() => {
+    if (!visible) return;
 
-      {/* ================= NAVBAR ================= */}
+    const interval = setInterval(() => {
+      setCount((prev) => {
+        return {
+          projects: prev.projects < 8 ? prev.projects + 1 : 8,
+          years: prev.years < 8 ? prev.years + 1 : 8,
+          clients:
+            prev.clients < 1000
+              ? prev.clients + Math.ceil((1000 - prev.clients) / 10)
+              : 1000,
+        };
+      });
+    }, 50);
+
+    return () => clearInterval(interval);
+  }, [visible]);
+
+  return (
+    <div
+      className="w-full bg-white"
+      style={{ fontFamily: "'IBM Plex Sans Arabic', sans-serif" }}
+    >
       <Navbar />
       <div className="h-20" />
 
-      {/* ===================== */}
-      {/* 1 - ABOUT */}
-      {/* ===================== */}
+      {/* ================= ABOUT ================= */}
       <section className="py-24 px-6 md:px-16">
 
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row-reverse items-start gap-12">
 
           <div className="flex-1 text-right">
-            <h1 className="text-4xl md:text-6xl font-bold text-[#1E3A5F]">
+            <h1 className="text-4xl md:text-6xl font-extrabold text-[#1E3A5F] tracking-wide">
               عن دار
             </h1>
+
+            <span className="block w-24 h-1 bg-gradient-to-r from-[#1E3A5F] to-[#38BDF8] mt-4 rounded-full ml-auto"></span>
           </div>
 
-          <div className="flex-1 text-right text-gray-600 text-lg leading-10" dir="rtl">
-            <p className="text-justify">
-            دار للاستثمار العقاري هي شركة مصرية تأسست عام 2017، متخصصة في تقديم حلول عقارية متكاملة تجمع بين الاستثمار والسكن، بخبرة تمتد لسنوات في سوق العقارات داخل طنطا والقاهرة، وخاصة منطقة بيت الوطن.
-
+          {/* ✅ FIX HERE ONLY */}
+          <div
+            className="flex-1 text-right text-gray-600 text-lg leading-10 text-justify"
+            dir="rtl"
+          >
+            <p className="whitespace-pre-line text-justify">
+دار للاستثمار العقاري هي شركة مصرية تأسست عام 2017، متخصصة في تقديم حلول عقارية متكاملة تجمع بين الاستثمار والسكن، بخبرة تمتد لسنوات في سوق العقارات داخل طنطا والقاهرة، وخاصة منطقة بيت الوطن.
 
 نحرص على تقديم فرص عقارية مدروسة تجمع بين الأمان الاستثماري، والمواقع المميزة، وخطط السداد المرنة التي تناسب مختلف العملاء.
-
 
 نؤمن أن النجاح في العقار لا يعتمد فقط على بيع وحدات، بل على بناء ثقة وعلاقات طويلة الأمد مع عملائنا.
             </p>
@@ -61,94 +89,96 @@ function AboutMore() {
         </div>
       </section>
 
-      {/* ===================== */}
-      {/* 2 - VISION & MISSION */}
-      {/* ===================== */}
+      {/* ================= VISION ================= */}
       <section className="py-28 px-6 md:px-16 bg-gray-50">
 
         <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-16">
 
-          <div className="text-right">
-            <h2 className="text-3xl md:text-5xl font-bold text-[#1E3A5F] mb-6">
-              رؤيتنا
-            </h2>
-            <p className="text-gray-600 text-lg leading-10 text-justify" dir="rtl">
-              نطمح لأن نكون شريكك العقاري الموثوق الذي يقودك نحو استثمار مستدام.
-            </p>
-          </div>
+          {[
+            {
+              title: "رؤيتنا",
+              text: "نطمح لأن نكون شريكك العقاري الموثوق الذي يقودك نحو استثمار مستدام."
+            },
+            {
+              title: "مهمتنا",
+              text: "نقدم مجتمعات سكنية متكاملة تحقق تجربة معيشية استثنائية."
+            }
+          ].map((item, i) => (
+            <div key={i} className="text-right">
+              <h2 className="text-3xl md:text-5xl font-bold text-[#1E3A5F] mb-4">
+                {item.title}
+              </h2>
 
-          <div className="text-right">
-            <h2 className="text-3xl md:text-5xl font-bold text-[#1E3A5F] mb-6">
-              مهمتنا
-            </h2>
-            <p className="text-gray-600 text-lg leading-10 text-justify" dir="rtl">
-              نقدم مجتمعات سكنية متكاملة تحقق تجربة معيشية استثنائية.
-            </p>
-          </div>
+              <span className="block w-16 h-1 bg-gradient-to-r from-[#1E3A5F] to-[#38BDF8] mb-6 rounded-full ml-auto"></span>
+
+              <p className="text-gray-600 text-lg leading-10 text-justify" dir="rtl">
+                {item.text}
+              </p>
+            </div>
+          ))}
 
         </div>
       </section>
 
-      {/* ===================== */}
-      {/* 3 - IMAGES */}
-      {/* ===================== */}
+      {/* ================= IMAGES ================= */}
       <section className="w-full flex flex-col md:flex-row">
 
-        <img
-          src={aboutImg}
-          className="w-full md:w-1/2 h-[300px] md:h-[500px] object-cover"
-          alt="about"
-        />
+        <div className="w-full md:w-1/2 h-[500px] md:h-[700px] overflow-hidden group">
+          <img
+            src={aboutImg}
+            className="w-full h-full object-cover transition duration-700 group-hover:scale-105"
+          />
+        </div>
 
-        <img
-          src={contactImg}
-          className="w-full md:w-1/2 h-[300px] md:h-[500px] object-cover"
-          alt="contact"
-        />
+        <div className="w-full md:w-1/2 h-[500px] md:h-[700px] overflow-hidden group">
+          <img
+            src={contactImg}
+            className="w-full h-full object-cover transition duration-700 group-hover:scale-105"
+          />
+        </div>
 
       </section>
 
-      {/* ===================== */}
-      {/* 4 - VALUES */}
-      {/* ===================== */}
+      {/* ================= VALUES ================= */}
       <section className="py-28 px-6 md:px-16 bg-gray-50">
 
-        <div className="max-w-6xl mx-auto text-center mb-16">
-
-          <h2 className="text-4xl md:text-6xl font-bold text-[#1E3A5F]">
-            قيمتنا
+        <div className="text-center mb-16">
+          <h2 className="text-4xl md:text-6xl font-extrabold text-[#1E3A5F]">
+            قِيَمُنا
           </h2>
 
-          <p className="mt-4 text-gray-600">
-            الضمان • الثقة • الرضا
-          </p>
-
+          <span className="block w-24 h-1 bg-gradient-to-r from-[#1E3A5F] to-[#38BDF8] mx-auto mt-4 rounded-full"></span>
         </div>
 
         <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
 
           {[
-            {
-              title: "الالتزام",
-              text: "نلتزم بتنمية شراكات مستدامة مع عملائنا."
-            },
-            {
-              title: "الابتكار",
-              text: "نسعى لتقديم حلول حديثة ومبتكرة."
-            },
-            {
-              title: "النزاهة",
-              text: "الشفافية والثقة أساس تعاملاتنا."
-            },
-            {
-              title: "الاتحاد",
-              text: "نعمل كفريق واحد لتحقيق النجاح."
-            }
+            { title: "الالتزام", text: "نلتزم بتقديم جودة عالية في كل مشروع، مع الحفاظ على الثقة والشفافية في كل خطوة." },
+            { title: "الابتكار", text: "نبتكر حلول عقارية حديثة تجمع بين التصميم الذكي وتجربة سكنية تناسب المستقبل." },
+            { title: "النزاهة", text: "نلتزم بالنزاهة والشفافية، ونضع مصلحة العميل في مقدمة أولوياتنا دائمًا." },
+            { title: "الاتحاد", text: " نعمل كفريق واحد بروح التعاون لتحقيق أفضل النتائج في كل مشروع." }
           ].map((item, i) => (
-            <div key={i} className="bg-white p-8 rounded-2xl shadow-sm text-right">
+            <div
+              key={i}
+              className="
+                bg-white
+                p-8
+                rounded-2xl
+                shadow-sm
+                text-right
+
+                transition-all duration-500 ease-in-out
+                transform
+                hover:scale-105
+                hover:shadow-2xl
+                hover:-translate-y-2
+                cursor-pointer
+              "
+            >
               <h3 className="text-2xl font-bold text-[#1E3A5F] mb-4">
                 {item.title}
               </h3>
+
               <p className="text-gray-600 leading-9 text-justify" dir="rtl">
                 {item.text}
               </p>
@@ -158,56 +188,52 @@ function AboutMore() {
         </div>
       </section>
 
-      {/* ===================== */}
-      {/* 5 - STATS WITH BLUR BACKGROUND */}
-      {/* ===================== */}
+      {/* ================= STATS ================= */}
       <section
         ref={statsRef}
         className="relative py-32 px-6 md:px-16 text-white overflow-hidden"
       >
 
-        {/* BACKGROUND IMAGE */}
         <img
           src={cover}
-          alt="background"
           className="absolute inset-0 w-full h-full object-cover"
         />
 
-        {/* BLUR OVERLAY */}
-        <div className="absolute inset-0 bg-black/60 backdrop-blur-md"></div>
+        <div className="absolute inset-0 bg-black/60"></div>
 
-        {/* CONTENT */}
-        <div className="relative z-10">
+        <div className="relative z-10 text-center mb-16">
+          <h2 className="text-4xl md:text-6xl font-extrabold">
+            حقائق وأرقام
+          </h2>
 
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-6xl font-bold">
-              حقائق وأرقام
-            </h2>
+          <span className="block w-24 h-1 bg-gradient-to-r from-white to-blue-300 mx-auto mt-4 rounded-full"></span>
+        </div>
+
+        <div className="relative z-10 grid md:grid-cols-3 gap-12 text-center">
+
+          <div>
+            <div className="text-6xl md:text-7xl font-bold">
+              +{count.projects}
+            </div>
+            <p className="mt-4 text-gray-200">مشاريعنا</p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-12 text-center">
-
-            {/* Projects */}
-            <div className={`transition-all duration-700 ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}>
-              <div className="text-6xl md:text-7xl font-bold">+8</div>
-              <p className="mt-4 text-gray-200">مشاريعنا</p>
+          <div>
+            <div className="text-6xl md:text-7xl font-bold">
+              +{count.years}
             </div>
+            <p className="mt-4 text-gray-200">سنين الخبرة</p>
+          </div>
 
-            {/* Experience */}
-            <div className={`transition-all duration-700 delay-200 ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}>
-              <div className="text-6xl md:text-7xl font-bold">+8</div>
-              <p className="mt-4 text-gray-200">سنين الخبرة</p>
+          <div>
+            <div className="text-6xl md:text-7xl font-bold">
+              +{count.clients}
             </div>
-
-            {/* Clients */}
-            <div className={`transition-all duration-700 delay-500 ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}>
-              <div className="text-6xl md:text-7xl font-bold">+1000</div>
-              <p className="mt-4 text-gray-200">عملاؤنا</p>
-            </div>
-
+            <p className="mt-4 text-gray-200">عملاؤنا</p>
           </div>
 
         </div>
+
       </section>
 
     </div>
