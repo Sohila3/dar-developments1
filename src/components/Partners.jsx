@@ -1,17 +1,19 @@
+import { useLanguage } from "../context/LanguageContext";
+
 function Partners() {
+  const { lang, t } = useLanguage();
+
   return (
     <div
       id="partners"
       className="w-full py-24 px-6 md:px-16"
       style={{
         background: "#0B1A2E",
-        fontFamily: "'Noto Naskh Arabic', serif",
-        direction: "rtl",
+        fontFamily: lang === "ar" ? "'Noto Naskh Arabic', serif" : "'Montserrat', sans-serif",
+        direction: lang === "ar" ? "rtl" : "ltr",
       }}
     >
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap');
-
         @keyframes fadeUp {
           from { opacity: 0; transform: translateY(24px); }
           to   { opacity: 1; transform: translateY(0); }
@@ -68,9 +70,7 @@ function Partners() {
           position: relative;
           z-index: 1;
         }
-        .partner-card:hover .partner-label {
-          color: rgba(201,168,76,0.7);
-        }
+        .partner-card:hover .partner-label { color: rgba(201,168,76,0.7); }
         .section-line {
           width: 50px; height: 2px;
           background: linear-gradient(90deg, #C9A84C, #E8C96A);
@@ -91,36 +91,29 @@ function Partners() {
             animation: "pulse 2s infinite",
           }} />
           <span style={{ fontSize: "12px", color: "#9A7535", letterSpacing: "1.5px" }}>
-            شركاؤنا
+            {t("partners", "label")}
           </span>
         </div>
 
         <h2 style={{
           fontSize: "clamp(26px, 4vw, 44px)",
-          fontWeight: 700,
-          color: "#FAF6EE",
-          lineHeight: 1.4,
-          marginBottom: "4px",
+          fontWeight: 700, color: "#FAF6EE",
+          lineHeight: 1.4, marginBottom: "4px",
         }}>
-          شركاء <span style={{ color: "#C9A84C" }}>النجاح</span>
+          {t("partners", "title1")}
+          <span style={{ color: "#C9A84C" }}>{t("partners", "title2")}</span>
         </h2>
         <div className="section-line" />
       </div>
 
       {/* SUBTITLE */}
-      <p
-        className="partners-sub"
-        style={{
-          textAlign: "center",
-          color: "rgba(250,246,238,0.5)",
-          fontSize: "clamp(14px, 1.6vw, 16px)",
-          lineHeight: 2,
-          maxWidth: "580px",
-          margin: "0 auto 56px",
-        }}
-      >
-        شركاء النجاح الذين نعتز بالتعاون معهم في تنفيذ وتطوير مشاريعنا،
-        والذين يساهمون بخبراتهم في تقديم أعلى معايير الجودة والتميز.
+      <p className="partners-sub" style={{
+        textAlign: "center",
+        color: "rgba(250,246,238,0.5)",
+        fontSize: "clamp(14px, 1.6vw, 16px)",
+        lineHeight: 2, maxWidth: "580px", margin: "0 auto 56px",
+      }}>
+        {t("partners", "subtitle")}
       </p>
 
       {/* LOGOS GRID */}
