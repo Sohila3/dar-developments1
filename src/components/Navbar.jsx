@@ -1,5 +1,6 @@
 import { useState } from "react";
-import logo from "../assets/logo.jpeg";
+import logo from "../assets/logodar.jpeg";
+import { Link } from "react-router-dom";
 
 function Navbar() {
   const [open, setOpen] = useState(false);
@@ -10,11 +11,9 @@ function Navbar() {
       <nav className="fixed top-0 left-0 w-full h-20 z-[100] bg-black/20 backdrop-blur-md">
         <div className="relative flex items-center justify-between h-full px-6 md:px-12">
 
-          {/* LANG */}
+          {/* LANG (مقفول مؤقتًا) */}
           <div className="flex items-center gap-3 text-white text-sm">
-            <button>عربي</button>
-            <span>|</span>
-            <button>English</button>
+            <span className="text-[#C9A84C]">عربي</span>
           </div>
 
           {/* LOGO */}
@@ -36,7 +35,6 @@ function Navbar() {
           >
             ☰
           </button>
-
         </div>
       </nav>
 
@@ -64,14 +62,12 @@ function Navbar() {
           </button>
         </div>
 
-        {/* LINKS */}
+        {/* LINKS (ARABIC ONLY) */}
         <div
           className="flex flex-col items-end gap-6 px-8 text-[#1E3A5F] text-lg font-semibold"
           dir="rtl"
         >
-          <a href="/" onClick={() => setOpen(false)}>
-            الرئيسية
-          </a>
+          <Link to="/" onClick={() => setOpen(false)}>الرئيسية</Link>
 
           <a href="/#about" onClick={() => setOpen(false)}>
             عن دار

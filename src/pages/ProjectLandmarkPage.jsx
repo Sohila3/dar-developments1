@@ -11,7 +11,6 @@ function ProjectLandmarkPage() {
   });
 
   const [showBrochure, setShowBrochure] = useState(false);
-
   const videoRef = useRef(null);
 
   const handleChange = (e) => {
@@ -24,7 +23,6 @@ function ProjectLandmarkPage() {
     window.open(url, "_blank");
   };
 
-  // ================= VIDEO AUTO PLAY / PAUSE (FIXED + MOBILE SAFE) =================
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
@@ -34,100 +32,79 @@ function ProjectLandmarkPage() {
 
     let isPlaying = false;
 
-    const playVideo = () => {
-      if (!isPlaying) {
-        isPlaying = true;
-        const playPromise = video.play();
-        if (playPromise !== undefined) {
-          playPromise.catch(() => {});
-        }
-      }
-    };
-
-    const pauseVideo = () => {
-      if (isPlaying) {
-        isPlaying = false;
-        video.pause();
-      }
-    };
-
-    // 1) Intersection Observer (primary)
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          playVideo();
+          if (!isPlaying) {
+            isPlaying = true;
+            video.play().catch(() => {});
+          }
         } else {
-          pauseVideo();
+          isPlaying = false;
+          video.pause();
         }
       },
-      {
-        threshold: 0.4,
-      }
+      { threshold: 0.4 }
     );
 
     observer.observe(video);
-
-    // 2) Scroll fallback (important for mobile Safari)
-    const handleScroll = () => {
-      const rect = video.getBoundingClientRect();
-
-      const inView =
-        rect.top < window.innerHeight * 0.75 &&
-        rect.bottom > window.innerHeight * 0.25;
-
-      if (inView) playVideo();
-      else pauseVideo();
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-
-    handleScroll(); // run on load
-
-    return () => {
-      observer.disconnect();
-      window.removeEventListener("scroll", handleScroll);
-    };
+    return () => observer.disconnect();
   }, []);
 
   return (
-    <div className="w-full bg-white">
-
+    <div
+      className="w-full overflow-x-hidden"
+      style={{
+        background: "background: linear-gradient(135deg,#ffffff 0%,#eef6ff 35%,#dbeafe 100);",
+        fontFamily: "'IBM Plex Sans Arabic', sans-serif",
+      }}
+    >
       <Navbar />
 
-      {/* ================= HERO ================= */}
-      <section className="flex flex-col md:flex-row h-screen mt-24 md:mt-0">
+      {/* HERO */}
+      <section className="flex flex-col md:flex-row min-h-screen pt-32 md:pt-40 gap-16 px-6 md:px-20 items-center relative overflow-hidden">
 
-        <div className="w-full md:w-1/2 h-1/2 md:h-full">
+        <div className="absolute w-[500px] h-[500px] bg-[#C9A84C]/10 blur-[140px] top-[-120px] right-[-120px]" />
+        <div className="absolute w-[450px] h-[450px] bg-blue-200/20 blur-[140px] bottom-[-120px] left-[-120px]" />
+
+        {/* IMAGE */}
+        <div className="w-full md:w-1/2 h-[360px] md:h-[80vh] rounded-2xl overflow-hidden shadow-2xl group relative">
           <img
             src={cover}
-            alt="Dar Landmark"
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover transition duration-700 group-hover:scale-105"
           />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0B1A2E]/10 to-transparent" />
         </div>
 
-        <div
-          className="w-full md:w-1/2 p-6 md:p-12 text-right flex flex-col justify-center"
-          dir="rtl"
-        >
-          <h1 className="text-3xl md:text-5xl font-bold text-[#1E3A5F] mb-6">
-            مشروع دار لاند مارك
-          </h1>
+        {/* TEXT */}
+        <div className="w-full md:w-1/2 text-right relative z-10" dir="rtl">
 
-          <p className="text-gray-700 leading-loose text-base md:text-lg text-justify">
-مشروع سكني متكامل يقدم تجربة معيشية هادئة واستثمارًا ذكيًا في موقع مميز بالقرب من أهم المناطق الحيوية في طنطا، مما يضعك على بُعد دقائق من كل ما تحتاجه.
-يتميز المشروع بتنوع المساحات التي تصل إلى 199 م²، ليناسب مختلف الاحتياجات العائلية، مع تصميم يراعي الراحة وجودة الحياة في كل تفصيلة.
-اختيارك لـ Dar Landmark هو خطوة نحو حياة أكثر هدوءًا واستثمار أكثر استقرارًا وقيمة مستقبلية أفضل.          </p>
+          <h1 className="text-5xl md:text-7xl font-bold text-[#0B1A2E]">
+              <span
+                style={{
+                  color: "#C9A84C",
+                  textShadow: "0 0 10px rgba(201,168,76,0.35)",
+                }}
+              >
+                مشروع 
+              </span>{" "}
+              لاند مارك
+            </h1>
+
+          <div className="w-24 h-[2px] bg-gradient-to-r from-[#C9A84C] to-[#E8C96A] mb-8 ml-auto" />
+
+          <p className="text-[#0B1A2E]/70 leading-10 text-justify">
+            مشروع سكني متكامل يقدم تجربة معيشية هادئة واستثمارًا ذكيًا في موقع مميز بالقرب من أهم المناطق الحيوية في طنطا، مما يضعك على بُعد دقائق من كل ما تحتاجه.
+            يتميز المشروع بتنوع المساحات التي تصل إلى 199 م²، ليناسب مختلف الاحتياجات العائلية، مع تصميم يراعي الراحة وجودة الحياة في كل تفصيلة.
+            اختيارك لـ Dar Landmark هو خطوة نحو حياة أكثر هدوءًا واستثمار أكثر استقرارًا وقيمة مستقبلية أفضل.
+          </p>
         </div>
-
       </section>
 
-      {/* ================= VIDEO ================= */}
-      <section className="w-full py-24 bg-gray-100 flex justify-center mt-10">
-
+      {/* VIDEO */}
+      <section className="w-full py-28 flex justify-center">
         <div className="relative w-[92%] md:w-[70%]">
-
-          {/* glow background */}
-          <div className="absolute inset-0 bg-blue-500/20 blur-3xl rounded-2xl"></div>
+          <div className="absolute inset-0 bg-[#C9A84C]/10 blur-3xl rounded-2xl"></div>
 
           <video
             ref={videoRef}
@@ -135,52 +112,60 @@ function ProjectLandmarkPage() {
             controls
             muted
             playsInline
-            preload="auto"
             className="relative w-full rounded-2xl shadow-2xl z-10"
           />
         </div>
-
       </section>
 
-      {/* ================= INFO + FORM ================= */}
-      <section className="grid grid-cols-1 md:grid-cols-2 gap-12 px-6 md:px-24 py-24">
+      {/* INFO */}
+      <section className="grid grid-cols-1 md:grid-cols-2 gap-16 px-6 md:px-24 py-28">
 
-        <div className="bg-white shadow-xl rounded-2xl p-8 text-right" dir="rtl">
+        <div className="bg-white shadow-xl rounded-2xl p-10 text-right" dir="rtl">
 
-          <h2 className="text-2xl font-bold text-[#1E3A5F] mb-6">
+          <h2 className="text-2xl font-bold text-[#0B1A2E] mb-6">
             تفاصيل المشروع
           </h2>
 
-          <p className="mb-3">📍 الموقع: طنطا - الطريق السريع امام شركة الكهرباء وبالقرب من منطقة الاستاد</p>
-          <p className="mb-3">🏢 يتكون من: برجين</p>
-          <p className="mb-3">💰 المقدم: 35%</p>
-          <p className="mb-6">⏳ القسط: سنتين ونص</p>
+          <p className="mb-3 text-[#0B1A2E]/70 text-justify">
+            الموقع: طنطا - الطريق السريع امام شركة الكهرباء وبالقرب من منطقة الاستاد
+          </p>
+
+          <p className="mb-3 text-[#0B1A2E]/70 text-justify">
+            يتكون من: برجين
+          </p>
+
+          <p className="mb-3 text-[#0B1A2E]/70 text-justify">
+            المقدم: 35%
+          </p>
+
+          <p className="mb-6 text-[#0B1A2E]/70 text-justify">
+            القسط: سنتين ونص
+          </p>
 
           <button
             onClick={() => setShowBrochure(true)}
-            className="bg-gradient-to-r from-[#1E3A5F] to-blue-500 text-white px-6 py-3 rounded-full shadow-lg hover:scale-105 transition"
+            className="bg-[#0B1A2E] text-white px-8 py-3 rounded-md hover:bg-[#1E3A5F] transition"
           >
             عرض البرشور
           </button>
-
         </div>
 
-        <div className="bg-white shadow-xl rounded-2xl p-8">
+        <div className="bg-white shadow-xl rounded-2xl p-10">
 
-          <h2 className="text-center text-2xl font-bold mb-6">
+          <h2 className="text-center text-2xl font-bold text-[#0B1A2E] mb-6">
             احجز / استفسر
           </h2>
 
           <input
             name="name"
             placeholder="الاسم"
-            className="w-full border p-3 rounded mb-4"
+            className="w-full border p-3 rounded-md mb-4"
             onChange={handleChange}
           />
 
           <select
             name="project"
-            className="w-full border p-3 rounded mb-4"
+            className="w-full border p-3 rounded-md mb-4"
             onChange={handleChange}
           >
             <option value="Dar Landmark">Dar Landmark</option>
@@ -190,16 +175,24 @@ function ProjectLandmarkPage() {
 
           <button
             onClick={openWhatsApp}
-            className="w-full bg-green-600 text-white py-3 rounded-full hover:bg-green-700 transition"
+            className="w-full bg-green-600 text-white py-3 rounded-md hover:bg-green-700 transition"
           >
             تواصل واتساب
           </button>
-
         </div>
-
       </section>
 
-      {/* ================= BROCHURE ================= */}
+      {/* BACK */}
+      <div className="text-center py-24">
+        <a
+          href="/#projects"
+          className="inline-block bg-[#0B1A2E] text-white px-10 py-3 rounded-md hover:bg-[#1E3A5F] transition"
+        >
+          تعرف على المشاريع الأخرى
+        </a>
+      </div>
+
+      {/* BROCHURE MODAL */}
       {showBrochure && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
 
@@ -221,17 +214,6 @@ function ProjectLandmarkPage() {
 
         </div>
       )}
-
-      {/* ================= BACK ================= */}
-      <div className="text-center py-20">
-        <a
-          href="/#projects"
-          className="inline-block bg-gradient-to-r from-[#1E3A5F] to-blue-500 text-white px-8 py-3 rounded-full"
-        >
-          تعرف على المشاريع الأخرى
-        </a>
-      </div>
-
     </div>
   );
 }

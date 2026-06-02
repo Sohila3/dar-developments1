@@ -17,27 +17,21 @@ function App() {
       <ScrollToSection />
 
       <Routes>
+
+        {/* HOME */}
         <Route path="/" element={<Home />} />
 
-        <Route
-          path="/about-more"
-          element={<AboutMore />}
-        />
+        {/* ABOUT PAGE */}
+        <Route path="/about-more" element={<AboutMore />} />
 
-        <Route
-          path="/projects/elwrood"
-          element={<ProjectElwroodPage />}
-        />
+        {/* PROJECTS */}
+        <Route path="/projects/elwrood" element={<ProjectElwroodPage />} />
+        <Route path="/projects/landmark" element={<ProjectLandmarkPage />} />
+        <Route path="/projects/damac" element={<ProjectDamacPage />} />
 
-        <Route
-          path="/projects/landmark"
-          element={<ProjectLandmarkPage />}
-        />
+        {/* CATCH-ALL - أي مسار غير معروف يرجع للـ Home */}
+        <Route path="*" element={<Home />} />
 
-        <Route
-          path="/projects/damac"
-          element={<ProjectDamacPage />}
-        />
       </Routes>
     </>
   );

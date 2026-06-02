@@ -103,7 +103,7 @@ function Projects() {
         مشاريعنا الحالية
       </h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-10 section-gap">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-10 section-gap ">
 
         <Link to="/projects/damac" className="project-card">
           <img src={p1} className="w-full h-[230px] object-cover" />

@@ -11,7 +11,6 @@ function ProjectElwroodPage() {
   });
 
   const [showBrochure, setShowBrochure] = useState(false);
-
   const videoRef = useRef(null);
 
   const handleChange = (e) => {
@@ -24,7 +23,6 @@ function ProjectElwroodPage() {
     window.open(url, "_blank");
   };
 
-  // ================= VIDEO AUTO PLAY (LANDMARK STYLE FIXED FOR MOBILE) =================
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
@@ -34,134 +32,136 @@ function ProjectElwroodPage() {
 
     let isPlaying = false;
 
-    const playVideo = () => {
-      if (!isPlaying) {
-        isPlaying = true;
-        video.play().catch(() => {});
-      }
-    };
-
-    const pauseVideo = () => {
-      if (isPlaying) {
-        isPlaying = false;
-        video.pause();
-      }
-    };
-
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          playVideo();
+          if (!isPlaying) {
+            isPlaying = true;
+            video.play().catch(() => {});
+          }
         } else {
-          pauseVideo();
+          isPlaying = false;
+          video.pause();
         }
       },
-      {
-        threshold: 0.5,
-      }
+      { threshold: 0.5 }
     );
 
     observer.observe(video);
-
     return () => observer.disconnect();
   }, []);
 
   return (
-    <div className="w-full bg-gray-50 overflow-x-hidden">
-
+    <div
+      className="w-full overflow-x-hidden"
+      style={{
+        background: "background: linear-gradient(135deg,#ffffff 0%,#eef6ff 35%,#dbeafe 100);",
+        fontFamily: "'IBM Plex Sans Arabic', sans-serif",
+      }}
+    >
       <Navbar />
 
-      {/* ================= HERO ================= */}
-      <section className="flex flex-col md:flex-row min-h-screen pt-32 md:pt-40 gap-12 px-6 md:px-16">
+      {/* HERO */}
+      <section className="flex flex-col md:flex-row min-h-screen pt-32 md:pt-40 gap-16 px-6 md:px-20 items-center">
 
-        <div className="w-full md:w-1/2 h-[360px] md:h-[80vh] rounded-2xl overflow-hidden shadow-2xl">
+        {/* IMAGE */}
+        <div className="w-full md:w-1/2 h-[360px] md:h-[80vh] rounded-2xl overflow-hidden shadow-2xl relative group">
           <img
             src={cover}
-            alt="Dar Elwrood"
-            className="w-full h-full object-cover hover:scale-105 transition duration-700"
+            className="w-full h-full object-cover transition duration-700 group-hover:scale-105"
           />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/25 to-transparent" />
         </div>
 
-        <div className="w-full md:w-1/2 flex flex-col justify-center text-right" dir="rtl">
+        {/* TEXT */}
+        <div className="w-full md:w-1/2 text-right" dir="rtl">
 
-          <h1 className="text-3xl md:text-5xl font-bold text-[#1E3A5F] mb-6">
-            مشروع دار الورود
-          </h1>
+          <h1 className="text-5xl md:text-7xl font-bold text-[#0B1A2E]">
+              <span
+                style={{
+                  color: "#C9A84C",
+                  textShadow: "0 0 10px rgba(201,168,76,0.35)",
+                }}
+              >
+                مشروع 
+              </span>{" "}
+              دار الورود
+            </h1>
 
-          <p className="text-gray-700 leading-loose text-base md:text-lg text-justify">
-           يقدم مشروع دار الورود من دار للاستثمار العقاري تجربة سكنية واستثمارية متكاملة تجمع بين الموقع المميز والهدوء والقيمة الحقيقية للاستثمار. صُمم المشروع ليوفر بيئة مريحة بعيدًا عن زحام المدينة، مع وحدات سكنية بمساحات تبدأ من 120 م² وأنظمة سداد مرنة تناسب مختلف الاحتياجات. ويعد دار الورود فرصة مثالية للراغبين في الحفاظ على قيمة استثماراتهم وتحقيق عائد مستقبلي في موقع واعد ومجتمع سكني متكامل.
-          </p>
+          <div className="w-24 h-[2px] bg-gradient-to-r from-[#C9A84C] to-[#E8C96A] mb-8 ml-auto" />
 
+          <p className="text-gray-600 leading-10 text-justify opacity-90">
+           يقدم مشروع دار الورود من دار للاستثمار العقاري تجربة سكنية واستثمارية متكاملة تجمع بين الموقع المميز والهدوء والقيمة الحقيقية للاستثمار. صُمم المشروع ليوفر بيئة مريحة بعيدًا عن زحام المدينة، مع وحدات سكنية بمساحات تبدأ من 120 م² وأنظمة سداد مرنة تناسب مختلف الاحتياجات. ويعد دار الورود فرصة مثالية للراغبين في الحفاظ على قيمة استثماراتهم وتحقيق عائد مستقبلي في موقع واعد ومجتمع سكني متكامل          </p>
         </div>
       </section>
 
-      {/* ================= VIDEO (FIXED LANDMARK STYLE) ================= */}
-      <section className="w-full py-28 flex justify-center items-center relative">
+      {/* VIDEO */}
+      <section className="relative w-full py-28 flex justify-center">
 
-        <div className="absolute w-[80%] md:w-[60%] h-[300px] md:h-[420px] bg-blue-500/30 blur-3xl rounded-full"></div>
+        <div className="absolute w-[70%] h-[320px] bg-[#C9A84C]/20 blur-3xl rounded-full" />
 
-        <div className="relative w-[92%] md:w-[70%] group transition-all duration-700">
-
+        <div className="relative w-[92%] md:w-[70%]">
           <video
             ref={videoRef}
             src={video}
             controls
             muted
             playsInline
-            preload="auto"
-            className="
-              w-full rounded-2xl shadow-2xl
-              transition-all duration-700
-              group-hover:scale-110
-              group-hover:shadow-blue-400/40
-              group-hover:brightness-110
-            "
+            className="w-full rounded-2xl shadow-2xl hover:scale-[1.02] transition duration-700"
           />
-
-          <div className="absolute inset-0 rounded-2xl border border-white/20 group-hover:border-blue-400/60 transition-all duration-500 pointer-events-none"></div>
-
         </div>
       </section>
 
-      {/* ================= INFO + FORM ================= */}
+      {/* INFO + FORM */}
       <section className="grid grid-cols-1 md:grid-cols-2 gap-16 px-6 md:px-24 py-28">
 
-        <div className="bg-white shadow-2xl rounded-2xl p-8 text-right" dir="rtl">
+        {/* DETAILS */}
+        <div className="bg-white shadow-xl rounded-2xl p-10 text-right" dir="rtl">
 
-          <h2 className="text-2xl font-bold text-[#1E3A5F] mb-6">
+          <h2 className="text-2xl font-bold text-[#0B1A2E] mb-6">
             تفاصيل المشروع
           </h2>
 
-          <p className="mb-3">📍 الموقع: طنطا - الطريق السريع خلف عمارات الأطباء</p>
-          <p className="mb-3">🏠 المساحات: 155م - 122م - 203م - 174م</p>
-          <p className="mb-3">💰 المقدم: 35%</p>
-          <p className="mb-6">⏳ القسط: حتى سنتين ونص</p>
+          <p className="mb-3 text-gray-600 text-justify"> الموقع: طنطا - الطريق السريع خلف عمارات الأطباء</p>
+          <p className="mb-3 text-gray-600 text-justify"> المساحات: 155م - 122م - 203م - 174م</p>
+          <p className="mb-3 text-gray-600 text-justify"> المقدم: 35%</p>
+          <p className="mb-6 text-gray-600 text-justify"> القسط: حتى سنتين ونص</p>
 
+          {/* RECTANGLE BUTTON */}
           <button
             onClick={() => setShowBrochure(true)}
-            className="bg-gradient-to-r from-[#1E3A5F] to-blue-500 text-white px-6 py-3 rounded-full shadow-lg hover:scale-105 transition"
+            className="
+              bg-gradient-to-r from-[#0B1A2E] to-[#1E3A5F]
+              text-white
+              px-8 py-3
+              rounded-md
+              shadow-md
+              hover:shadow-xl
+              hover:scale-[1.02]
+              transition
+            "
           >
             عرض البرشور
           </button>
-
         </div>
 
-        <div className="bg-white shadow-2xl rounded-2xl p-8">
+        {/* FORM */}
+        <div className="bg-white shadow-xl rounded-2xl p-10">
 
-          <h2 className="text-2xl font-bold text-[#1E3A5F] mb-6 text-center">
+          <h2 className="text-2xl font-bold text-[#0B1A2E] mb-6 text-center">
             احجز / استفسر
           </h2>
 
           <input
             name="name"
             placeholder="الاسم"
-            className="w-full border p-3 rounded mb-4"
+            className="w-full border p-3 rounded-md mb-4"
             onChange={handleChange}
           />
 
           <select
             name="project"
-            className="w-full border p-3 rounded mb-4"
+            className="w-full border p-3 rounded-md mb-4"
             onChange={handleChange}
           >
             <option value="Dar Elwrood">Dar Elwrood</option>
@@ -169,18 +169,27 @@ function ProjectElwroodPage() {
             <option value="Dar Landmark">Dar Landmark</option>
           </select>
 
+          {/* RECTANGLE BUTTON */}
           <button
             onClick={openWhatsApp}
-            className="w-full bg-green-600 text-white py-3 rounded-full hover:bg-green-700 transition"
+            className="
+              w-full
+              bg-green-600
+              text-white
+              py-3
+              rounded-md
+              hover:bg-green-700
+              transition
+              shadow-md
+              hover:shadow-lg
+            "
           >
             تواصل واتساب
           </button>
-
         </div>
-
       </section>
 
-      {/* ================= BROCHURE ================= */}
+      {/* BROCHURE */}
       {showBrochure && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
 
@@ -188,31 +197,36 @@ function ProjectElwroodPage() {
 
             <button
               onClick={() => setShowBrochure(false)}
-              className="absolute top-3 right-3 bg-white w-10 h-10 rounded-full shadow"
+              className="absolute top-3 right-3 bg-white w-10 h-10 rounded-md shadow"
             >
               ×
             </button>
 
-            <iframe
-              src={brochure}
-              className="w-full h-full"
-              title="Brochure"
-            />
-
+            <iframe src={brochure} className="w-full h-full" />
           </div>
         </div>
       )}
 
-      {/* ================= BACK ================= */}
+      {/* BACK */}
       <div className="text-center py-24">
+
         <a
           href="/#projects"
-          className="inline-block bg-gradient-to-r from-[#1E3A5F] to-blue-500 text-white px-8 py-3 rounded-full shadow-lg hover:scale-105 transition"
+          className="
+            inline-block
+            bg-gradient-to-r from-[#0B1A2E] to-[#1E3A5F]
+            text-white
+            px-10 py-3
+            rounded-md
+            shadow-md
+            hover:scale-105
+            transition
+          "
         >
           تعرف على المشاريع الأخرى
         </a>
-      </div>
 
+      </div>
     </div>
   );
 }

@@ -5,7 +5,7 @@ function Installments() {
     <section
       className="w-full py-24 px-6 md:px-16"
       style={{
-        background: "#FAF6EE",
+        background: "#f8fbff",
         fontFamily: "'Noto Naskh Arabic', serif",
         direction: "rtl",
       }}
