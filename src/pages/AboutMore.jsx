@@ -2,9 +2,10 @@ import { useEffect, useRef, useState } from "react";
 import Navbar from "../components/Navbar";
 import { useLanguage } from "../context/LanguageContext";
 
-import aboutImg   from "../assets/about-uspage.jpeg";
-import contactImg from "../assets/contact-us.jpeg";
-import cover      from "../assets/cover.png";
+import aboutImg    from "../assets/about-uspage.jpeg";
+import contactImg  from "../assets/contact-us.jpeg";
+import contactImgEn from "../assets/contact-us-en.jpeg";
+import cover       from "../assets/cover.png";
 
 function AboutMore() {
   const { lang, t } = useLanguage();
@@ -100,7 +101,11 @@ function AboutMore() {
           <img src={aboutImg} className="w-full h-full object-cover hover:scale-105 transition duration-700" />
         </div>
         <div className="w-full md:w-1/2 h-[600px] overflow-hidden">
-          <img src={contactImg} className="w-full h-full object-cover hover:scale-105 transition duration-700" />
+          {/* ← الصورة بتتغير حسب اللغة */}
+          <img
+            src={lang === "ar" ? contactImg : contactImgEn}
+            className="w-full h-full object-cover hover:scale-105 transition duration-700"
+          />
         </div>
       </section>
 

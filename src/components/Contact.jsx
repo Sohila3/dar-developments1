@@ -17,7 +17,7 @@ function Contact() {
       id="contact"
       className="w-full py-24 px-6 md:px-16"
       style={{
-        background: "#f8fbff",
+        background: "linear-gradient(180deg,#ffffff 0%,#f5f9ff 50%)",
         fontFamily: lang === "ar" ? "'Noto Naskh Arabic', serif" : "'Montserrat', sans-serif",
         direction: lang === "ar" ? "rtl" : "ltr",
       }}

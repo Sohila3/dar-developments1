@@ -9,14 +9,12 @@ function Hero() {
       id="home"
       className="w-full min-h-screen relative overflow-hidden flex flex-col justify-center"
       style={{
-        background: "#0B1A2E",
+        background: "linear-gradient(180deg,#ffffff 0%,#f5f9ff 50%)",
         fontFamily: lang === "ar" ? "'Noto Naskh Arabic', serif" : "'Montserrat', sans-serif",
         direction: lang === "ar" ? "rtl" : "ltr",
       }}
     >
       <style>{`
-        
-
         @keyframes fadeUp {
           from { opacity: 0; transform: translateY(22px); }
           to   { opacity: 1; transform: translateY(0); }
@@ -83,13 +81,13 @@ function Hero() {
       <div style={{
         position: "absolute", top: "10%", left: "5%",
         width: 300, height: 300, borderRadius: "50%",
-        background: "radial-gradient(circle, rgba(201,168,76,0.05) 0%, transparent 70%)",
+        background: "radial-gradient(circle, rgba(201,168,76,0.08) 0%, transparent 70%)",
         pointerEvents: "none",
       }} />
       <div style={{
         position: "absolute", bottom: "15%", right: "10%",
         width: 200, height: 200, borderRadius: "50%",
-        border: "1px solid rgba(201,168,76,0.07)",
+        border: "1px solid rgba(201,168,76,0.15)",
         pointerEvents: "none",
       }} />
 
@@ -110,7 +108,7 @@ function Hero() {
                 background: "rgba(201,168,76,0.1)",
                 border: "1px solid rgba(201,168,76,0.3)",
                 borderRadius: "50px", padding: "5px 16px",
-                fontSize: "13px", color: "#E8C96A",
+                fontSize: "13px", color: "#9A7535",
               }}
             >
               <span style={{
@@ -124,7 +122,7 @@ function Hero() {
             <h1 className="hero-title font-bold"
               style={{
                 fontSize: "clamp(32px, 4.5vw, 56px)",
-                lineHeight: 1.45, color: "#FAF6EE", marginBottom: "16px",
+                lineHeight: 1.45, color: "#0B1A2E", marginBottom: "16px",
               }}
             >
               <span>{t("hero", "title1")} </span>
@@ -142,7 +140,7 @@ function Hero() {
             {/* SUB */}
             <p className="hero-sub"
               style={{
-                color: "rgba(250,246,238,0.58)", lineHeight: 2.1,
+                color: "rgba(11,26,46,0.6)", lineHeight: 2.1,
                 marginBottom: "36px", fontSize: "16px", maxWidth: "380px",
               }}
             >
@@ -163,8 +161,8 @@ function Hero() {
               </a>
               <a href="#contact" className="btn-outline"
                 style={{
-                  background: "transparent", color: "#FAF6EE",
-                  border: "1px solid rgba(201,168,76,0.4)",
+                  background: "transparent", color: "#0B1A2E",
+                  border: "1px solid rgba(201,168,76,0.6)",
                   padding: "13px 32px", borderRadius: "4px",
                   textDecoration: "none", display: "inline-block", transition: "0.3s",
                 }}
@@ -190,7 +188,7 @@ function Hero() {
                 fontSize: "13px", fontWeight: 600, marginBottom: "3px",
               }}>DAR</p>
               <p style={{
-                color: "rgba(250,246,238,0.4)", fontSize: "11px", letterSpacing: "2px",
+                color: "rgba(11,26,46,0.4)", fontSize: "11px", letterSpacing: "2px",
               }}>
                 {t("hero", "logoSub")}
               </p>

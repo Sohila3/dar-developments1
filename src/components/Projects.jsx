@@ -33,25 +33,25 @@ function Projects() {
       id="projects"
       className="w-full py-28 px-6 md:px-20"
       style={{
-        background: "linear-gradient(180deg,#0B1A2E 0%, #08121f 100%)",
+        background: "linear-gradient(180deg,#ffffff 0%,#f5f9ff 50%)",
         fontFamily: lang === "ar" ? "'Noto Naskh Arabic', serif" : "'Montserrat', sans-serif",
         direction: lang === "ar" ? "rtl" : "ltr",
       }}
     >
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
-
         .project-card {
-          background: rgba(255,255,255,0.03);
-          border: 1px solid rgba(201,168,76,0.12);
+          background: rgba(255,255,255,0.7);
+          border: 1px solid rgba(201,168,76,0.2);
           border-radius: 16px;
           overflow: hidden;
           transition: all .4s ease;
           backdrop-filter: blur(8px);
+          box-shadow: 0 4px 20px rgba(0,0,0,0.06);
         }
         .project-card:hover {
           transform: translateY(-6px);
-          border-color: rgba(201,168,76,0.4);
+          border-color: rgba(201,168,76,0.5);
+          box-shadow: 0 12px 40px rgba(0,0,0,0.1);
         }
         .project-card img { transition: transform .7s ease; }
         .project-card:hover img { transform: scale(1.08); }
@@ -68,20 +68,24 @@ function Projects() {
         .project-card:hover .project-btn { background: #E8C96A; }
 
         .project-title {
-          color: rgba(232,201,108,0.9);
+          color: #9A7535;
           transition: .3s;
         }
-        .project-card:hover .project-title { color: #E8C96A; }
+        .project-card:hover .project-title { color: #C9A84C; }
 
         .project-location {
-          color: rgba(250,246,238,0.45);
+          color: rgba(11,26,46,0.55);
           font-size: 13px;
         }
         .section-gap { margin-bottom: 90px; }
+
+        .section-title {
+          color: #0B1A2E;
+        }
       `}</style>
 
       {/* CURRENT PROJECTS */}
-      <h2 className="text-center text-4xl text-white mb-20">
+      <h2 className="section-title text-center text-4xl font-bold mb-20">
         {t("projects", "currentTitle")}
       </h2>
 
@@ -117,7 +121,7 @@ function Projects() {
       </div>
 
       {/* COMPLETED PROJECTS */}
-      <h2 className="text-center text-4xl text-white mb-20">
+      <h2 className="section-title text-center text-4xl font-bold mb-20">
         {t("projects", "completedTitle")}
       </h2>
 
@@ -126,7 +130,9 @@ function Projects() {
           <div key={i} className="project-card">
             <img src={img} className="w-full h-[210px] object-cover" />
             <div className="p-5 text-center">
-              <h4 className="text-[#C9A84C] font-semibold">{completedProjects[i]}</h4>
+              <h4 className="font-semibold" style={{ color: "#9A7535" }}>
+                {completedProjects[i]}
+              </h4>
             </div>
           </div>
         ))}
@@ -137,7 +143,9 @@ function Projects() {
           <div key={i} className="project-card">
             <img src={img} className="w-full h-[240px] object-cover" />
             <div className="p-5 text-center">
-              <h4 className="text-[#C9A84C] font-semibold">{completedProjects[i + 3]}</h4>
+              <h4 className="font-semibold" style={{ color: "#9A7535" }}>
+                {completedProjects[i + 3]}
+              </h4>
             </div>
           </div>
         ))}

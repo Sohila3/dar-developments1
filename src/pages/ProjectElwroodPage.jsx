@@ -93,16 +93,46 @@ function ProjectElwroodPage() {
           <h2 className="text-2xl font-bold text-[#0B1A2E] mb-6">
             {t("elwrood", "detailsTitle")}
           </h2>
-          <p className="mb-3 text-gray-600 text-justify">{t("elwrood", "location")}</p>
+          <p className="mb-3 text-gray-600 text-justify">{t("elwrood", "location")}
+            <br />
+
+            <a
+              href="https://www.google.com/maps?q=30.809358596801758,31.007654190063477&z=17&hl=en"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2"
+              style={{
+              color: "#C9A84C",
+              fontSize: "14px",
+              fontWeight: 600,
+              textDecoration: "none",
+              transition: "0.3s",
+              }}
+              onMouseEnter={e => e.currentTarget.style.color = "#9A7535"}
+              onMouseLeave={e => e.currentTarget.style.color = "#C9A84C"}
+           >
+  
+
+           <span>
+              {lang === "ar"
+              ? "عرض الموقع على الخريطة"
+              : "View on Google Maps"}
+           </span>
+          </a>
+          </p>
+          <p className="mb-3 text-gray-600 text-justify">{t("elwrood", "towers")}</p>
           <p className="mb-3 text-gray-600 text-justify">{t("elwrood", "spaces")}</p>
           <p className="mb-3 text-gray-600 text-justify">{t("elwrood", "downPayment")}</p>
           <p className="mb-6 text-gray-600 text-justify">{t("elwrood", "installment")}</p>
-          <button
-            onClick={() => setShowBrochure(true)}
-            className="bg-gradient-to-r from-[#0B1A2E] to-[#1E3A5F] text-white px-8 py-3 rounded-md shadow-md hover:shadow-xl hover:scale-[1.02] transition"
-          >
-            {t("elwrood", "brochureBtn")}
-          </button>
+
+          <div className="flex flex-col gap-3">
+            <button
+              onClick={() => setShowBrochure(true)}
+              className="bg-gradient-to-r from-[#0B1A2E] to-[#1E3A5F] text-white px-8 py-3 rounded-md shadow-md hover:shadow-xl hover:scale-[1.02] transition"
+            >
+              {t("elwrood", "brochureBtn")}
+            </button>
+          </div>
         </div>
 
         {/* FORM */}

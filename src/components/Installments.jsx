@@ -1,4 +1,5 @@
 import installmentImg from "../assets/installments.jpeg";
+import installmentImgEn from "../assets/installmentsEn.jpeg";
 import { useLanguage } from "../context/LanguageContext";
 
 function Installments() {
@@ -8,7 +9,7 @@ function Installments() {
     <section
       className="w-full py-24 px-6 md:px-16"
       style={{
-        background: "#f8fbff",
+        background: "linear-gradient(180deg,#ffffff 0%,#f5f9ff 50%)",
         fontFamily: lang === "ar" ? "'Noto Naskh Arabic', serif" : "'Montserrat', sans-serif",
         direction: lang === "ar" ? "rtl" : "ltr",
       }}
@@ -64,17 +65,19 @@ function Installments() {
 
       </div>
 
+      {/* IMAGE — بتتغير حسب اللغة */}
       <div
         className="install-img-wrap"
         style={{ width: "100%", height: "clamp(280px, 60vh, 600px)" }}
       >
         <img
-          src={installmentImg}
+          src={lang === "ar" ? installmentImg : installmentImgEn}
           alt="installments"
           style={{
             width: "100%", height: "100%",
             objectFit: "cover", objectPosition: "center",
             display: "block", filter: "brightness(100%) contrast(110%)",
+            transition: "opacity 0.5s ease",
           }}
         />
         <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.08)" }} />

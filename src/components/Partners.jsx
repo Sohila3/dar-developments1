@@ -8,7 +8,7 @@ function Partners() {
       id="partners"
       className="w-full py-24 px-6 md:px-16"
       style={{
-        background: "#0B1A2E",
+        background: "linear-gradient(180deg,#ffffff 0%,#f5f9ff 50%)",
         fontFamily: lang === "ar" ? "'Noto Naskh Arabic', serif" : "'Montserrat', sans-serif",
         direction: lang === "ar" ? "rtl" : "ltr",
       }}
@@ -33,8 +33,8 @@ function Partners() {
 
         .partner-card {
           position: relative;
-          background: rgba(255,255,255,0.03);
-          border: 1px solid rgba(201,168,76,0.15);
+          background: rgba(255,255,255,0.8);
+          border: 1px solid rgba(201,168,76,0.2);
           border-radius: 10px;
           height: 120px;
           display: flex;
@@ -43,6 +43,7 @@ function Partners() {
           overflow: hidden;
           transition: all .4s ease;
           cursor: pointer;
+          box-shadow: 0 4px 20px rgba(0,0,0,0.06);
         }
         .partner-card::before {
           content: '';
@@ -56,21 +57,21 @@ function Partners() {
         .partner-card:hover {
           border-color: rgba(201,168,76,0.5);
           transform: translateY(-4px);
-          box-shadow: 0 12px 40px rgba(0,0,0,0.3), 0 0 20px rgba(201,168,76,0.08);
+          box-shadow: 0 12px 40px rgba(0,0,0,0.1), 0 0 20px rgba(201,168,76,0.08);
         }
         .partner-card:hover::before {
           opacity: 1;
           animation: shimmerCard 1.2s linear infinite;
         }
         .partner-label {
-          color: rgba(250,246,238,0.25);
+          color: rgba(11,26,46,0.3);
           font-size: 13px;
           letter-spacing: 1px;
           transition: color .3s ease;
           position: relative;
           z-index: 1;
         }
-        .partner-card:hover .partner-label { color: rgba(201,168,76,0.7); }
+        .partner-card:hover .partner-label { color: rgba(201,168,76,0.8); }
         .section-line {
           width: 50px; height: 2px;
           background: linear-gradient(90deg, #C9A84C, #E8C96A);
@@ -97,7 +98,7 @@ function Partners() {
 
         <h2 style={{
           fontSize: "clamp(26px, 4vw, 44px)",
-          fontWeight: 700, color: "#FAF6EE",
+          fontWeight: 700, color: "#0B1A2E",
           lineHeight: 1.4, marginBottom: "4px",
         }}>
           {t("partners", "title1")}
@@ -109,7 +110,7 @@ function Partners() {
       {/* SUBTITLE */}
       <p className="partners-sub" style={{
         textAlign: "center",
-        color: "rgba(250,246,238,0.5)",
+        color: "rgba(11,26,46,0.55)",
         fontSize: "clamp(14px, 1.6vw, 16px)",
         lineHeight: 2, maxWidth: "580px", margin: "0 auto 56px",
       }}>
