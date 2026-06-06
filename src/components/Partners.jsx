@@ -1,7 +1,12 @@
 import { useLanguage } from "../context/LanguageContext";
+import chemas from "../assets/chemas.png";
+import elmazlom from "../assets/elmazlom.png";
+import elswedy from "../assets/elswedy.png";
+import jotun from "../assets/jotun.png";
 
 function Partners() {
   const { lang, t } = useLanguage();
+  const logos = [chemas, elmazlom, elswedy, jotun];
 
   return (
     <div
@@ -118,6 +123,7 @@ function Partners() {
       </p>
 
       {/* LOGOS GRID */}
+            {/* LOGOS GRID */}
       <div
         className="partners-grid max-w-5xl mx-auto"
         style={{
@@ -126,9 +132,23 @@ function Partners() {
           gap: "20px",
         }}
       >
-        {[1, 2, 3, 4].map((item, i) => (
-          <div key={i} className="partner-card">
-            <span className="partner-label">Partner Logo</span>
+        {logos.map((logo, i) => (
+          <div
+            key={i}
+            className="partner-card"
+            style={{
+              background: "#ffffff",
+            }}
+          >
+            <img
+              src={logo}
+              alt="Partner Logo"
+              style={{
+                width: "130px",
+                objectFit: "contain",
+                transition: "0.3s",
+              }}
+            />
           </div>
         ))}
       </div>

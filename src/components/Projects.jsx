@@ -6,6 +6,8 @@ import p5 from "../assets/project-5.jpeg";
 import p6 from "../assets/project-6.jpeg";
 import p7 from "../assets/project-7.jpeg";
 import p8 from "../assets/project-8.jpeg";
+import float1 from "../assets/float1.png";
+import float2 from "../assets/float2.png";
 import { Link } from "react-router-dom";
 import { useLanguage } from "../context/LanguageContext";
 
@@ -39,6 +41,38 @@ function Projects() {
       }}
     >
       <style>{`
+
+     @keyframes floating {
+       0% {
+      transform: translateY(0px);
+       }
+
+       25% {
+      transform: translateY(-12px);
+       }
+
+       50% {
+      transform: translateY(0px);
+       }
+
+       75% {
+      transform: translateY(12px);
+       }
+
+       100% {
+      transform: translateY(0px);
+       }
+     }
+
+   .floating-image {
+    animation: floating 5s ease-in-out infinite;
+    transition: 0.4s ease;
+     }
+
+  .floating-image.delay {
+    animation-delay: 2.5s;
+     }
+
         .project-card {
           background: rgba(255,255,255,0.7);
           border: 1px solid rgba(201,168,76,0.2);
@@ -119,7 +153,43 @@ function Projects() {
         </Link>
 
       </div>
+{/* FLOATING IMAGES SECTION */}
+<div
+  style={{
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: "6px",
+    flexWrap: "wrap",
+    marginBottom: "90px",
+  }}
+>
+  <img
+    src={float1}
+    alt="Floating"
+    className="floating-image"
+    style={{
+      width: "100%",
+      maxWidth: "320px",
+      borderRadius: "18px",
+      objectFit: "cover",
+      boxShadow: "0 10px 35px rgba(0,0,0,0.12)",
+    }}
+  />
 
+  <img
+    src={float2}
+    alt="Floating"
+    className="floating-image delay"
+    style={{
+      width: "100%",
+      maxWidth: "320px",
+      borderRadius: "18px",
+      objectFit: "cover",
+      boxShadow: "0 10px 35px rgba(0,0,0,0.12)",
+    }}
+  />
+</div>
       {/* COMPLETED PROJECTS */}
       <h2 className="section-title text-center text-4xl font-bold mb-20">
         {t("projects", "completedTitle")}

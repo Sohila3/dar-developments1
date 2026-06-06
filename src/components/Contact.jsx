@@ -1,16 +1,30 @@
 import { useState } from "react";
 import { useLanguage } from "../context/LanguageContext";
 
+
 function Contact() {
   const { lang, t } = useLanguage();
   const [showForm, setShowForm] = useState(false);
   const [name, setName] = useState("");
   const [project, setProject] = useState("");
+  const [nameError, setNameError] = useState(false);
 
-  const handleWhatsApp = () => {
-    const message = `${t("contact", "whatsappMsg")} ${name} ${t("contact", "whatsappMsg2")} ${project}`;
-    window.open(`https://wa.me/201039207908?text=${encodeURIComponent(message)}`, "_blank");
-  };
+ const handleWhatsApp = () => {
+
+  if (!name.trim()) {
+    setNameError(true);
+    return;
+  }
+
+  setNameError(false);
+
+  const message = `${t("contact", "whatsappMsg")} ${name} ${t("contact", "whatsappMsg2")} ${project}`;
+
+  window.open(
+    `https://wa.me/201039207908?text=${encodeURIComponent(message)}`,
+    "_blank"
+  );
+};
 
   return (
     <div
@@ -46,6 +60,7 @@ function Contact() {
         .popup-box {
           background: #FAF6EE; width: 100%; max-width: 420px;
           border-radius: 10px; padding: 35px;
+          position: relative;
         }
         .popup-input {
           width: 100%; padding: 12px; margin-top: 10px;
@@ -136,16 +151,58 @@ function Contact() {
       {showForm && (
         <div className="popup-overlay">
           <div className="popup-box" style={{ direction: lang === "ar" ? "rtl" : "ltr" }}>
-            <button onClick={() => setShowForm(false)}>×</button>
+            <button
+  onClick={() => setShowForm(false)}
+  style={{
+    background: "none",
+    border: "none",
+    fontSize: "24px",
+    cursor: "pointer",
+    position: "absolute",
+    top: "15px",
+    right: "20px",
+    color: "#0B1A2E",
+  }}
+>
+  ×
+</button>
             <h3 style={{ textAlign: "center", marginBottom: "10px" }}>
               {t("contact", "popupTitle")}
             </h3>
             <input
-              className="popup-input"
-              placeholder={t("contact", "namePlaceholder")}
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
+                 className="popup-input"
+                 placeholder={t("contact", "namePlaceholder")}
+                 value={name}
+                 onChange={(e) => {
+                        setName(e.target.value);
+
+                        if (e.target.value.trim()) {
+                        setNameError(false);
+                        }
+                  }}
+                 style={{
+                 border: nameError
+                 ? "1px solid #dc2626"
+                 : "1px solid rgba(201,168,76,0.3)",
+                  }}
+             />
+             {nameError && (
+  <p
+    style={{
+      color: "#dc2626",
+      fontSize: "13px",
+      marginTop: "6px",
+      display: "flex",
+      alignItems: "center",
+      gap: "5px",
+    }}
+  >
+    <span>!</span>
+    {lang === "ar"
+      ? "من فضلك ادخل الاسم"
+      : "Please enter your name"}
+  </p>
+)}
             <select
               className="popup-input"
               value={project}
@@ -161,7 +218,7 @@ function Contact() {
             </button>
           </div>
         </div>
-      )}
+      )}      
     </div>
   );
 }

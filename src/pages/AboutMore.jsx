@@ -7,6 +7,8 @@ import contactImg  from "../assets/contact-us.jpeg";
 import contactImgEn from "../assets/contact-us-en.jpeg";
 import cover       from "../assets/cover.png";
 
+import Contact from "../components/Contact";
+
 function AboutMore() {
   const { lang, t } = useLanguage();
   const statsRef = useRef(null);
@@ -48,6 +50,23 @@ function AboutMore() {
     >
       <Navbar />
       <div className="h-20" />
+      <style>{`
+      
+@keyframes floating {
+  0% { transform: translateY(0px); }
+  25% { transform: translateY(-12px); }
+  50% { transform: translateY(0px); }
+  75% { transform: translateY(12px); }
+  100% { transform: translateY(0px); }
+}
+
+.floating-img {
+  animation: floating 5s ease-in-out infinite;
+}
+  .floating-img.delay {
+  animation-delay: 2.5s;
+}
+`}</style>
 
       {/* HERO */}
       <section className="py-32 px-6 md:px-16 relative overflow-hidden">
@@ -96,15 +115,18 @@ function AboutMore() {
       </section>
 
       {/* IMAGES */}
-      <section className="flex flex-col md:flex-row">
+      <section className="flex flex-col md:flex-row gap-2 md:gap-4">
         <div className="w-full md:w-1/2 h-[600px] overflow-hidden">
-          <img src={aboutImg} className="w-full h-full object-cover hover:scale-105 transition duration-700" />
+          <img
+             src={lang === "ar" ? contactImg : contactImgEn}
+             className="w-full h-full object-cover hover:scale-105 transition duration-700 floating-img delay"
+          />
         </div>
         <div className="w-full md:w-1/2 h-[600px] overflow-hidden">
           {/* ← الصورة بتتغير حسب اللغة */}
           <img
-            src={lang === "ar" ? contactImg : contactImgEn}
-            className="w-full h-full object-cover hover:scale-105 transition duration-700"
+               src={aboutImg}
+               className="w-full h-full object-cover hover:scale-105 transition duration-700 floating-img"
           />
         </div>
       </section>
@@ -161,6 +183,8 @@ function AboutMore() {
           </div>
         </div>
       </section>
+
+<Contact />
     </div>
   );
 }
