@@ -98,7 +98,7 @@ aboutMore: {
   v4Title:     { ar: "الاتحاد",      en: "Unity" },
   v4Text:      { ar: "نعمل كفريق واحد بروح التعاون لتحقيق أفضل النتائج في كل مشروع",
                  en: "We work as one team with a spirit of collaboration to achieve the best results in every project." },
-  statsTitle:  { ar: "أرقامنا",      en: "Our Numbers" },
+  statsTitle:  { ar: "حقائق وارقام",      en: " Facts & Numbers" },
   statProjects:{ ar: "مشاريعنا",     en: "Projects" },
   statYears:   { ar: "سنين الخبرة",  en: "Years of Experience" },
   statClients: { ar: "عملاؤنا",      en: "Clients" },
