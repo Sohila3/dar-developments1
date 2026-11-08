@@ -154,7 +154,7 @@ damac: {
   detailsTitle: { ar: "تفاصيل المشروع", en: "Project Details" },
   location:     { ar: "الموقع: الكورنيش البر التاني امام امواج ومسجد السلام", en: "Location: Corniche, Second Bank, in front of Amwaj and Al-Salam Mosque" },
   towers:       { ar: "يتكون من: برج واحد", en: "Consists of: One Tower" },
-  spaces:       { ar: "المساحات: تبدأ من 157م² ", en: "Areas: start from 157m²" },
+  spaces:       { ar: "المساحات: 218 م² - 157 م² ", en: "Areas: 218 m² - 157 m² " },
   downPayment:  { ar: "المقدم: يبدأ من  30%",  en: "Down Payment: start from 30%" },
   installment: { ar: "القسط: يصل إلى 30 شهر", en: "Installments: Up to 30 months " },
   brochureBtn:  { ar: "عرض البرشور", en: "View Brochure" },

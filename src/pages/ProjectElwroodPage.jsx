@@ -379,13 +379,13 @@ function ProjectElwroodPage() {
             {/* SOCIAL */}
             <div style={{
               marginTop: "18px",
-    textAlign: "center",
-    direction: lang === "ar" ? "rtl" : "ltr",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    color: "rgba(250,246,238,0.75)",
-    fontSize: "14px",
+              textAlign: "center",
+              direction: lang === "ar" ? "rtl" : "ltr",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              color: "rgba(250,246,238,0.75)",
+              fontSize: "14px",
             }}>
               <div style={{ fontWeight: 600, marginBottom: "12px" }}>
                 {lang === "ar" ? "تابعنا على السوشيال ميديا:" : "Follow us:"}

@@ -1,300 +1,705 @@
+import { useEffect, useRef } from "react";
 import logodar from "../assets/logodar.jpeg";
+import heroBg from "../assets/palm5.jpeg";
 import { useLanguage } from "../context/LanguageContext";
 
 function Hero() {
   const { lang, t } = useLanguage();
+  const ar = lang === "ar";
+  const imgRef = useRef(null);
+
+  useEffect(() => {
+    const img = imgRef.current;
+    if (!img) return;
+
+    const onScroll = () => {
+      img.style.transform = `scale(1.08) translateY(${window.scrollY * 0.15}px)`;
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   return (
     <div
       id="home"
-      className="w-full min-h-screen relative overflow-hidden flex flex-col justify-center"
       style={{
-        background: "linear-gradient(160deg, #ffffff 0%, #f0f6ff 60%, #e8f0fb 100%)",
-        fontFamily: lang === "ar" ? "'Noto Naskh Arabic', serif" : "'Montserrat', sans-serif",
-        direction: lang === "ar" ? "rtl" : "ltr",
+        fontFamily: ar
+          ? "'Noto Naskh Arabic', serif"
+          : "'Montserrat', sans-serif",
+        direction: ar ? "rtl" : "ltr",
       }}
     >
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;500;600;700&family=Montserrat:wght@400;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;500;600;700&family=Montserrat:wght@400;600;700;800;900&display=swap');
 
         @keyframes fadeUp {
           from { opacity: 0; transform: translateY(28px); }
-          to   { opacity: 1; transform: translateY(0); }
+          to { opacity: 1; transform: translateY(0); }
         }
-        @keyframes pulse {
-          0%, 100% { opacity: 1; }
-          50%       { opacity: 0.3; }
-        }
+
         @keyframes fadeIn {
-          from { opacity: 0; transform: scale(0.85); }
-          to   { opacity: 1; transform: scale(1); }
+          from { opacity: 0; }
+          to { opacity: 1; }
         }
-        @keyframes rotateBorder {
-          from { transform: rotate(0deg); }
-          to   { transform: rotate(360deg); }
-        }
-        @keyframes floatLogo {
-          0%, 100% { transform: translateY(0px); }
-          50%       { transform: translateY(-10px); }
-        }
-        @keyframes shimmerText {
-          0%   { background-position: -200% center; }
-          100% { background-position: 200% center; }
-        }
-        @keyframes drawLine {
+
+        @keyframes goldExpand {
           from { width: 0; }
-          to   { width: 50px; }
+          to { width: 48px; }
         }
 
-        .hero-logo    { opacity:0; animation: fadeIn 1s 0.1s forwards; }
-        .hero-badge   { opacity:0; animation: fadeUp 0.7s 0.3s forwards; }
-        .hero-title   { opacity:0; animation: fadeUp 0.8s 0.5s forwards; }
-        .hero-sub     { opacity:0; animation: fadeUp 0.8s 0.7s forwards; }
-        .hero-divider { opacity:0; animation: fadeUp 0.6s 0.75s forwards; }
-        .hero-cta     { opacity:0; animation: fadeUp 0.8s 0.9s forwards; }
-        .hero-trust   { opacity:0; animation: fadeUp 0.8s 1.1s forwards; }
-
-        .logo-wrapper {
-          position: relative; width: 210px; height: 210px;
-          display: flex; align-items: center; justify-content: center;
-          animation: floatLogo 4s ease-in-out infinite;
-        }
-        .logo-spin {
-          position: absolute; inset: 0; border-radius: 50%;
-          border: 1.5px dashed rgba(201,168,76,0.5);
-          animation: rotateBorder 10s linear infinite;
-        }
-        .logo-ring-outer {
-          position: absolute; inset: 10px; border-radius: 50%;
-          border: 1px solid rgba(30,58,95,0.12);
-        }
-        .logo-img {
-          width: 148px; height: 148px; border-radius: 50%;
-          object-fit: cover;
-          border: 3px solid rgba(201,168,76,0.7);
-          position: relative; z-index: 2;
-          box-shadow: 0 8px 40px rgba(30,58,95,0.18);
-        }
-        .logo-glow {
-          position: absolute; inset: 20px; border-radius: 50%;
-          background: radial-gradient(circle, rgba(201,168,76,0.15) 0%, transparent 70%);
-          z-index: 1;
+        @keyframes pulse {
+          0%,100% { opacity:1; }
+          50% { opacity:0.3; }
         }
 
-        .gold-title {
-          background: linear-gradient(90deg, #C9A84C, #E8C96A, #C9A84C);
-          background-size: 200% auto;
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-          animation: shimmerText 4s linear infinite;
+        @keyframes scrollBounce {
+          0%,100% { transform: translateY(0); }
+          50% { transform: translateY(7px); }
         }
 
-        .divider-line {
-          height: 1px; background: rgba(201,168,76,0.5);
-          animation: drawLine 1s 0.75s both;
-        }
-        .divider-diamond {
-          width: 6px; height: 6px; background: #C9A84C;
-          transform: rotate(45deg); flex-shrink: 0;
+        @keyframes spinRing {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
         }
 
-        .btn-primary {
-          transition: all .35s ease !important;
-        }
-        .btn-primary:hover {
-          background: #1a3356 !important;
-          transform: translateY(-3px) !important;
-          box-shadow: 0 10px 30px rgba(30,58,95,0.3) !important;
-        }
-        .btn-outline {
-          transition: all .35s ease !important;
-        }
-        .btn-outline:hover {
-          background: rgba(201,168,76,0.08) !important;
-          border-color: #C9A84C !important;
-          color: #9A7535 !important;
-          transform: translateY(-3px) !important;
+        @keyframes revealRight {
+          from { clip-path: inset(0 100% 0 0); }
+          to { clip-path: inset(0 0% 0 0); }
         }
 
-        .trust-item {
-          display: flex; flex-direction: column;
-          align-items: center; gap: 4px;
-          padding: 0 20px;
+        .img-panel {
+          animation: revealRight 1.2s 0.1s cubic-bezier(.77,0,.18,1) both;
         }
-        .trust-item + .trust-item {
-          border-right: 1px solid rgba(30,58,95,0.12);
+
+        .text-panel {
+          animation: fadeIn 0.6s 0.5s both;
         }
-        .trust-num {
-          font-size: clamp(20px, 2.5vw, 26px);
-          font-weight: 800; color: #1E3A5F; line-height: 1;
+
+        .a1 {
+          opacity:0;
+          animation: fadeUp 0.8s 0.6s cubic-bezier(.16,1,.3,1) forwards;
         }
-        .trust-lbl {
-          font-size: 12px; color: rgba(30,58,95,0.55);
-          white-space: nowrap;
+
+        .a2 {
+          opacity:0;
+          animation: fadeUp 0.8s 0.75s cubic-bezier(.16,1,.3,1) forwards;
+        }
+
+        .a3 {
+          opacity:0;
+          animation: fadeUp 0.8s 0.9s cubic-bezier(.16,1,.3,1) forwards;
+        }
+
+        .a4 {
+          opacity:0;
+          animation: fadeUp 0.8s 1.05s cubic-bezier(.16,1,.3,1) forwards;
+        }
+
+        .a5 {
+          opacity:0;
+          animation: fadeUp 0.8s 1.2s cubic-bezier(.16,1,.3,1) forwards;
+        }
+
+        .a6 {
+          opacity:0;
+          animation: fadeIn 1s 1.4s forwards;
+        }
+
+        .hero-headline {
+          font-size: clamp(44px, 5.5vw, 86px);
+          font-weight: 900;
+          line-height: 1.05;
+          color: #10243D;
+          letter-spacing: ${ar ? "0" : "-2px"};
+        }
+
+        .hero-headline-gold {
+          color: #B8953F;
+          display: block;
+        }
+
+        .gold-line {
+          height: 2px;
+          background: linear-gradient(90deg, #C9A84C, #E8C96A);
+          width: 0;
+          animation: goldExpand 0.8s 0.8s ease forwards;
+          margin-bottom: 24px;
+          border-radius: 2px;
+        }
+
+        .hero-sub {
+          color: #667487;
+          font-size: clamp(14px, 1.3vw, 16px);
+          line-height: 2;
+          max-width: 380px;
+        }
+
+        .btn-gold {
+          display: inline-block;
+          background: #10243D;
+          color: #fff;
+          padding: 15px 40px;
+          font-size: 13px;
+          font-weight: 700;
+          letter-spacing: 1px;
+          text-decoration: none;
+          border-radius: 1px;
+          transition: all .3s ease;
+          font-family: inherit;
+        }
+
+        .btn-gold:hover {
+          background: #C9A84C;
+          color: #10243D;
+          transform: translateY(-3px);
+          box-shadow: 0 14px 36px rgba(201,168,76,0.22);
+        }
+
+        .btn-outline-white {
+          display: inline-block;
+          color: #34465C;
+          padding: 15px 40px;
+          font-size: 13px;
+          font-weight: 600;
+          letter-spacing: 1px;
+          text-decoration: none;
+          border: 1px solid rgba(16,36,61,0.2);
+          border-radius: 1px;
+          transition: all .3s ease;
+          font-family: inherit;
+        }
+
+        .btn-outline-white:hover {
+          border-color: #B8953F;
+          color: #B8953F;
+          transform: translateY(-3px);
+        }
+
+        .stat-divider {
+          width: 1px;
+          height: 32px;
+          background: rgba(16,36,61,0.14);
+        }
+
+        .nav-link-hero {
+          color: rgba(255,255,255,0.78);
+          font-size: 12px;
+          font-weight: 500;
+          text-decoration: none;
+          letter-spacing: 0.5px;
+          transition: color .2s;
+        }
+
+        .nav-link-hero:hover {
+          color: #E8C96A;
+        }
+
+        .lang-toggle {
+          background: rgba(255,255,255,0.08);
+          border: 1px solid rgba(201,168,76,0.55);
+          color: #E8C96A;
+          padding: 5px 12px;
+          font-size: 11px;
+          font-weight: 600;
+          letter-spacing: 1px;
+          border-radius: 1px;
+          cursor: pointer;
+          transition: all .2s;
+          font-family: inherit;
+        }
+
+        .lang-toggle:hover {
+          background: rgba(201,168,76,0.18);
+        }
+
+        .scroll-ind {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 8px;
+        }
+
+        .scroll-ind-line {
+          width: 1px;
+          height: 52px;
+          background: linear-gradient(to bottom, #B8953F, transparent);
+          animation: scrollBounce 2s ease-in-out infinite;
+        }
+
+        .scroll-ind-txt {
+          font-size: 9px;
+          letter-spacing: 3px;
+          color: rgba(16,36,61,0.45);
+          writing-mode: vertical-rl;
+        }
+
+        .logo-ring-spin {
+          position: absolute;
+          inset: -8px;
+          border-radius: 50%;
+          border: 1px dashed rgba(201,168,76,0.55);
+          animation: spinRing 12s linear infinite;
+        }
+
+        .img-number {
+          position: absolute;
+          bottom: 40px;
+          font-size: 120px;
+          font-weight: 900;
+          color: transparent;
+          -webkit-text-stroke: 1px rgba(255,255,255,0.18);
+          line-height: 1;
+          pointer-events: none;
+          user-select: none;
+          letter-spacing: -4px;
+        }
+
+        @media (max-width: 767px) {
+          .hero-split {
+            flex-direction: column !important;
+          }
+
+          .img-panel-wrap {
+            width: 100% !important;
+            height: 45vh !important;
+            min-height: 300px !important;
+          }
+
+          .text-panel-wrap {
+            width: 100% !important;
+            min-height: unset !important;
+            padding: 40px 24px 48px !important;
+            justify-content: flex-start !important;
+          }
+
+          .hero-nav {
+            padding: 18px 20px !important;
+          }
+
+          .nav-links-wrap {
+            display: none !important;
+          }
+
+          .hero-headline {
+            font-size: clamp(38px, 10vw, 56px) !important;
+          }
+
+          .scroll-ind-wrap,
+          .img-number {
+            display: none !important;
+          }
         }
       `}</style>
 
-      {/* BG SHAPES */}
-      <div style={{
-        position: "absolute", top: "-80px",
-        right: lang === "ar" ? "auto" : "-80px",
-        left: lang === "ar" ? "-80px" : "auto",
-        width: 400, height: 400, borderRadius: "50%",
-        background: "radial-gradient(circle, rgba(30,58,95,0.06) 0%, transparent 70%)",
-        pointerEvents: "none",
-      }} />
-      <div style={{
-        position: "absolute", bottom: "5%",
-        left: lang === "ar" ? "auto" : "5%",
-        right: lang === "ar" ? "5%" : "auto",
-        width: 240, height: 240, borderRadius: "50%",
-        border: "1px solid rgba(201,168,76,0.18)",
-        pointerEvents: "none",
-      }} />
-      <svg style={{
-        position: "absolute", inset: 0, width: "100%",
-        height: "100%", pointerEvents: "none", opacity: 0.4,
-      }} viewBox="0 0 1200 900" preserveAspectRatio="xMidYMid slice">
-        <defs>
-          <pattern id="dots" width="30" height="30" patternUnits="userSpaceOnUse">
-            <circle cx="1.5" cy="1.5" r="1.5" fill="rgba(30,58,95,0.07)" />
-          </pattern>
-        </defs>
-        <rect width="1200" height="900" fill="url(#dots)" />
-      </svg>
+      <section
+        style={{
+          position: "relative",
+          width: "100%",
+          height: "100vh",
+          minHeight: "600px",
+          overflow: "hidden",
+        }}
+      >
+        {/* NAV */}
+        <nav
+          className="hero-nav"
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            zIndex: 50,
+            padding: "24px 48px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            background:
+              "linear-gradient(to bottom, rgba(11,26,46,0.62), transparent)",
+          }}
+        >
+          {/* LOGO */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "12px",
+            }}
+          >
+            <div
+              style={{
+                position: "relative",
+                width: 44,
+                height: 44,
+              }}
+            >
+              <div className="logo-ring-spin" />
 
-      {/* MAIN LAYOUT */}
-      <div className="relative z-10 w-full max-w-5xl mx-auto px-8 md:px-16 py-32">
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: lang === "ar" ? "1fr auto" : "auto 1fr",
-          gap: "72px",
-          alignItems: "center",
-        }}>
-
-          {/* TEXT */}
-          <div>
-
-            {/* BADGE */}
-            <div className="hero-badge inline-flex items-center gap-2 mb-8" style={{
-              background: "rgba(201,168,76,0.1)",
-              border: "1px solid rgba(201,168,76,0.35)",
-              borderRadius: "50px", padding: "6px 18px",
-              fontSize: "13px", color: "#9A7535", letterSpacing: "1px",
-            }}>
-              <span style={{
-                width: 7, height: 7, borderRadius: "50%",
-                background: "#C9A84C", animation: "pulse 2s infinite", flexShrink: 0,
-              }} />
-              <span>{t("hero", "badge")}</span>
+              <img
+                src={logodar}
+                alt="DAR"
+                style={{
+                  width: 44,
+                  height: 44,
+                  borderRadius: "50%",
+                  objectFit: "cover",
+                  border: "1.5px solid rgba(201,168,76,0.6)",
+                  position: "relative",
+                  zIndex: 2,
+                }}
+              />
             </div>
 
-            {/* TITLE */}
-            <h1 className="hero-title font-bold" style={{
-              fontSize: "clamp(42px, 6vw, 72px)",
-              lineHeight: 1.3, color: "#1E3A5F", marginBottom: "20px",
-            }}>
-              <span>{t("hero", "title1")} </span>
-              <span className="gold-title">{t("hero", "title2")}</span>
-              {t("hero", "title3") && <span> {t("hero", "title3")}</span>}
+            <div>
+              <p
+                style={{
+                  color: "#fff",
+                  fontWeight: 800,
+                  fontSize: "15px",
+                  letterSpacing: "4px",
+                  lineHeight: 1,
+                  margin: 0,
+                }}
+              >
+                DAR
+              </p>
+
+              <p
+                style={{
+                  color: "rgba(232,201,106,0.85)",
+                  fontSize: "9px",
+                  letterSpacing: "2px",
+                  margin: 0,
+                }}
+              >
+                {ar ? "للاستثمار العقاري" : "DEVELOPMENTS"}
+              </p>
+            </div>
+          </div>
+
+          {/* LINKS */}
+          <div
+            className="nav-links-wrap"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "32px",
+            }}
+          >
+            {(ar
+              ? ["الرئيسية", "المشاريع", "عن الشركة", "تواصل معنا"]
+              : ["Home", "Projects", "About", "Contact"]
+            ).map((lnk, i) => (
+              <a
+                key={i}
+                href={["/#home", "/#projects", "/#about", "/#contact"][i]}
+                className="nav-link-hero"
+              >
+                {lnk}
+              </a>
+            ))}
+
+            <button className="lang-toggle">
+              {ar ? "EN" : "ع"}
+            </button>
+          </div>
+        </nav>
+
+        {/* SPLIT LAYOUT */}
+        <div
+          className="hero-split"
+          style={{
+            display: "flex",
+            width: "100%",
+            height: "100%",
+          }}
+        >
+          {/* IMAGE PANEL */}
+          <div
+            className="img-panel img-panel-wrap"
+            style={{
+              width: "55%",
+              height: "100%",
+              position: "relative",
+              overflow: "hidden",
+              order: ar ? 2 : 1,
+            }}
+          >
+            <img
+              ref={imgRef}
+              src={heroBg}
+              alt="DAR Developments"
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                transform: "scale(1.08)",
+                transformOrigin: "center center",
+                willChange: "transform",
+              }}
+            />
+
+            {/* Subtle image vignette */}
+            <div
+              style={{
+                position: "absolute",
+                inset: 0,
+                background: ar
+                  ? "linear-gradient(to left, rgba(11,26,46,0.38) 0%, transparent 40%)"
+                  : "linear-gradient(to right, rgba(11,26,46,0.38) 0%, transparent 40%)",
+              }}
+            />
+
+            {/* Decorative image number */}
+            <div
+              className="img-number"
+              style={{
+                [ar ? "right" : "left"]: "24px",
+              }}
+            >
+              02
+            </div>
+
+            {/* Location badge removed as requested */}
+          </div>
+
+          {/* LIGHT TEXT PANEL */}
+          <div
+            className="text-panel text-panel-wrap"
+            style={{
+              width: "45%",
+              background: "#F4F7FA",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              padding: "120px 56px 80px",
+              position: "relative",
+              overflow: "hidden",
+              order: ar ? 1 : 2,
+              textAlign: ar ? "right" : "left",
+            }}
+          >
+            {/* Soft background texture */}
+            <div
+              style={{
+                position: "absolute",
+                inset: 0,
+                opacity: 0.035,
+                pointerEvents: "none",
+                backgroundImage:
+                  "repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(16,36,61,0.5) 40px, rgba(16,36,61,0.5) 41px), repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(16,36,61,0.5) 40px, rgba(16,36,61,0.5) 41px)",
+              }}
+            />
+
+            {/* Gold accent line */}
+            <div
+              style={{
+                position: "absolute",
+                top: 0,
+                [ar ? "right" : "left"]: 0,
+                width: "3px",
+                height: "100%",
+                background:
+                  "linear-gradient(to bottom, #C9A84C, transparent)",
+              }}
+            />
+
+            {/* Location / eyebrow label */}
+            <div className="a1" style={{ marginBottom: "28px" }}>
+              <span
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  fontSize: "10px",
+                  color: "#9A7535",
+                  letterSpacing: "2.5px",
+                  fontWeight: 700,
+                }}
+              >
+                <span
+                  style={{
+                    width: 5,
+                    height: 5,
+                    borderRadius: "50%",
+                    background: "#C9A84C",
+                    display: "inline-block",
+                    animation: "pulse 2s infinite",
+                  }}
+                />
+
+                {ar ? "طنطا — مصر" : "TANTA — EGYPT"}
+              </span>
+            </div>
+
+            {/* HEADLINE */}
+            <h1
+              className="hero-headline a2"
+              style={{
+                marginBottom: 0,
+              }}
+            >
+              {ar ? (
+                <>
+                  نصنع ملامح
+                  <span className="hero-headline-gold">
+                    المستقبل.
+                  </span>
+                </>
+              ) : (
+                <>
+                  WE SHAPE
+                  <span className="hero-headline-gold">
+                    THE FUTURE.
+                  </span>
+                </>
+              )}
             </h1>
 
-            {/* DIVIDER */}
-            <div className="hero-divider flex items-center gap-3 mb-6">
-              <div className="divider-line" style={{ width: "50px" }} />
-              <div className="divider-diamond" />
-              <div className="divider-line" style={{ width: "50px" }} />
-            </div>
+            {/* Gold line */}
+            <div
+              className="gold-line a3"
+              style={{
+                marginTop: "24px",
+              }}
+            />
 
-            {/* SUB */}
-            <p className="hero-sub" style={{
-              color: "rgba(30,58,95,0.65)",
-              lineHeight: 2.1, marginBottom: "40px",
-              fontSize: "clamp(16px, 2vw, 20px)",
-              maxWidth: "420px", fontWeight: 400,
-            }}>
-              {t("hero", "sub")}
+            {/* Subtitle */}
+            <p
+              className="hero-sub a3"
+              style={{
+                marginBottom: "40px",
+                marginLeft: ar ? "auto" : 0,
+                marginRight: ar ? 0 : "auto",
+              }}
+            >
+              {ar
+                ? "نبني مساحات، نصنع قيمة، ونرسم ملامح المستقبل."
+                : "Building spaces. Creating lasting value. Shaping tomorrow."}
             </p>
 
             {/* BUTTONS */}
-            <div className="hero-cta flex gap-3 flex-wrap" style={{ marginBottom: "48px" }}>
-              <a href="#projects" className="btn-primary" style={{
-                background: "#1E3A5F", color: "white",
-                padding: "15px 36px", borderRadius: "4px",
-                textDecoration: "none", display: "inline-block",
-                fontWeight: 700, fontSize: "15px",
-                fontFamily: lang === "ar" ? "'Noto Naskh Arabic', serif" : "'Montserrat', sans-serif",
-              }}>
-                {t("hero", "btn1")}
+            <div
+              className="a4"
+              style={{
+                display: "flex",
+                gap: "12px",
+                flexWrap: "wrap",
+                marginBottom: "52px",
+              }}
+            >
+              <a href="#projects" className="btn-gold">
+                {ar ? "استكشف مشاريعنا" : "Explore Projects"}
               </a>
-              <a href="#contact" className="btn-outline" style={{
-                background: "transparent", color: "#1E3A5F",
-                border: "1.5px solid rgba(201,168,76,0.55)",
-                padding: "15px 36px", borderRadius: "4px",
-                textDecoration: "none", display: "inline-block",
-                fontSize: "15px", fontWeight: 600,
-                fontFamily: lang === "ar" ? "'Noto Naskh Arabic', serif" : "'Montserrat', sans-serif",
-              }}>
-                {t("hero", "btn2")}
+
+              <a href="#contact" className="btn-outline-white">
+                {ar ? "تواصل معنا" : "Contact Us"}
               </a>
             </div>
 
-            {/* TRUST BAR */}
-            <div className="hero-trust flex" style={{
-              direction: "rtl",
-              borderTop: "1px solid rgba(30,58,95,0.1)",
-              paddingTop: "24px",
-            }}>
+            {/* STATS */}
+            <div
+              className="a5"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "24px",
+                flexWrap: "wrap",
+              }}
+            >
               {[
-                { num: "+100", lbl: lang === "ar" ? "وحدة سُلِّمت" : "Units Delivered" },
-                { num: "98%",  lbl: lang === "ar" ? "رضا العملاء"  : "Client Satisfaction" },
+                {
+                  num: "+100",
+                  ar: "وحدة سُلِّمت",
+                  en: "Units Delivered",
+                },
+                {
+                  num: "98%",
+                  ar: "رضا العملاء",
+                  en: "Satisfaction",
+                },
+                {
+                  num: "8+",
+                  ar: "سنوات خبرة",
+                  en: "Yrs Experience",
+                },
               ].map((s, i) => (
-                <div key={i} className="trust-item" style={{
-                  borderRight: i > 0 ? "1px solid rgba(30,58,95,0.12)" : "none",
-                  borderLeft: i === 0 ? "none" : undefined,
-                }}>
-                  <span className="trust-num">{s.num}</span>
-                  <span className="trust-lbl">{s.lbl}</span>
+                <div
+                  key={i}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "24px",
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "4px",
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: "clamp(20px,2.5vw,28px)",
+                        fontWeight: 800,
+                        color: "#10243D",
+                        lineHeight: 1,
+                      }}
+                    >
+                      {s.num}
+                    </span>
+
+                    <span
+                      style={{
+                        fontSize: "10px",
+                        color: "#7B8797",
+                        letterSpacing: "0.3px",
+                      }}
+                    >
+                      {ar ? s.ar : s.en}
+                    </span>
+                  </div>
+
+                  {i < 2 && <div className="stat-divider" />}
                 </div>
               ))}
             </div>
 
-          </div>
+            {/* SCROLL INDICATOR */}
+            <div
+              className="scroll-ind-wrap a6"
+              style={{
+                position: "absolute",
+                bottom: "40px",
+                [ar ? "left" : "right"]: "32px",
+              }}
+            >
+              <div className="scroll-ind">
+                <span className="scroll-ind-txt">
+                  SCROLL
+                </span>
 
-          {/* LOGO */}
-          <div
-            className="hero-logo hidden md:flex flex-col items-center gap-4"
-            style={{ order: lang === "ar" ? 1 : -1 }}
-          >
-            <div className="logo-wrapper">
-              <div className="logo-spin" />
-              <div className="logo-ring-outer" />
-              <div className="logo-glow" />
-              <img src={logodar} alt="دار" className="logo-img" />
-            </div>
-            <div style={{ textAlign: "center" }}>
-              <p style={{
-                color: "#C9A84C", letterSpacing: "6px",
-                fontSize: "14px", fontWeight: 700, marginBottom: "4px",
-              }}>
-                DAR
-              </p>
-              <p style={{ color: "rgba(30,58,95,0.4)", fontSize: "11px", letterSpacing: "2px" }}>
-                {t("hero", "logoSub")}
-              </p>
+                <div className="scroll-ind-line" />
+              </div>
             </div>
           </div>
-
         </div>
-      </div>
 
-      {/* BOTTOM GOLD LINE */}
-      <div style={{
-        position: "absolute", bottom: 0, left: 0, right: 0, height: "2px",
-        background: "linear-gradient(90deg,transparent,#C9A84C,#E8C96A,#C9A84C,transparent)",
-      }} />
-
+        {/* Gold bottom bar */}
+        <div
+          style={{
+            position: "absolute",
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: "2px",
+            background:
+              "linear-gradient(90deg,transparent,#C9A84C,#E8C96A,#C9A84C,transparent)",
+            zIndex: 10,
+          }}
+        />
+      </section>
     </div>
   );
 }
