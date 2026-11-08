@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import logo from "../assets/logodar.jpeg";
 import { Link } from "react-router-dom";
@@ -12,6 +13,62 @@ function Navbar() {
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap');
 
+        .dar-navbar {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 72px;
+          z-index: 100;
+          background: rgba(30,58,95,0.15);
+          backdrop-filter: blur(12px);
+          border-bottom: 1px solid rgba(201,168,76,0.15);
+          direction: ltr;
+        }
+
+        .dar-nav-inner {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          height: 100%;
+          padding: 0 32px;
+          position: relative;
+          box-sizing: border-box;
+        }
+
+        .dar-nav-logo {
+          position: absolute;
+          left: 50%;
+          transform: translateX(-50%);
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          z-index: 101;
+          white-space: nowrap;
+        }
+
+        .dar-nav-logo img {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          border: 1.5px solid rgba(201,168,76,0.4);
+          object-fit: cover;
+        }
+
+        .dar-nav-logo span {
+          color: white;
+          letter-spacing: 5px;
+          font-weight: 600;
+          font-size: 15px;
+        }
+
+        .dar-nav-right {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          flex-shrink: 0;
+        }
+
         .nav-contact-btn {
           background: #C9A84C;
           color: #1E3A5F;
@@ -25,9 +82,9 @@ function Navbar() {
           text-decoration: none;
           display: inline-block;
           transition: all .3s ease;
-          letter-spacing: 0.5px;
           white-space: nowrap;
         }
+
         .nav-contact-btn:hover {
           background: #E8C96A;
           transform: translateY(-1px);
@@ -35,7 +92,6 @@ function Navbar() {
         }
 
         .lang-btn {
-          position: relative;
           display: flex;
           align-items: center;
           gap: 6px;
@@ -45,30 +101,50 @@ function Navbar() {
           padding: 6px 14px;
           cursor: pointer;
           transition: all .3s ease;
-          overflow: hidden;
+          flex-shrink: 0;
         }
+
         .lang-btn:hover {
           border-color: #C9A84C;
         }
+
         .lang-ar {
           font-family: 'Noto Naskh Arabic', serif;
           font-size: 13px;
           font-weight: 600;
-          transition: all .3s ease;
         }
+
         .lang-en {
-          font-family: 'Georgia', serif;
+          font-family: Georgia, serif;
           font-size: 12px;
           font-weight: 600;
           letter-spacing: 1.5px;
-          transition: all .3s ease;
         }
-        .lang-active { color: #C9A84C; }
-        .lang-inactive { color: rgba(255,255,255,0.35); }
+
         .lang-divider {
           width: 1px;
           height: 12px;
           background: rgba(255,255,255,0.25);
+        }
+
+        .dar-menu-btn {
+          background: transparent;
+          border: 1.5px solid rgba(255,255,255,0.35);
+          border-radius: 4px;
+          padding: 7px 10px;
+          cursor: pointer;
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+          flex-shrink: 0;
+        }
+
+        .dar-menu-btn span {
+          display: block;
+          width: 20px;
+          height: 2px;
+          background: white;
+          border-radius: 2px;
         }
 
         .sidebar-link {
@@ -83,10 +159,12 @@ function Navbar() {
           transition: color .25s ease, padding .25s ease;
           display: block;
         }
+
         .sidebar-link:hover {
           color: #C9A84C;
           padding-right: 8px;
         }
+
         .sidebar-contact-btn {
           background: #1E3A5F;
           color: white;
@@ -100,116 +178,158 @@ function Navbar() {
           text-decoration: none;
           display: block;
           text-align: center;
-          transition: all .3s ease;
           margin-top: 8px;
         }
+
         .sidebar-contact-btn:hover {
           background: #C9A84C;
           color: #1E3A5F;
         }
+
+        /* MOBILE NAVBAR */
+        @media (max-width: 600px) {
+          .dar-navbar {
+            height: 64px;
+          }
+
+          .dar-nav-inner {
+            padding: 0 12px;
+          }
+
+          .dar-nav-logo {
+            position: static;
+            transform: none;
+            gap: 6px;
+            margin-left: 8px;
+          }
+
+          .dar-nav-logo img {
+            width: 32px;
+            height: 32px;
+          }
+
+          .dar-nav-logo span {
+            font-size: 12px;
+            letter-spacing: 2px;
+          }
+
+          .dar-nav-right {
+            gap: 7px;
+          }
+
+          .lang-btn {
+            gap: 4px;
+            padding: 5px 7px;
+          }
+
+          .lang-ar {
+            font-size: 11px;
+          }
+
+          .lang-en {
+            font-size: 10px;
+            letter-spacing: 1px;
+          }
+
+          .lang-divider {
+            height: 10px;
+          }
+
+          .dar-menu-btn {
+            padding: 6px 7px;
+          }
+
+          .dar-menu-btn span {
+            width: 17px;
+          }
+
+          .nav-contact-btn {
+            display: none;
+          }
+        }
+
+        /* EXTRA SMALL MOBILE */
+        @media (max-width: 360px) {
+          .dar-nav-inner {
+            padding: 0 8px;
+          }
+
+          .dar-nav-logo {
+            gap: 4px;
+            margin-left: 4px;
+          }
+
+          .dar-nav-logo img {
+            width: 28px;
+            height: 28px;
+          }
+
+          .dar-nav-logo span {
+            font-size: 11px;
+            letter-spacing: 1.5px;
+          }
+
+          .lang-btn {
+            padding: 4px 5px;
+          }
+
+          .dar-nav-right {
+            gap: 5px;
+          }
+        }
       `}</style>
 
       {/* NAVBAR */}
-      <nav
-  style={{
-    position: "fixed",
-    top: 0,
-    left: 0,
-    width: "100%",
-    height: "72px",
-    zIndex: 100,
-    background: "rgba(30,58,95,0.15)",
-    backdropFilter: "blur(12px)",
-    borderBottom: "1px solid rgba(201,168,76,0.15)",
+      <nav className="dar-navbar">
+        <div className="dar-nav-inner">
 
-    direction: "ltr", // 👈 أهم سطر
-  }}
->
-        <div style={{
-          position: "relative",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          height: "100%",
-          padding: "0 32px",
-        }}>
-
-          {/* LEFT — LANG TOGGLE */}
+          {/* LANGUAGE */}
           <button className="lang-btn" onClick={toggleLang}>
             <span
-                  className={`lang-ar ${lang === "ar" ? "lang-active" : "lang-inactive"}`}
-                  style={{
-                          color: lang === "ar" ? "#D4AF37" : "#0A192F",
-                          transition: "0.3s",
-                          }}
-              >
-                   عربي  
-             </span>
+              className="lang-ar"
+              style={{
+                color: lang === "ar" ? "#D4AF37" : "#0A192F",
+              }}
+            >
+              عربي
+            </span>
 
             <span className="lang-divider" />
 
             <span
-                  className={`lang-en ${lang === "en" ? "lang-active" : "lang-inactive"}`}
-                  style={{
-                          color: lang === "en" ? "#D4AF37" : "#0A192F",
-                          transition: "0.3s",
-                          }}
-             >
-                  EN
-             </span>
+              className="lang-en"
+              style={{
+                color: lang === "en" ? "#D4AF37" : "#0A192F",
+              }}
+            >
+              EN
+            </span>
           </button>
 
-          {/* CENTER — LOGO */}
-          <div style={{
-            position: "absolute", left: "50%",
-            transform: "translateX(-50%)",
-            display: "flex", alignItems: "center", gap: "10px",
-            zIndex: 101,
-          }}>
-            <img src={logo} alt="logo" style={{
-              width: 40, height: 40, borderRadius: "50%",
-              border: "1.5px solid rgba(201,168,76,0.4)",
-            }} />
-            <span style={{
-              color: "white",
-              letterSpacing: "5px",
-              fontWeight: 600,
-              fontSize: "15px",
-            }}>
-              DAR
-            </span>
+          {/* LOGO */}
+          <div className="dar-nav-logo">
+            <img src={logo} alt="DAR Logo" />
+            <span>DAR</span>
           </div>
 
-          {/* RIGHT — CONTACT + MENU */}
-          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+          {/* RIGHT */}
+          <div className="dar-nav-right">
+
             <a href="/#contact" className="nav-contact-btn">
               {lang === "ar" ? "تواصل معنا" : "Contact Us"}
             </a>
+
             <button
+              className="dar-menu-btn"
               onClick={() => setOpen(true)}
-              style={{
-                background: "transparent",
-                border: "1.5px solid rgba(255,255,255,0.35)",
-                borderRadius: "4px",
-                padding: "7px 10px",
-                cursor: "pointer",
-                display: "flex",
-                flexDirection: "column",
-                gap: "4px",
-                transition: "border-color .3s",
-              }}
-              onMouseEnter={e => e.currentTarget.style.borderColor = "#C9A84C"}
-              onMouseLeave={e => e.currentTarget.style.borderColor = "rgba(255,255,255,0.35)"}
+              aria-label="Open menu"
             >
-              {[0,1,2].map(i => (
-                <span key={i} style={{
-                  display: "block", width: "20px", height: "2px",
-                  background: "white", borderRadius: "2px",
-                }} />
+              {[0, 1, 2].map(i => (
+                <span key={i} />
               ))}
             </button>
-          </div>
 
+          </div>
         </div>
       </nav>
 
@@ -217,7 +337,8 @@ function Navbar() {
       {open && (
         <div
           style={{
-            position: "fixed", inset: 0,
+            position: "fixed",
+            inset: 0,
             background: "rgba(0,0,0,0.45)",
             zIndex: 200,
           }}
@@ -227,84 +348,103 @@ function Navbar() {
 
       {/* SIDEBAR */}
       <div
-  style={{
-    position: "fixed",
-    top: 0,
-    height: "100%",
-    width: "300px",
-    background: "white",
-    zIndex: 300,
-    boxShadow: "-8px 0 40px rgba(0,0,0,0.15)",
-    transition: "transform .3s ease",
-
-    right: 0,
-    left: "auto",
-
-    transform: open ? "translateX(0)" : "translateX(100%)",
-
-    display: "flex",
-    flexDirection: "column",
-  }}
->
-        {/* SIDEBAR HEADER */}
-        <div style={{
+        style={{
+          position: "fixed",
+          top: 0,
+          height: "100%",
+          width: "min(300px, 85vw)",
+          background: "white",
+          zIndex: 300,
+          boxShadow: "-8px 0 40px rgba(0,0,0,0.15)",
+          transition: "transform .3s ease",
+          right: 0,
+          left: "auto",
+          transform: open ? "translateX(0)" : "translateX(100%)",
           display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          padding: "20px 24px",
-          borderBottom: "1px solid rgba(30,58,95,0.08)",
-        }}>
+          flexDirection: "column",
+        }}
+      >
+        {/* SIDEBAR HEADER */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            padding: "20px 24px",
+            borderBottom: "1px solid rgba(30,58,95,0.08)",
+          }}
+        >
           <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-            <img src={logo} alt="logo" style={{
-              width: 36, height: 36, borderRadius: "50%",
-              border: "1.5px solid rgba(201,168,76,0.4)",
-            }} />
-            <span style={{
-              color: "#1E3A5F", letterSpacing: "4px",
-              fontWeight: 700, fontSize: "14px",
-            }}>
+            <img
+              src={logo}
+              alt="logo"
+              style={{
+                width: 36,
+                height: 36,
+                borderRadius: "50%",
+                border: "1.5px solid rgba(201,168,76,0.4)",
+              }}
+            />
+
+            <span
+              style={{
+                color: "#1E3A5F",
+                letterSpacing: "4px",
+                fontWeight: 700,
+                fontSize: "14px",
+              }}
+            >
               DAR
             </span>
           </div>
+
           <button
             onClick={() => setOpen(false)}
             style={{
-              background: "none", border: "none",
-              fontSize: "24px", color: "#1E3A5F",
-              cursor: "pointer", lineHeight: 1,
+              background: "none",
+              border: "none",
+              fontSize: "24px",
+              color: "#1E3A5F",
+              cursor: "pointer",
+              lineHeight: 1,
             }}
           >
-            {"×"}
+            ×
           </button>
         </div>
 
         {/* SIDEBAR LINKS */}
-        <div style={{
-          flex: 1,
-          padding: "16px 24px",
-          display: "flex",
-          flexDirection: "column",
-          textAlign: lang === "ar" ? "right" : "left"
-        }}>
+        <div
+          style={{
+            flex: 1,
+            padding: "16px 24px",
+            display: "flex",
+            flexDirection: "column",
+            textAlign: lang === "ar" ? "right" : "left",
+          }}
+        >
           <Link to="/" className="sidebar-link" onClick={() => setOpen(false)}>
             {t("navbar", "home")}
           </Link>
+
           <a href="/#about" className="sidebar-link" onClick={() => setOpen(false)}>
             {t("navbar", "about")}
           </a>
+
           <a href="/#projects" className="sidebar-link" onClick={() => setOpen(false)}>
             {t("navbar", "projects")}
           </a>
+
           <a href="/#partners" className="sidebar-link" onClick={() => setOpen(false)}>
             {t("navbar", "partners")}
           </a>
+
           <a href="/#contact" className="sidebar-link" onClick={() => setOpen(false)}>
             {t("navbar", "contact")}
           </a>
 
-          {/* CONTACT BTN */}
-          
-          <a href="/#contact"
+          <a
+            href="/#contact"
             className="sidebar-contact-btn"
             onClick={() => setOpen(false)}
           >
@@ -313,19 +453,23 @@ function Navbar() {
         </div>
 
         {/* SIDEBAR FOOTER */}
-        <div style={{
-          padding: "16px 24px",
-          borderTop: "1px solid rgba(30,58,95,0.08)",
-          display: "flex",
-          justifyContent: "center",
-        }}>
-          <div style={{
-            width: "40px", height: "2px",
-            background: "linear-gradient(90deg,#1E3A5F,#C9A84C)",
-            borderRadius: "2px",
-          }} />
+        <div
+          style={{
+            padding: "16px 24px",
+            borderTop: "1px solid rgba(30,58,95,0.08)",
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
+          <div
+            style={{
+              width: "40px",
+              height: "2px",
+              background: "linear-gradient(90deg,#1E3A5F,#C9A84C)",
+              borderRadius: "2px",
+            }}
+          />
         </div>
-
       </div>
     </>
   );

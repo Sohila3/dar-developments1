@@ -1,51 +1,22 @@
-
-import { useEffect, useRef, useState } from "react";
-
+import { useEffect, useRef } from "react";
 import logodar from "../assets/logodar.jpeg";
 import heroBg from "../assets/palm5.jpeg";
-
-import p1 from "../assets/project-1.png";
-import p2 from "../assets/project-2.png";
-import p3 from "../assets/project-3.png";
-import p4 from "../assets/project-4.jpeg";
-import p5 from "../assets/project-5.jpeg";
-import p6 from "../assets/project-6.jpeg";
-import p7 from "../assets/project-7.jpeg";
-import p8 from "../assets/project-8.jpeg";
-
 import { useLanguage } from "../context/LanguageContext";
 
 function Hero() {
   const { lang, t } = useLanguage();
   const ar = lang === "ar";
-
   const imgRef = useRef(null);
 
-  // HERO SLIDESHOW
-  const images = [heroBg, p1, p2, p3, p4, p5, p6, p7, p8];
-
-  const [currentImage, setCurrentImage] = useState(0);
-
-  // Automatic image change every 5 seconds
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentImage((prev) => (prev + 1) % images.length);
-    }, 5000);
+    const img = imgRef.current;
+    if (!img) return;
 
-    return () => clearInterval(interval);
-  }, []);
-
-  // PARALLAX EFFECT
-  useEffect(() => {
     const onScroll = () => {
-      if (!imgRef.current) return;
-
-      imgRef.current.style.transform =
-        `scale(1.08) translateY(${window.scrollY * 0.15}px)`;
+      img.style.transform = `scale(1.08) translateY(${window.scrollY * 0.15}px)`;
     };
 
     window.addEventListener("scroll", onScroll, { passive: true });
-
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
@@ -97,23 +68,8 @@ function Hero() {
           to { clip-path: inset(0 0% 0 0); }
         }
 
-        @keyframes heroImageFade {
-          from {
-            opacity: 0;
-            filter: brightness(0.7);
-          }
-          to {
-            opacity: 1;
-            filter: brightness(1);
-          }
-        }
-
         .img-panel {
           animation: revealRight 1.2s 0.1s cubic-bezier(.77,0,.18,1) both;
-        }
-
-        .hero-slideshow-image {
-          animation: heroImageFade 1.2s ease both;
         }
 
         .text-panel {
@@ -299,22 +255,6 @@ function Hero() {
           letter-spacing: -4px;
         }
 
-        .hero-slide-indicator {
-          width: 7px;
-          height: 7px;
-          border-radius: 20px;
-          border: none;
-          padding: 0;
-          background: rgba(255,255,255,0.55);
-          cursor: pointer;
-          transition: all .4s ease;
-        }
-
-        .hero-slide-indicator.active {
-          width: 28px;
-          background: #E8C96A;
-        }
-
         @media (max-width: 767px) {
           .hero-split {
             flex-direction: column !important;
@@ -348,16 +288,6 @@ function Hero() {
           .scroll-ind-wrap,
           .img-number {
             display: none !important;
-          }
-
-          .hero-slide-dots {
-            bottom: 18px !important;
-          }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-          .hero-slideshow-image {
-            animation: none;
           }
         }
       `}</style>
@@ -469,13 +399,7 @@ function Hero() {
               </a>
             ))}
 
-            <button
-              className="lang-toggle"
-              onClick={() => {
-                // لو LanguageContext عندك فيه toggleLanguage
-                // اربطيه هنا لو حابة.
-              }}
-            >
+            <button className="lang-toggle">
               {ar ? "EN" : "ع"}
             </button>
           </div>
@@ -502,11 +426,9 @@ function Hero() {
             }}
           >
             <img
-              key={currentImage}
               ref={imgRef}
-              src={images[currentImage]}
-              alt={`DAR Developments - Slide ${currentImage + 1}`}
-              className="hero-slideshow-image"
+              src={heroBg}
+              alt="DAR Developments"
               style={{
                 width: "100%",
                 height: "100%",
@@ -517,7 +439,7 @@ function Hero() {
               }}
             />
 
-            {/* VIGNETTE */}
+            {/* Subtle image vignette */}
             <div
               style={{
                 position: "absolute",
@@ -525,48 +447,23 @@ function Hero() {
                 background: ar
                   ? "linear-gradient(to left, rgba(11,26,46,0.38) 0%, transparent 40%)"
                   : "linear-gradient(to right, rgba(11,26,46,0.38) 0%, transparent 40%)",
-                pointerEvents: "none",
               }}
             />
 
-            {/* SLIDE INDICATORS */}
-            <div
-              className="hero-slide-dots"
-              style={{
-                position: "absolute",
-                bottom: 30,
-                left: "50%",
-                transform: "translateX(-50%)",
-                display: "flex",
-                alignItems: "center",
-                gap: 8,
-                zIndex: 5,
-              }}
-            >
-              {images.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setCurrentImage(i)}
-                  aria-label={`Go to image ${i + 1}`}
-                  className={`hero-slide-indicator ${
-                    currentImage === i ? "active" : ""
-                  }`}
-                />
-              ))}
-            </div>
-
-            {/* IMAGE NUMBER */}
+            {/* Decorative image number */}
             <div
               className="img-number"
               style={{
                 [ar ? "right" : "left"]: "24px",
               }}
             >
-              {String(currentImage + 1).padStart(2, "0")}
+              02
             </div>
+
+            {/* Location badge removed as requested */}
           </div>
 
-          {/* TEXT PANEL */}
+          {/* LIGHT TEXT PANEL */}
           <div
             className="text-panel text-panel-wrap"
             style={{
@@ -582,7 +479,7 @@ function Hero() {
               textAlign: ar ? "right" : "left",
             }}
           >
-            {/* TEXTURE */}
+            {/* Soft background texture */}
             <div
               style={{
                 position: "absolute",
@@ -594,7 +491,7 @@ function Hero() {
               }}
             />
 
-            {/* GOLD ACCENT */}
+            {/* Gold accent line */}
             <div
               style={{
                 position: "absolute",
@@ -607,7 +504,7 @@ function Hero() {
               }}
             />
 
-            {/* LOCATION */}
+            {/* Location / eyebrow label */}
             <div className="a1" style={{ marginBottom: "28px" }}>
               <span
                 style={{
@@ -659,7 +556,7 @@ function Hero() {
               )}
             </h1>
 
-            {/* GOLD LINE */}
+            {/* Gold line */}
             <div
               className="gold-line a3"
               style={{
@@ -667,7 +564,7 @@ function Hero() {
               }}
             />
 
-            {/* SUBTITLE */}
+            {/* Subtitle */}
             <p
               className="hero-sub a3"
               style={{
@@ -789,7 +686,7 @@ function Hero() {
           </div>
         </div>
 
-        {/* GOLD BOTTOM BAR */}
+        {/* Gold bottom bar */}
         <div
           style={{
             position: "absolute",
