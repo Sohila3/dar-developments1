@@ -1,3 +1,4 @@
+
 import { Routes, Route } from "react-router-dom";
 import { LanguageProvider } from "./context/LanguageContext";
 
@@ -5,6 +6,8 @@ import Home from "./pages/Home";
 import AboutMore from "./pages/AboutMore";
 import ScrollToTop from "./components/ScrollToTop";
 import ScrollToSection from "./components/ScrollToSection";
+import SocialSidebar from "./components/SocialSidebar";
+
 import ProjectElwroodPage from "./pages/ProjectElwroodPage";
 import ProjectLandmarkPage from "./pages/ProjectLandmarkPage";
 import ProjectDamacPage from "./pages/ProjectDamacPage";
@@ -15,6 +18,10 @@ function App() {
     <LanguageProvider>
       <ScrollToTop />
       <ScrollToSection />
+
+      {/* Fixed Social Media Icons */}
+      <SocialSidebar />
+
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/about-more" element={<AboutMore />} />

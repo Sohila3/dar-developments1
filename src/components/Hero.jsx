@@ -19,56 +19,12 @@ const TICKER = [
   { label: "PALM 2", to: "/projects/palm2" },
 ];
 
-function Counter({ to, prefix = "", suffix = "", delay = 1000, duration = 1600 }) {
-  const [val, setVal] = useState(0);
-
-  useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setVal(to);
-      return;
-    }
-
-    let raf;
-    let start;
-    const timer = setTimeout(() => {
-      const tick = (ts) => {
-        if (!start) start = ts;
-
-        const progress = Math.min((ts - start) / duration, 1);
-        const eased = 1 - Math.pow(1 - progress, 3);
-
-        setVal(Math.round(to * eased));
-
-        if (progress < 1) raf = requestAnimationFrame(tick);
-      };
-
-      raf = requestAnimationFrame(tick);
-    }, delay);
-
-    return () => {
-      clearTimeout(timer);
-      cancelAnimationFrame(raf);
-    };
-  }, [to, delay, duration]);
-
-  return (
-    <span dir="ltr" style={{ display: "inline-block" }}>
-      {prefix}
-      {val}
-      {suffix}
-    </span>
-  );
-}
-
 function Hero() {
   const { lang } = useLanguage();
   const ar = lang === "ar";
   const slidesRef = useRef(null);
 
-  const [{ active, prev }, setSlide] = useState({
-    active: 0,
-    prev: -1,
-  });
+  const [{ active }, setSlide] = useState({ active: 0, prev: -1 });
 
   const goTo = (i) => {
     setSlide((s) =>
@@ -99,11 +55,10 @@ function Hero() {
         return;
       }
 
-      el.style.transform = `translateY(${Math.min(window.scrollY, 400) * 0.08}px) scale(1.1)`;
+      el.style.transform = `translateY(${Math.min(window.scrollY, 400) * 0.04}px) scale(1.08)`;
     };
 
     onScroll();
-
     window.addEventListener("scroll", onScroll, { passive: true });
 
     return () => window.removeEventListener("scroll", onScroll);
@@ -111,7 +66,7 @@ function Hero() {
 
   const copy = ar
     ? {
-        eyebrow: "دار للاستثمار العقاري",
+        eyebrow: "دار للتطوير العقاري",
         line1: "نصنع ملامح",
         line2: "المستقبل.",
         sub: "نبني مساحات، نصنع قيمة، ونرسم ملامح المستقبل.",
@@ -120,14 +75,13 @@ function Hero() {
         cardTag: "المشروع المميز",
         cardTitle: "بالم 2",
         cardLoc: "كورنيش بلازا — طنطا",
-        chip1: "مقدم يبدأ من 30%",
-        chip2: "تقسيط 4 سنوات",
         cardCta: "اكتشف المشروع",
+        trusted: "موثوقون لدى",
+        families: "عائلة وأكثر",
         arrow: "←",
-        stats: ["وحدة سُلِّمت", "رضا العملاء", "سنوات خبرة"],
       }
     : {
-        eyebrow: "TANTA — EGYPT",
+        eyebrow: "DAR DEVELOPMENTS — TANTA",
         line1: "WE SHAPE",
         line2: "THE FUTURE.",
         sub: "Building spaces. Creating lasting value. Shaping tomorrow.",
@@ -136,24 +90,19 @@ function Hero() {
         cardTag: "FEATURED PROJECT",
         cardTitle: "Palm 2",
         cardLoc: "Corniche Plaza — Tanta",
-        chip1: "From 30% down",
-        chip2: "4-year installments",
         cardCta: "Discover the project",
+        trusted: "Trusted by",
+        families: "Families",
         arrow: "→",
-        stats: ["Units Delivered", "Satisfaction", "Years Experience"],
       };
-
-  const statNumbers = [
-    { to: 100, prefix: "+", suffix: "" },
-    { to: 98, prefix: "", suffix: "%" },
-    { to: 8, prefix: "", suffix: "+" },
-  ];
 
   return (
     <div
       id="home"
       style={{
-        fontFamily: ar ? "'Alexandria', sans-serif" : "'DM Sans', sans-serif",
+        fontFamily: ar
+          ? "'Alexandria', sans-serif"
+          : "'DM Sans', sans-serif",
         direction: ar ? "rtl" : "ltr",
       }}
     >
@@ -162,904 +111,700 @@ function Hero() {
 
         :root {
           --dar-ivory: #F8F6F1;
-          --dar-paper: #F2EEE6;
           --dar-navy: #10243D;
           --dar-gold: #B89552;
           --dar-gold-light: #D7BC83;
-          --dar-muted: #777B80;
         }
 
-        @keyframes hxFadeUp {
-          from { opacity: 0; transform: translateY(24px); }
+        @keyframes heroFadeUp {
+          from { opacity: 0; transform: translateY(25px); }
           to { opacity: 1; transform: translateY(0); }
         }
 
-        @keyframes hxFadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-
-        @keyframes hxLineReveal {
-          from { width: 0; }
-          to { width: 56px; }
-        }
-
-        @keyframes hxImageReveal {
-          from { clip-path: inset(0 100% 0 0); }
-          to { clip-path: inset(0 0 0 0); }
-        }
-
-        @keyframes hxKenBurns {
+        @keyframes heroZoom {
           from { transform: scale(1); }
-          to { transform: scale(1.08); }
+          to { transform: scale(1.09); }
         }
 
-        @keyframes hxProgress {
+        @keyframes heroProgress {
           from { width: 0; }
           to { width: 100%; }
         }
 
-        @keyframes hxPulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: .35; }
-        }
-
-        @keyframes hxScroll {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(6px); }
-        }
-
-        @keyframes hxMarquee {
+        @keyframes heroTicker {
           from { transform: translateX(0); }
           to { transform: translateX(-50%); }
         }
 
-        @keyframes hxGoldShimmer {
-          0% { background-position: 0% center; }
-          100% { background-position: 200% center; }
-        }
-
-        .hx-hero {
-          width: 100%;
-          min-height: 100vh;
-          min-height: 100svh;
-          display: flex;
-          flex-direction: column;
-          background: var(--dar-ivory);
-          color: var(--dar-navy);
-          overflow: hidden;
+        .dar-hero {
           position: relative;
-        }
-
-        .hx-split {
-          display: flex;
-          flex: 1;
           width: 100%;
-          min-height: 660px;
-        }
-
-        /* IMAGE */
-
-        .hx-img-panel {
-          width: 56%;
-          min-height: 660px;
-          position: relative;
+          height: 88vh;
+          height: 88svh;
+          min-height: 650px;
+          max-height: 1000px;
           overflow: hidden;
-          background: #D8D4CC;
-          animation: hxImageReveal 1.1s .1s cubic-bezier(.77,0,.18,1) both;
+          background: #14212b;
+          color: white;
         }
 
-        .hx-slides {
+        /* BACKGROUND SLIDER */
+
+        .dar-hero-slides {
           position: absolute;
           inset: 0;
-          transform-origin: center;
+          overflow: hidden;
           will-change: transform;
         }
 
-        .hx-slide {
+        .dar-hero-slide {
           position: absolute;
           inset: 0;
           width: 100%;
           height: 100%;
           object-fit: cover;
+          object-position: center;
           opacity: 0;
-          transition: opacity 1.2s ease;
-          animation: none;
+          transition: opacity 1.3s ease;
         }
 
-        .hx-slide.active {
+        .dar-hero-slide.active {
           opacity: 1;
-          animation: hxKenBurns 7s ease-out both;
+          animation: heroZoom 7s ease-out both;
         }
 
-        .hx-shade {
+        .dar-hero-overlay {
           position: absolute;
           inset: 0;
-          pointer-events: none;
+          z-index: 1;
           background:
-            linear-gradient(to top, rgba(10,24,39,.56), transparent 42%),
-            ${ar
-              ? "linear-gradient(to left, rgba(10,24,39,.18), transparent 42%)"
-              : "linear-gradient(to right, rgba(10,24,39,.18), transparent 42%)"};
+            linear-gradient(
+              90deg,
+              rgba(8,18,27,.80) 0%,
+              rgba(8,18,27,.57) 40%,
+              rgba(8,18,27,.15) 75%,
+              rgba(8,18,27,.18) 100%
+            ),
+            linear-gradient(
+              0deg,
+              rgba(8,18,27,.65) 0%,
+              transparent 40%
+            );
         }
 
-        .hx-image-label {
+        /* HERO CONTENT */
+
+        .dar-hero-content {
           position: absolute;
-          bottom: 28px;
-          inset-inline-end: 30px;
-          color: rgba(255,255,255,.75);
-          font-size: 10px;
-          letter-spacing: 3px;
-          text-transform: uppercase;
           z-index: 2;
+          top: 46%;;
+          left: 7%;
+          transform: translateY(-50%);
+          width: min(570px, 48%);
+          text-align: left;
+          animation: heroFadeUp 1s .2s both;
         }
 
-        /* SLIDER CONTROLS */
+        .dar-hero[dir="rtl"] .dar-hero-content {
+          left: auto;
+          right: 7%;
+          text-align: right;
+        }
 
-        .hx-meta {
-          position: absolute;
-          top: 105px;
-          inset-inline-end: 30px;
-          z-index: 3;
+        .dar-hero-eyebrow {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          color: var(--dar-gold-light);
+          font-size: 11px;
+          font-weight: 500;
+          letter-spacing: 3px;
+          margin-bottom: 20px;
+        }
+
+        .dar-hero[dir="rtl"] .dar-hero-eyebrow {
+          letter-spacing: 1px;
+        }
+
+        .dar-hero-eyebrow::before {
+          content: "";
+          width: 30px;
+          height: 1px;
+          background: var(--dar-gold);
+        }
+
+        .dar-hero-title {
+          margin: 0;
+          font-family: 'Playfair Display', serif;
+          font-size: clamp(55px, 6.4vw, 90px);
+          line-height: 1.03;
+          font-weight: 500;
+          letter-spacing: -2px;
+          color: #fff;
+        }
+
+        .dar-hero-title span {
+          display: block;
+          color: var(--dar-gold-light);
+        }
+
+        .dar-hero-title.ar {
+          font-family: 'Alexandria', sans-serif;
+          font-size: clamp(38px, 5.2vw, 68px);
+          line-height: 1.55;
+          letter-spacing: 0;
+          font-weight: 500;
+        }
+
+        .dar-hero-description {
+          margin: 20px 0 35px;
+          max-width: 390px;
+          font-size: 14px;
+          line-height: 2;
+          color: rgba(255,255,255,.78);
+          font-weight: 300;
+        }
+
+        .dar-hero[dir="rtl"] .dar-hero-description {
+          margin-right: 0;
+          margin-left: auto;
+        }
+
+        /* BUTTONS */
+
+        .dar-hero-actions {
           display: flex;
           align-items: center;
           gap: 14px;
-          direction: ltr;
-          opacity: 0;
-          animation: hxFadeIn 1s 1s forwards;
+          flex-wrap: wrap;
         }
 
-        .hx-count {
-          color: #fff;
-          font-family: 'DM Sans', sans-serif;
-          font-size: 11px;
-          letter-spacing: 2px;
-          text-shadow: 0 1px 8px rgba(0,0,0,.3);
-        }
-
-        .hx-segs {
-          display: flex;
-          gap: 5px;
-        }
-
-        .hx-seg {
-          position: relative;
-          width: 26px;
-          height: 16px;
-          padding: 0;
-          border: 0;
-          background: transparent;
-          cursor: pointer;
-          display: flex;
+        .dar-hero-primary {
+          display: inline-flex;
           align-items: center;
+          gap: 16px;
+          padding: 0;
+          color: white;
+          text-decoration: none;
+          font-size: 12px;
+          font-weight: 500;
+          transition: color .3s;
         }
 
-        .hx-seg::before {
-          content: "";
-          position: absolute;
-          left: 0;
-          right: 0;
-          height: 1px;
-          background: rgba(255,255,255,.4);
+        .dar-hero-primary:hover {
+          color: var(--dar-gold-light);
         }
 
-        .hx-seg-fill {
-          position: relative;
-          height: 1px;
-          width: 0;
+        .dar-hero-round {
+          width: 52px;
+          height: 52px;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          background: var(--dar-ivory);
+          color: var(--dar-navy);
+          border-radius: 50%;
+          font-size: 22px;
+          transition: transform .3s, background .3s;
+          flex-shrink: 0;
+        }
+
+        .dar-hero-primary:hover .dar-hero-round {
+          transform: translateX(5px);
           background: var(--dar-gold-light);
         }
 
-        .hx-seg-fill.done { width: 100%; }
+        .dar-hero[dir="rtl"] .dar-hero-primary:hover .dar-hero-round {
+          transform: translateX(-5px);
+        }
 
-        .hx-seg-fill.run {
-          animation: hxProgress ${SLIDE_MS}ms linear forwards;
+        .dar-hero-secondary {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          min-height: 48px;
+          padding: 0 24px;
+          border: 1px solid rgba(255,255,255,.35);
+          color: white;
+          text-decoration: none;
+          font-size: 11px;
+          transition: all .3s;
+        }
+
+        .dar-hero-secondary:hover {
+          background: white;
+          color: var(--dar-navy);
+          border-color: white;
         }
 
         /* FEATURED PROJECT */
 
-        .hx-card {
+        .dar-hero-card {
           position: absolute;
-          bottom: 34px;
-          inset-inline-start: 34px;
-          width: min(310px, calc(100% - 68px));
           z-index: 3;
-          display: block;
-          padding: 22px 24px 18px;
+          bottom: 85px;
+          right: 7%;
+          width: 265px;
+          padding: 23px;
           color: white;
+          background: rgba(12,25,37,.55);
+          border: 1px solid rgba(255,255,255,.2);
+          backdrop-filter: blur(12px);
           text-decoration: none;
-          background: rgba(16,36,61,.76);
-          border: 1px solid rgba(215,188,131,.38);
-          border-radius: 2px;
-          backdrop-filter: blur(14px);
-          -webkit-backdrop-filter: blur(14px);
-          opacity: 0;
-          animation: hxFadeUp .8s 1.1s cubic-bezier(.16,1,.3,1) forwards;
-          transition: background .3s ease, transform .3s ease;
+          transition: background .3s, transform .3s;
+          animation: heroFadeUp 1s .7s both;
         }
 
-        .hx-card:hover {
-          background: rgba(16,36,61,.9);
+        .dar-hero[dir="rtl"] .dar-hero-card {
+          right: auto;
+          left: 7%;
+        }
+
+        .dar-hero-card:hover {
+          background: rgba(12,25,37,.8);
           transform: translateY(-4px);
         }
 
-        .hx-card-tag {
+        .dar-hero-card-tag {
           display: flex;
           align-items: center;
           gap: 9px;
           color: var(--dar-gold-light);
           font-size: 9px;
           letter-spacing: 2px;
-          font-weight: 600;
           margin-bottom: 13px;
         }
 
-        .hx-card-tag i {
+        .dar-hero-card-tag::before {
+          content: "";
           width: 5px;
           height: 5px;
-          background: var(--dar-gold-light);
           border-radius: 50%;
-          animation: hxPulse 2s infinite;
+          background: var(--dar-gold-light);
         }
 
-        .hx-card-title {
+        .dar-hero-card-title {
           font-family: 'Playfair Display', serif;
-          font-size: 32px;
+          font-size: 30px;
           font-weight: 500;
-          line-height: 1.15;
           margin: 0;
         }
 
-        .hx-card-loc {
+        .dar-hero-card-location {
           font-size: 11px;
-          color: rgba(255,255,255,.68);
-          margin: 7px 0 16px;
+          color: rgba(255,255,255,.7);
+          margin: 8px 0 20px;
         }
 
-        .hx-chips {
+        .dar-hero-card-footer {
           display: flex;
-          flex-wrap: wrap;
-          gap: 6px;
-          margin-bottom: 17px;
+          justify-content: space-between;
+          align-items: center;
+          padding-top: 14px;
+          border-top: 1px solid rgba(255,255,255,.2);
+          font-size: 11px;
         }
 
-        .hx-chip {
-          font-size: 10px;
+        .dar-hero-card-footer span:last-child {
           color: var(--dar-gold-light);
-          border: 1px solid rgba(215,188,131,.35);
-          padding: 5px 9px;
-          border-radius: 1px;
+          font-size: 18px;
         }
 
-        .hx-card-cta {
+        /* SLIDER */
+
+        .dar-hero-slider {
+          position: absolute;
+          z-index: 4;
+          bottom: 32px;
+          left: 7%;
           display: flex;
           align-items: center;
-          justify-content: space-between;
-          padding-top: 13px;
-          border-top: 1px solid rgba(255,255,255,.15);
-          color: white;
-          font-size: 11px;
-          font-weight: 500;
-        }
-
-        .hx-card-cta span:last-child {
-          color: var(--dar-gold-light);
-          transition: transform .3s;
-        }
-
-        .hx-card:hover .hx-card-cta span:last-child {
-          transform: translateX(${ar ? "-5px" : "5px"});
-        }
-
-        /* TEXT PANEL */
-
-        .hx-text-panel {
-          width: 44%;
-          position: relative;
-          overflow: hidden;
-          display: flex;
-          flex-direction: column;
-          padding: 110px 54px 70px;
-          background: var(--dar-ivory);
-          animation: hxFadeIn .8s .3s both;
-        }
-
-        .hx-grid {
-          position: absolute;
-          inset: 0;
-          pointer-events: none;
-          opacity: .025;
-          background-image:
-            repeating-linear-gradient(0deg, transparent, transparent 39px, #10243D 40px),
-            repeating-linear-gradient(90deg, transparent, transparent 39px, #10243D 40px);
-        }
-
-        .hx-glow {
-          position: absolute;
-          top: -160px;
-          inset-inline-end: -180px;
-          width: 420px;
-          height: 420px;
-          border-radius: 50%;
-          pointer-events: none;
-          background: radial-gradient(circle, rgba(184,149,82,.12), transparent 70%);
-        }
-
-        .hx-watermark {
-          position: absolute;
-          bottom: -35px;
-          inset-inline-end: -10px;
-          font-family: 'Playfair Display', serif;
-          font-size: clamp(150px, 17vw, 250px);
-          line-height: 1;
-          color: transparent;
-          -webkit-text-stroke: 1px rgba(16,36,61,.055);
-          pointer-events: none;
-          user-select: none;
+          gap: 16px;
           direction: ltr;
         }
 
-        .hx-edge {
-          position: absolute;
-          top: 0;
-          width: 2px;
-          height: 100%;
-          background: linear-gradient(to bottom, var(--dar-gold), transparent 65%);
-        }
-
-        .hx-content {
-          position: relative;
-          z-index: 1;
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-        }
-
-        .hx-a1 { opacity: 0; animation: hxFadeUp .8s .45s forwards; }
-        .hx-a2 { opacity: 0; animation: hxFadeUp .8s .6s forwards; }
-        .hx-a3 { opacity: 0; animation: hxFadeUp .8s .75s forwards; }
-        .hx-a4 { opacity: 0; animation: hxFadeUp .8s .9s forwards; }
-        .hx-a5 { opacity: 0; animation: hxFadeUp .8s 1.05s forwards; }
-        .hx-a6 { opacity: 0; animation: hxFadeIn 1s 1.3s forwards; }
-
-        .hx-eyebrow {
-          display: inline-flex;
-          align-items: center;
-          gap: 10px;
-          color: #96743E;
+        .dar-hero-number {
+          font-family: 'DM Sans', sans-serif;
           font-size: 10px;
-          font-weight: 600;
-          letter-spacing: ${ar ? "1px" : "3px"};
+          letter-spacing: 2px;
+          color: white;
+          white-space: nowrap;
         }
 
-        .hx-eyebrow-dot {
-          width: 5px;
-          height: 5px;
-          border-radius: 50%;
-          background: var(--dar-gold);
-          animation: hxPulse 2s infinite;
+        .dar-hero-segments {
+          display: flex;
+          gap: 5px;
         }
 
-        .hx-headline {
-          color: var(--dar-navy);
-          font-size: clamp(44px, 5vw, 78px);
-          font-weight: 500;
-          line-height: ${ar ? 1.55 : 1.04};
-          letter-spacing: ${ar ? "0" : "-2.5px"};
-          margin: 0;
+        .dar-hero-segment {
+          width: 30px;
+          height: 18px;
+          padding: 0;
+          display: flex;
+          align-items: center;
+          background: transparent;
+          border: 0;
+          cursor: pointer;
         }
 
-        .hx-headline-en {
-          font-family: 'Playfair Display', serif;
-          font-weight: 500;
+        .dar-hero-segment::before {
+          content: "";
+          position: absolute;
+          width: 30px;
+          height: 1px;
+          background: rgba(255,255,255,.35);
         }
 
-        .hx-headline-ar {
-          font-family: 'Alexandria', sans-serif;
-          font-weight: 500;
-        }
-
-        .hx-gold {
-          display: block;
-          padding-bottom: .08em;
-          color: var(--dar-gold);
-        }
-
-        .hx-line {
+        .dar-hero-segment span {
+          position: relative;
           height: 1px;
           width: 0;
-          margin-top: 25px;
-          margin-bottom: 25px;
-          background: var(--dar-gold);
-          animation: hxLineReveal .8s .7s ease forwards;
+          background: var(--dar-gold-light);
         }
 
-        .hx-sub {
-          color: #73777B;
-          font-size: clamp(13px, 1.2vw, 15px);
-          line-height: 2;
-          max-width: 360px;
-          margin-top: 0;
-          margin-bottom: 34px;
-          font-weight: 400;
+        .dar-hero-segment span.done {
+          width: 100%;
         }
 
-        .hx-actions {
+        .dar-hero-segment span.run {
+          animation: heroProgress ${SLIDE_MS}ms linear forwards;
+        }
+
+        .dar-hero-arrows {
           display: flex;
-          gap: 12px;
-          flex-wrap: wrap;
-          margin-bottom: 42px;
-        }
-
-        .hx-btn-primary,
-        .hx-btn-ghost {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          min-height: 50px;
-          padding: 14px 28px;
-          font-size: 11px;
-          font-weight: 600;
-          text-decoration: none;
-          text-align: center;
-          border-radius: 1px;
-          transition: all .3s ease;
-          font-family: inherit;
-        }
-
-        .hx-btn-primary {
-          background: var(--dar-navy);
-          color: white;
-          border: 1px solid var(--dar-navy);
-        }
-
-        .hx-btn-primary:hover {
-          background: var(--dar-gold);
-          border-color: var(--dar-gold);
-          color: var(--dar-navy);
-          transform: translateY(-2px);
-        }
-
-        .hx-btn-ghost {
-          color: var(--dar-navy);
-          border: 1px solid rgba(16,36,61,.2);
-          background: transparent;
-        }
-
-        .hx-btn-ghost:hover {
-          border-color: var(--dar-gold);
-          color: #96743E;
-          transform: translateY(-2px);
-        }
-
-        /* STATS */
-
-        .hx-stats {
-          display: flex;
-          align-items: center;
-          gap: 20px;
-          flex-wrap: wrap;
-        }
-
-        .hx-stat {
-          display: flex;
-          flex-direction: column;
           gap: 8px;
         }
 
-        .hx-stat-num {
-          font-family: 'DM Sans', sans-serif;
-          font-size: clamp(25px, 2.7vw, 34px);
-          font-weight: 500;
-          color: var(--dar-navy);
-          line-height: 1;
-        }
-
-        .hx-stat-lbl {
-          font-size: 10px;
-          color: #85888B;
-          letter-spacing: .2px;
-        }
-
-        .hx-stat-div {
-          width: 1px;
-          height: 34px;
-          background: rgba(16,36,61,.15);
-        }
-
-        /* SCROLL */
-
-        .hx-scroll {
-          position: absolute;
-          bottom: 28px;
-          inset-inline-end: 26px;
-          z-index: 2;
+        .dar-hero-arrow {
+          width: 38px;
+          height: 38px;
           display: flex;
-          flex-direction: column;
           align-items: center;
-          gap: 9px;
+          justify-content: center;
+          color: white;
+          border: 1px solid rgba(255,255,255,.3);
+          background: transparent;
+          border-radius: 50%;
+          font-size: 16px;
+          cursor: pointer;
+          transition: all .3s;
         }
 
-        .hx-scroll-txt {
-          font-size: 8px;
-          letter-spacing: 3px;
-          color: rgba(16,36,61,.42);
-          writing-mode: vertical-rl;
-          font-family: 'DM Sans', sans-serif;
-        }
-
-        .hx-scroll-line {
-          width: 1px;
-          height: 40px;
-          background: linear-gradient(to bottom, var(--dar-gold), transparent);
-          animation: hxScroll 2s ease-in-out infinite;
+        .dar-hero-arrow:hover {
+          background: white;
+          color: var(--dar-navy);
         }
 
         /* TICKER */
 
-        .hx-ticker {
-          position: relative;
-          z-index: 5;
+        .dar-hero-ticker {
           height: 44px;
+          margin-top: 12px;
           background: var(--dar-navy);
-          border-top: 1px solid rgba(184,149,82,.4);
           overflow: hidden;
           display: flex;
           align-items: center;
           direction: ltr;
+          border-top: 1px solid rgba(184,149,82,.3);
         }
 
-        .hx-ticker-track {
+        .dar-hero-ticker-track {
           display: flex;
           width: max-content;
-          animation: hxMarquee 42s linear infinite;
+          animation: heroTicker 42s linear infinite;
         }
 
-        .hx-ticker:hover .hx-ticker-track {
+        .dar-hero-ticker:hover .dar-hero-ticker-track {
           animation-play-state: paused;
         }
 
-        .hx-ticker-group {
+        .dar-hero-ticker-group {
           display: flex;
           flex-shrink: 0;
         }
 
-        .hx-ticker-item {
+        .dar-hero-ticker-item {
           display: inline-flex;
           align-items: center;
+          gap: 22px;
+          padding: 0 22px;
         }
 
-        .hx-ticker-item a {
-          color: #D7BC83;
-          font-family: 'DM Sans', sans-serif;
+        .dar-hero-ticker-item a {
+          color: var(--dar-gold-light);
           font-size: 10px;
           font-weight: 600;
-          letter-spacing: 2.5px;
-          padding: 0 22px;
+          letter-spacing: 2px;
           text-decoration: none;
           white-space: nowrap;
-          transition: color .25s;
+          transition: color .3s;
         }
 
-        .hx-ticker-item a:hover { color: white; }
+        .dar-hero-ticker-item a:hover {
+          color: white;
+        }
 
-        .hx-ticker-item i {
-          font-style: normal;
+        .dar-hero-ticker-item i {
           font-size: 7px;
           color: var(--dar-gold);
-          opacity: .65;
+          font-style: normal;
         }
 
-        /* RESPONSIVE */
-
-        @media (max-width: 1100px) {
-          .hx-text-panel { padding-inline: 36px; }
-          .hx-headline { font-size: clamp(42px, 5.5vw, 68px); }
-          .hx-card { width: min(290px, calc(100% - 48px)); inset-inline-start: 24px; }
-        }
+        /* MOBILE */
 
         @media (max-width: 767px) {
-          .hx-split {
-            flex-direction: column !important;
-            min-height: auto;
+          .dar-hero {
+            height: 92vh;
+            height: 92svh;
+            min-height: 720px;
+            max-height: 900px;
           }
 
-          .hx-img-panel {
-            order: 1 !important;
-            width: 100% !important;
-            height: 58vh;
-            height: 58svh;
-            min-height: 390px;
-            max-height: 620px;
-            flex: none;
+          .dar-hero-overlay {
+            background:
+              linear-gradient(
+                0deg,
+                rgba(8,18,27,.88) 0%,
+                rgba(8,18,27,.55) 50%,
+                rgba(8,18,27,.2) 100%
+              );
           }
 
-          .hx-text-panel {
-            order: 2 !important;
-            width: 100% !important;
-            padding: 48px 24px 56px !important;
-            min-height: 510px;
+          .dar-hero-content {
+            top: 45%;
+            left: 24px;
+            right: 24px;
+            width: auto;
+            transform: translateY(-50%);
           }
 
-          .hx-meta {
-            top: 22px;
-            inset-inline-end: 18px;
+          .dar-hero[dir="rtl"] .dar-hero-content {
+            right: 24px;
+            left: 24px;
           }
 
-          .hx-card {
-            bottom: 18px;
-            inset-inline-start: 18px;
-            width: min(300px, calc(100% - 36px));
-            padding: 17px 19px 15px;
-          }
-
-          .hx-card-title { font-size: 28px; }
-
-          .hx-headline {
-            font-size: clamp(38px, 10vw, 58px) !important;
+          .dar-hero-title {
+            font-size: clamp(48px, 13vw, 72px);
             letter-spacing: -1px;
           }
 
-          .hx-headline-ar {
-            font-size: clamp(34px, 9vw, 48px) !important;
+          .dar-hero-title.ar {
+            font-size: clamp(36px, 10vw, 52px);
             line-height: 1.6;
-            letter-spacing: 0;
           }
 
-          .hx-sub { max-width: 100%; }
+          .dar-hero-description {
+            font-size: 13px;
+            max-width: 100%;
+            margin: 20px 0 26px;
+          }
 
-          .hx-actions {
+          .dar-hero-actions {
+            gap: 12px;
+          }
+
+          .dar-hero-round {
+            width: 46px;
+            height: 46px;
+          }
+
+          .dar-hero-secondary {
+            min-height: 44px;
+            padding: 0 18px;
+          }
+
+          .dar-hero-card {
+            display: none;
+          }
+
+          .dar-hero-slider {
+            left: 24px;
+            bottom: 25px;
             gap: 10px;
-            margin-bottom: 34px;
           }
 
-          .hx-btn-primary,
-          .hx-btn-ghost {
-            flex: 1 1 140px;
-            padding: 14px 16px;
-            min-height: 48px;
+          .dar-hero-arrows {
+            display: none;
           }
 
-          .hx-stats { gap: 13px; }
-          .hx-stat-num { font-size: 25px; }
-          .hx-stat-lbl { font-size: 9px; }
-          .hx-stat-div { height: 28px; }
-          .hx-watermark { font-size: 130px; }
-          .hx-scroll { display: none; }
-          .hx-image-label { bottom: 20px; inset-inline-end: 18px; }
-          .hx-ticker { height: 40px; }
-          .hx-ticker-item a { font-size: 9px; padding: 0 16px; }
+          .dar-hero-segment {
+            width: 22px;
+          }
+
+          .dar-hero-segment::before {
+            width: 22px;
+          }
+
+          .dar-hero-ticker {
+            height: 40px;
+          }
+
+          .dar-hero-ticker-item {
+            padding: 0 15px;
+            gap: 15px;
+          }
+
+          .dar-hero-ticker-item a {
+            font-size: 9px;
+          }
         }
 
         @media (max-width: 380px) {
-          .hx-text-panel { padding-inline: 18px !important; }
-          .hx-headline { font-size: 36px !important; }
-          .hx-headline-ar { font-size: 32px !important; }
-          .hx-stats { gap: 10px; }
-          .hx-stat-div { margin-inline: 2px; }
+          .dar-hero-content {
+            left: 18px;
+            right: 18px;
+          }
+
+          .dar-hero[dir="rtl"] .dar-hero-content {
+            left: 18px;
+            right: 18px;
+          }
+
+          .dar-hero-title.ar {
+            font-size: 33px;
+          }
+
+          .dar-hero-secondary {
+            padding: 0 13px;
+          }
         }
 
         @media (prefers-reduced-motion: reduce) {
-          .hx-hero *,
-          .hx-hero *::before,
-          .hx-hero *::after {
+          .dar-hero *,
+          .dar-hero-ticker *,
+          .dar-hero-ticker *::before {
             animation-duration: .01ms !important;
             animation-iteration-count: 1 !important;
             transition-duration: .01ms !important;
-            scroll-behavior: auto !important;
           }
         }
       `}</style>
 
-      <section className="hx-hero">
-        <div className="hx-split">
+      {/* HERO */}
+      <section className="dar-hero" dir={ar ? "rtl" : "ltr"}>
 
-          {/* IMAGE PANEL */}
-          <div
-            className="hx-img-panel"
-            style={{ order: ar ? 2 : 1 }}
-          >
-            <div className="hx-slides" ref={slidesRef}>
-              {SLIDES.map((src, i) => (
-                <img
-                  key={i}
-                  src={src}
-                  alt=""
-                  decoding="async"
-                  className={`hx-slide ${i === active ? "active" : ""}`}
-                />
-              ))}
-            </div>
+        {/* Background Images */}
+        <div className="dar-hero-slides" ref={slidesRef}>
+          {SLIDES.map((src, i) => (
+            <img
+              key={i}
+              src={src}
+              alt=""
+              className={`dar-hero-slide ${
+                i === active ? "active" : ""
+              }`}
+            />
+          ))}
+        </div>
 
-            <div className="hx-shade" />
+        <div className="dar-hero-overlay" />
 
-            <div className="hx-meta">
-              <span className="hx-count">
-                0{active + 1} / 0{SLIDES.length}
-              </span>
+        {/* Main Content */}
+        <div className="dar-hero-content">
 
-              <div className="hx-segs">
-                {SLIDES.map((_, i) => (
-                  <button
-                    key={i}
-                    className="hx-seg"
-                    onClick={() => goTo(i)}
-                    aria-label={`Slide ${i + 1}`}
-                    aria-current={i === active ? "true" : undefined}
-                  >
-                    <span
-                      className={`hx-seg-fill ${
-                        i === active ? "run" : i < active ? "done" : ""
-                      }`}
-                    />
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Featured Project */}
-            <Link to="/projects/palm2" className="hx-card">
-              <div className="hx-card-tag">
-                <i />
-                {copy.cardTag}
-              </div>
-
-              <h3 className="hx-card-title">{copy.cardTitle}</h3>
-              <p className="hx-card-loc">{copy.cardLoc}</p>
-
-              <div className="hx-chips">
-                <span className="hx-chip">{copy.chip1}</span>
-                <span className="hx-chip">{copy.chip2}</span>
-              </div>
-
-              <div className="hx-card-cta">
-                <span>{copy.cardCta}</span>
-                <span>{copy.arrow}</span>
-              </div>
-            </Link>
-
-            <div className="hx-image-label">
-              DAR DEVELOPMENTS — TANTA
-            </div>
+          <div className="dar-hero-eyebrow">
+            {copy.eyebrow}
           </div>
 
-          {/* TEXT PANEL */}
-          <div
-            className="hx-text-panel"
-            style={{
-              order: ar ? 1 : 2,
-              textAlign: ar ? "right" : "left",
-            }}
-          >
-            <div className="hx-grid" />
-            <div className="hx-glow" />
-            <div className="hx-watermark">DAR</div>
+          <h1 className={`dar-hero-title ${ar ? "ar" : ""}`}>
+            {copy.line1}
+            <span>{copy.line2}</span>
+          </h1>
 
-            <div
-              className="hx-edge"
-              style={{ [ar ? "right" : "left"]: 0 }}
-            />
+          <p className="dar-hero-description">
+            {copy.sub}
+          </p>
 
-            <div className="hx-content">
+          <div className="dar-hero-actions">
+            <a href="#projects" className="dar-hero-primary">
+              <span className="dar-hero-round">
+                {ar ? "←" : "→"}
+              </span>
+              {copy.btn1}
+            </a>
 
-              {/* Eyebrow */}
-              <div className="hx-a1" style={{ marginBottom: 28 }}>
-                <span className="hx-eyebrow">
-                  <span className="hx-eyebrow-dot" />
-                  {copy.eyebrow}
-                </span>
-              </div>
-
-              {/* Headline */}
-              <h1
-                className={`hx-headline hx-a2 ${
-                  ar ? "hx-headline-ar" : "hx-headline-en"
-                }`}
-              >
-                {copy.line1}
-                <span className="hx-gold">{copy.line2}</span>
-              </h1>
-
-              <div
-                className="hx-line"
-                style={{
-                  marginLeft: ar ? "auto" : 0,
-                  marginRight: ar ? 0 : "auto",
-                }}
-              />
-
-              {/* Description */}
-              <p
-                className="hx-sub hx-a3"
-                style={{
-                  marginLeft: ar ? "auto" : 0,
-                  marginRight: ar ? 0 : "auto",
-                }}
-              >
-                {copy.sub}
-              </p>
-
-              {/* Buttons */}
-              <div
-                className="hx-actions hx-a4"
-                style={{ justifyContent: ar ? "flex-start" : "flex-start" }}
-              >
-                <a href="#projects" className="hx-btn-primary">
-                  {copy.btn1}
-                </a>
-
-                <a href="#contact" className="hx-btn-ghost">
-                  {copy.btn2}
-                </a>
-              </div>
-
-              {/* Stats */}
-              <div className="hx-stats hx-a5">
-                {statNumbers.map((s, i) => (
-                  <div
-                    key={i}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 20,
-                    }}
-                  >
-                    <div className="hx-stat">
-                      <span className="hx-stat-num">
-                        <Counter
-                          to={s.to}
-                          prefix={s.prefix}
-                          suffix={s.suffix}
-                        />
-                      </span>
-
-                      <span className="hx-stat-lbl">
-                        {copy.stats[i]}
-                      </span>
-                    </div>
-
-                    {i < statNumbers.length - 1 && (
-                      <div className="hx-stat-div" />
-                    )}
-                  </div>
-                ))}
-              </div>
-
-              {/* Scroll Indicator */}
-              <div className="hx-scroll hx-a6">
-                <span className="hx-scroll-txt">SCROLL</span>
-                <div className="hx-scroll-line" />
-              </div>
-            </div>
+            <a href="#contact" className="dar-hero-secondary">
+              {copy.btn2}
+            </a>
           </div>
         </div>
 
-        {/* PROJECT TICKER */}
-        <div className="hx-ticker">
-          <div className="hx-ticker-track">
-            {[0, 1].map((g) => (
-              <div
-                className="hx-ticker-group"
-                key={g}
-                aria-hidden={g === 1}
+        {/* Slider Controls */}
+        <div className="dar-hero-slider">
+
+          <span className="dar-hero-number">
+            0{active + 1} / 0{SLIDES.length}
+          </span>
+
+          <div className="dar-hero-segments">
+            {SLIDES.map((_, i) => (
+              <button
+                key={i}
+                className="dar-hero-segment"
+                onClick={() => goTo(i)}
+                aria-label={`Slide ${i + 1}`}
               >
-                {[...TICKER, ...TICKER, ...TICKER].map((p, i) => (
-                  <span className="hx-ticker-item" key={i}>
-                    <Link
-                      to={p.to}
-                      tabIndex={g === 1 ? -1 : 0}
-                    >
-                      {p.label}
-                    </Link>
-                    <i>◆</i>
-                  </span>
-                ))}
-              </div>
+                <span
+                  className={
+                    i === active
+                      ? "run"
+                      : i < active
+                      ? "done"
+                      : ""
+                  }
+                />
+              </button>
             ))}
+          </div>
+
+          <div className="dar-hero-arrows">
+            <button
+              className="dar-hero-arrow"
+              onClick={() =>
+                goTo((active - 1 + SLIDES.length) % SLIDES.length)
+              }
+              aria-label="Previous slide"
+            >
+              ←
+            </button>
+
+            <button
+              className="dar-hero-arrow"
+              onClick={() =>
+                goTo((active + 1) % SLIDES.length)
+              }
+              aria-label="Next slide"
+            >
+              →
+            </button>
           </div>
         </div>
       </section>
+
+      {/* PROJECT TICKER */}
+      <div className="dar-hero-ticker">
+        <div className="dar-hero-ticker-track">
+          {[0, 1].map((g) => (
+            <div
+              className="dar-hero-ticker-group"
+              key={g}
+              aria-hidden={g === 1}
+            >
+              {[...TICKER, ...TICKER, ...TICKER].map((p, i) => (
+                <span className="dar-hero-ticker-item" key={i}>
+                  <Link
+                    to={p.to}
+                    tabIndex={g === 1 ? -1 : 0}
+                  >
+                    {p.label}
+                  </Link>
+                  <i>◆</i>
+                </span>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

@@ -26,6 +26,64 @@ const translations = {
             en: "We offer integrated real estate solutions combining investment and residential options with prime locations and flexible payment plans for all clients." },
   link:   { ar: "اعرف المزيد عن دار", en: "Learn More About DAR" },
 },
+
+faq: {
+  subtitle: {
+    ar: "FAQ",
+    en: "FAQ",
+  },
+
+  title: {
+    ar: "الأسئلة الشائعة",
+    en: "Frequently Asked Questions",
+  },
+
+  description: {
+    ar: "احصل على إجابات للاستفسارات والأسئلة الشائعة",
+    en: "Find answers to our most frequently asked questions",
+  },
+
+  q1: {
+    ar: "هل توجد فوائد على الأقساط؟",
+    en: "?Is there any interest on installments",
+  },
+
+  a1: {
+    ar: "لا، تقدم الشركة أنظمة تقسيط بدون فوائد، مما يتيح لك سداد المبالغ على مدى فترة طويلة دون تحمل أي تكاليف إضافية.",
+    en: "No, we offer interest-free installment plans, allowing you to pay over an extended period without any additional costs.",
+  },
+
+  q2: {
+    ar: "ما المقصود بنسبة التحميل؟",
+    en: "?What does the loading percentage mean",
+  },
+
+  a2: {
+    ar: "نسبة التحميل هي الفرق بين المساحة البيعية أو المساحة الإجمالية للشقة، ومساحة الشقة الصافية. والمساحة الصافية هي مساحة الشقة الفعلية دون حساب المساحات المشتركة في العقار، مثل السلم والمنور والمصاعد.",
+    en: "The loading percentage is the difference between the gross saleable area of an apartment and its net area. The net area refers to the actual usable apartment space, excluding shared areas such as staircases, shafts, and elevators.",
+  },
+
+  q3: {
+    ar: "ما هي طرق الدفع المتاحة؟",
+    en: "?What payment methods are available",
+  },
+
+  a3: {
+    ar: "يمكنك الدفع نقدًا، أو عبر أقساط شهرية، أو عن طريق تحويل بنكي.",
+    en: "You can pay in cash, through monthly installments, or via bank transfer.",
+  },
+
+  footerText: {
+    ar: "لم تجد إجابة لسؤالك؟",
+    en: "?Didn't find the answer to your question",
+  },
+
+  contactBtn: {
+    ar: "اتصل بنا لمزيد من المعلومات",
+    en: "Contact us for more information",
+  },
+},
+
 projects: {
   currentTitle:   { ar: "تعرف على مشاريعنا الحالية",        en: "Our Current Projects" },
   completedTitle: { ar: "مشاريع تم الانتهاء منها", en: "Completed Projects" },
