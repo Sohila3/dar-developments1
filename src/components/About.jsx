@@ -9,20 +9,25 @@ function About() {
   const ar = lang === "ar";
 
   const sectionRef = useRef(null);
+  const imageRef = useRef(null);
 
-  // Reveal animation
+  // Reveal animation on scroll
   useEffect(() => {
     const section = sectionRef.current;
     if (!section) return;
 
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          section.classList.add("is-visible");
-          observer.unobserve(section);
-        }
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            section.classList.add("is-visible");
+            observer.unobserve(section);
+          }
+        });
       },
-      { threshold: 0.15 }
+      {
+        threshold: 0.15,
+      }
     );
 
     observer.observe(section);
@@ -35,31 +40,19 @@ function About() {
     const section = sectionRef.current;
     if (!section) return;
 
-    const reducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    );
-
     let ticking = false;
 
     const updateParallax = () => {
-      if (reducedMotion.matches) {
-        section.style.setProperty("--about-parallax", "0px");
-        ticking = false;
-        return;
-      }
-
       const rect = section.getBoundingClientRect();
-      const progress =
-        (window.innerHeight - rect.top) /
-        (window.innerHeight + rect.height);
+      const windowHeight = window.innerHeight;
 
-      const movement = (progress - 0.5) * 18;
+      if (rect.bottom > 0 && rect.top < windowHeight) {
+        const progress =
+          (windowHeight - rect.top) / (windowHeight + rect.height);
 
-      if (rect.bottom > 0 && rect.top < window.innerHeight) {
-        section.style.setProperty(
-          "--about-parallax",
-          `${movement}px`
-        );
+        const movement = (progress - 0.5) * 24;
+
+        section.style.setProperty("--about-parallax", `${movement}px`);
       }
 
       ticking = false;
@@ -90,96 +83,65 @@ function About() {
     <section
       id="about"
       ref={sectionRef}
-      className={`dar-about ${ar ? "dar-about-ar" : "dar-about-en"}`}
+      className="dar-about"
       style={{
         direction: ar ? "rtl" : "ltr",
         fontFamily: ar
-          ? "'Alexandria', sans-serif"
-          : "'DM Sans', sans-serif",
+          ? "'Noto Naskh Arabic', serif"
+          : "'Montserrat', sans-serif",
       }}
     >
       <style>{`
-        /* =====================================
-           DAR ABOUT - LUXURY EDITORIAL
-        ===================================== */
-
         .dar-about {
           --about-parallax: 0px;
 
-          position: relative;
           width: 100%;
-          padding: clamp(85px, 10vw, 145px) 24px;
+          padding: 110px 24px;
           background: linear-gradient(
             180deg,
-            #F8F6F1 0%,
-            #F8F6F1 65%,
-            #F2EEE6 100%
+            #F4F7FA 0%,
+            #FFFFFF 100%
           );
           overflow: hidden;
+          position: relative;
           isolation: isolate;
         }
 
-        .dar-about *,
-        .dar-about *::before,
-        .dar-about *::after {
-          box-sizing: border-box;
-        }
-
-        /* =====================================
-           BACKGROUND DECORATION
-        ===================================== */
+        /* =========================
+           BACKGROUND DETAILS
+        ========================= */
 
         .dar-about::before {
           content: "";
           position: absolute;
-          width: 520px;
-          height: 520px;
+          width: 420px;
+          height: 420px;
           border-radius: 50%;
           background: radial-gradient(
             circle,
-            rgba(184,149,82,.09) 0%,
-            rgba(184,149,82,.035) 35%,
-            transparent 72%
+            rgba(201,168,76,.07) 0%,
+            rgba(201,168,76,0) 70%
           );
-          top: -240px;
-          ${ar ? "left: -200px;" : "right: -200px;"}
+          top: -180px;
+          ${ar ? "left: -160px;" : "right: -160px;"}
           pointer-events: none;
           z-index: -1;
-        }
-
-        .dar-about::after {
-          content: "DAR";
-          position: absolute;
-          bottom: -100px;
-          ${ar ? "left: -35px;" : "right: -35px;"}
-          font-family: "Playfair Display", serif;
-          font-size: clamp(180px, 28vw, 380px);
-          font-weight: 700;
-          letter-spacing: -20px;
-          line-height: 1;
-          color: rgba(16,36,61,.025);
-          pointer-events: none;
-          z-index: -1;
-          user-select: none;
         }
 
         .dar-about-container {
-          max-width: 1280px;
-          margin: 0 auto;
+          max-width: 1250px;
+          margin: auto;
           display: flex;
           align-items: center;
-          gap: clamp(45px, 8vw, 115px);
-          position: relative;
-          z-index: 1;
+          gap: clamp(40px, 7vw, 100px);
         }
 
-        /* =====================================
-           CONTENT
-        ===================================== */
+        /* =========================
+           TEXT CONTENT
+        ========================= */
 
         .dar-about-content {
-          flex: 1 1 480px;
-          min-width: 0;
+          flex: 1 1 450px;
           display: flex;
           flex-direction: column;
           justify-content: center;
@@ -188,27 +150,27 @@ function About() {
         .dar-about-label {
           display: inline-flex;
           align-items: center;
-          gap: 12px;
-          margin-bottom: 28px;
+          gap: 10px;
+          margin-bottom: 26px;
           font-size: 11px;
           font-weight: 700;
-          letter-spacing: 3px;
-          color: #8D6B34;
+          letter-spacing: 2.5px;
+          color: #9A7535;
           text-transform: uppercase;
 
           opacity: 0;
-          transform: translateY(20px);
+          transform: translateY(22px);
           transition:
             opacity .8s ease,
             transform .8s cubic-bezier(.2,.8,.2,1);
-          transition-delay: .1s;
+          transition-delay: .15s;
         }
 
         .dar-about-dot {
-          width: 7px;
-          height: 7px;
+          width: 6px;
+          height: 6px;
+          background: #C9A84C;
           border-radius: 50%;
-          background: #B89552;
           flex-shrink: 0;
           position: relative;
         }
@@ -217,12 +179,12 @@ function About() {
           content: "";
           position: absolute;
           inset: -5px;
-          border: 1px solid rgba(184,149,82,.5);
+          border: 1px solid rgba(201,168,76,.5);
           border-radius: 50%;
-          animation: darAboutPulse 2.5s ease-in-out infinite;
+          animation: darDotPulse 2.5s ease-in-out infinite;
         }
 
-        @keyframes darAboutPulse {
+        @keyframes darDotPulse {
           0%, 100% {
             transform: scale(.8);
             opacity: .35;
@@ -233,146 +195,131 @@ function About() {
           }
         }
 
-        /* =====================================
-           HEADING
-        ===================================== */
-
         .dar-about-heading {
-          font-family: inherit;
-          font-size: clamp(36px, 4.1vw, 60px);
-          font-weight: 700;
-          line-height: 1.35;
-          letter-spacing: -.8px;
+          font-size: clamp(34px, 4.2vw, 58px);
+          font-weight: 800;
+          line-height: 1.3;
           color: #10243D;
-          margin: 0 0 24px;
+          margin: 0 0 18px;
+          letter-spacing: -1px;
 
           opacity: 0;
-          transform: translateY(25px);
+          transform: translateY(28px);
           transition:
             opacity .9s ease,
             transform .9s cubic-bezier(.2,.8,.2,1);
-          transition-delay: .25s;
+          transition-delay: .3s;
         }
 
         .dar-about-heading span {
-          color: #B89552;
+          color: #B8953F;
           display: inline-block;
           position: relative;
-          margin-inline-start: 8px;
         }
 
         .dar-about-heading span::after {
           content: "";
           position: absolute;
-          bottom: -6px;
+          bottom: -5px;
           ${ar ? "right: 0;" : "left: 0;"}
           width: 0;
           height: 2px;
           background: linear-gradient(
             90deg,
-            #B89552,
-            #D7BC83,
+            #C9A84C,
+            #E8C96A,
             transparent
           );
           transition: width 1s cubic-bezier(.2,.8,.2,1);
-          transition-delay: 1s;
+          transition-delay: 1.1s;
         }
 
-        /* =====================================
-           GOLD DIVIDER
-        ===================================== */
-
         .dar-about-line {
-          width: 65px;
+          width: 50px;
           height: 2px;
           background: linear-gradient(
             90deg,
-            #B89552,
-            #D7BC83
+            #C9A84C,
+            #E8C96A
           );
-          margin-bottom: 30px;
+          margin-bottom: 28px;
           position: relative;
           overflow: hidden;
 
           transform: scaleX(0);
           transform-origin: ${ar ? "right" : "left"};
           transition: transform .8s cubic-bezier(.2,.8,.2,1);
-          transition-delay: .45s;
+          transition-delay: .55s;
         }
 
         .dar-about-line::after {
           content: "";
           position: absolute;
           inset: 0;
-          background: #F8F6F1;
+          background: #fff;
           transform: translateX(0);
           transition: transform .8s ease;
-          transition-delay: .6s;
+          transition-delay: .7s;
         }
 
-        /* =====================================
-           PARAGRAPHS
-        ===================================== */
-
         .dar-about-paragraph {
-          color: #777B80;
-          font-size: clamp(14px, 1.15vw, 16px);
-          font-weight: 400;
-          line-height: 2.15;
+          color: #667487;
+          font-size: clamp(14px, 1.3vw, 16px);
+          line-height: 2.1;
           margin: 0 0 18px;
-          max-width: 540px;
+          max-width: 520px;
 
           opacity: 0;
-          transform: translateY(22px);
+          transform: translateY(24px);
           transition:
             opacity .8s ease,
             transform .8s cubic-bezier(.2,.8,.2,1);
         }
 
         .dar-about-paragraph:nth-of-type(1) {
-          transition-delay: .6s;
+          transition-delay: .65s;
         }
 
         .dar-about-paragraph:nth-of-type(2) {
-          transition-delay: .75s;
+          transition-delay: .8s;
         }
 
-        /* =====================================
+        /* =========================
            READ MORE
-        ===================================== */
+        ========================= */
 
         .dar-about-link-wrap {
-          margin-top: 24px;
+          margin-top: 20px;
 
           opacity: 0;
-          transform: translateY(18px);
+          transform: translateY(20px);
           transition:
             opacity .8s ease,
             transform .8s cubic-bezier(.2,.8,.2,1);
-          transition-delay: .9s;
+          transition-delay: .95s;
         }
 
         .dar-about-link {
           display: inline-flex;
           align-items: center;
-          gap: 13px;
+          gap: 12px;
           color: #10243D;
           font-size: 13px;
           font-weight: 700;
           text-decoration: none;
-          padding-bottom: 10px;
-          border-bottom: 1px solid rgba(184,149,82,.6);
-          position: relative;
           transition:
             color .3s ease,
             gap .3s ease;
+          padding-bottom: 8px;
+          border-bottom: 1px solid #C9A84C;
+          position: relative;
         }
 
         .dar-about-link::after {
           content: "";
           position: absolute;
           bottom: -1px;
-          ${ar ? "right: 0;" : "left: 0;"}
+          left: 0;
           width: 0;
           height: 1px;
           background: #10243D;
@@ -380,15 +327,14 @@ function About() {
         }
 
         .dar-about-link-arrow {
-          color: #B89552;
-          font-size: 20px;
-          line-height: 1;
+          color: #B8953F;
+          font-size: 19px;
           transition: transform .3s ease;
         }
 
         .dar-about-link:hover {
-          color: #B89552;
-          gap: 19px;
+          color: #B8953F;
+          gap: 18px;
         }
 
         .dar-about-link:hover::after {
@@ -399,56 +345,44 @@ function About() {
           transform: translateX(${ar ? "-5px" : "5px"});
         }
 
-        /* =====================================
-           IMAGE
-        ===================================== */
+        /* =========================
+           IMAGE COLUMN
+        ========================= */
 
         .dar-about-image-column {
-          flex: 1.05 1 540px;
+          flex: 1.1 1 500px;
           min-width: 0;
           position: relative;
-          padding: 0 18px 18px 0;
-        }
-
-        .dar-about-en .dar-about-image-column {
-          padding: 0 18px 18px 0;
-        }
-
-        .dar-about-ar .dar-about-image-column {
-          padding: 0 0 18px 18px;
+          padding: 0 15px 15px 0;
         }
 
         .dar-about-image-frame {
           position: relative;
           overflow: hidden;
           aspect-ratio: 4 / 4.5;
-          background: #E9E4DA;
-          border: 1px solid rgba(184,149,82,.25);
+          background: #E8EDF3;
+          border: 1px solid rgba(201,168,76,.25);
 
           clip-path: inset(100% 0 0 0);
           transition: clip-path 1.2s cubic-bezier(.77,0,.175,1);
-          transition-delay: .1s;
+          transition-delay: .15s;
         }
 
         .dar-about-image-frame img {
           width: 100%;
-          height: 110%;
+          height: 108%;
           object-fit: cover;
-          object-position: center;
           display: block;
 
           transform:
-            scale(1.12)
+            scale(1.13)
             translateY(var(--about-parallax, 0px));
 
           transition:
-            transform 1.5s cubic-bezier(.2,.8,.2,1),
-            filter .8s ease;
-          filter: saturate(.88);
+            transform 1.5s cubic-bezier(.2,.8,.2,1);
         }
 
         .dar-about-image-frame:hover img {
-          filter: saturate(1);
           transform:
             scale(1.055)
             translateY(var(--about-parallax, 0px));
@@ -460,42 +394,37 @@ function About() {
           inset: 0;
           background: linear-gradient(
             180deg,
-            transparent 45%,
-            rgba(16,36,61,.04) 65%,
-            rgba(16,36,61,.35) 100%
+            transparent 55%,
+            rgba(11,26,46,.22) 100%
           );
           pointer-events: none;
           opacity: 0;
           transition: opacity 1s ease;
-          transition-delay: .7s;
+          transition-delay: .8s;
         }
-
-        /* FRAME */
 
         .dar-about-image-border {
           position: absolute;
-          top: 18px;
-          ${ar ? "left: 0;" : "right: 0;"}
+          top: 15px;
+          right: 0;
           width: 100%;
           height: 100%;
-          border: 1px solid rgba(184,149,82,.55);
+          border: 1px solid rgba(201,168,76,.55);
           z-index: 0;
           pointer-events: none;
 
           opacity: 0;
-          transform: translate(${ar ? "12px" : "-12px"}, 12px);
+          transform: translate(-12px, 12px);
           transition:
             opacity 1s ease,
             transform 1s cubic-bezier(.2,.8,.2,1);
-          transition-delay: .6s;
+          transition-delay: .65s;
         }
-
-        /* IMAGE CAPTION */
 
         .dar-about-image-caption {
           position: absolute;
-          bottom: 28px;
-          ${ar ? "right: 28px;" : "left: 28px;"}
+          bottom: 30px;
+          left: 30px;
           z-index: 2;
           color: #fff;
           font-size: 10px;
@@ -507,35 +436,33 @@ function About() {
           transition:
             opacity .7s ease,
             transform .7s cubic-bezier(.2,.8,.2,1);
-          transition-delay: .9s;
+          transition-delay: 1s;
         }
 
         .dar-about-image-caption span {
-          color: #D7BC83;
+          color: #E8C96A;
         }
-
-        /* IMAGE NUMBER */
 
         .dar-about-number {
           position: absolute;
           top: 24px;
           ${ar ? "right: 0;" : "left: 0;"}
-          font-size: 10px;
+          font-size: 12px;
           letter-spacing: 3px;
-          color: #8D6B34;
+          color: #9A7535;
           font-weight: 700;
 
           opacity: 0;
-          transform: translateY(12px);
+          transform: translateY(15px);
           transition:
             opacity .7s ease,
             transform .7s cubic-bezier(.2,.8,.2,1);
-          transition-delay: .4s;
+          transition-delay: .45s;
         }
 
-        /* =====================================
-           REVEAL STATE
-        ===================================== */
+        /* =========================
+           VISIBLE STATE
+        ========================= */
 
         .dar-about.is-visible .dar-about-label,
         .dar-about.is-visible .dar-about-heading,
@@ -556,11 +483,11 @@ function About() {
         }
 
         .dar-about.is-visible .dar-about-line::after {
-          transform: translateX(${ar ? "100%" : "-100%"});
+          transform: translateX(${ar ? "-100%" : "100%"});
         }
 
         .dar-about.is-visible .dar-about-image-frame {
-          clip-path: inset(0);
+          clip-path: inset(0 0 0 0);
         }
 
         .dar-about.is-visible .dar-about-image-frame img {
@@ -578,37 +505,41 @@ function About() {
           transform: translate(0, 0);
         }
 
-        /* =====================================
+        /* =========================
            TABLET
-        ===================================== */
+        ========================= */
 
-        @media (max-width: 1000px) {
+        @media (max-width: 900px) {
+          .dar-about {
+            padding: 80px 24px;
+          }
+
           .dar-about-container {
-            gap: 55px;
+            gap: 45px;
           }
 
           .dar-about-heading {
-            font-size: clamp(34px, 5vw, 48px);
+            font-size: clamp(32px, 5vw, 46px);
           }
 
           .dar-about-image-caption {
+            left: 20px;
             bottom: 22px;
-            ${ar ? "right: 20px;" : "left: 20px;"}
           }
         }
 
-        /* =====================================
+        /* =========================
            MOBILE
-        ===================================== */
+        ========================= */
 
         @media (max-width: 767px) {
           .dar-about {
-            padding: 75px 22px;
+            padding: 70px 22px;
           }
 
           .dar-about-container {
             flex-direction: column;
-            gap: 48px;
+            gap: 50px;
           }
 
           .dar-about-content {
@@ -616,25 +547,23 @@ function About() {
             width: 100%;
           }
 
-          .dar-about-heading {
-            font-size: clamp(34px, 8.5vw, 48px);
-            line-height: 1.45;
-          }
-
-          .dar-about-paragraph {
-            font-size: 14px;
-            line-height: 2;
-          }
-
           .dar-about-image-column {
             flex: unset;
             width: 100%;
-            max-width: 540px;
+            max-width: 520px;
             margin: auto;
           }
 
           .dar-about-image-frame {
-            aspect-ratio: 4 / 4.35;
+            aspect-ratio: 4 / 4.3;
+          }
+
+          .dar-about-heading {
+            font-size: clamp(34px, 9vw, 48px);
+          }
+
+          .dar-about-paragraph {
+            font-size: 14px;
           }
 
           .dar-about-number {
@@ -644,7 +573,6 @@ function About() {
           .dar-about-image-caption {
             font-size: 9px;
             letter-spacing: 2px;
-            bottom: 20px;
           }
 
           .dar-about-image-frame:hover img {
@@ -660,7 +588,7 @@ function About() {
           }
 
           .dar-about-container {
-            gap: 38px;
+            gap: 40px;
           }
 
           .dar-about-heading {
@@ -668,14 +596,14 @@ function About() {
           }
 
           .dar-about-image-caption {
-            bottom: 16px;
-            ${ar ? "right: 15px;" : "left: 15px;"}
+            left: 15px;
+            bottom: 18px;
           }
         }
 
-        /* =====================================
+        /* =========================
            REDUCED MOTION
-        ===================================== */
+        ========================= */
 
         @media (prefers-reduced-motion: reduce) {
           .dar-about *,
@@ -774,6 +702,7 @@ function About() {
 
         {/* IMAGE CONTENT */}
         <div
+          ref={imageRef}
           className="dar-about-image-column"
           style={{
             order: ar ? 2 : 1,
@@ -793,6 +722,7 @@ function About() {
               }
             />
 
+            {/* IMAGE CAPTION */}
             <div className="dar-about-image-caption">
               DAR <span>—</span> DEVELOPMENTS
             </div>

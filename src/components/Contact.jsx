@@ -6,10 +6,10 @@ function Contact() {
   const { lang, t } = useLanguage();
   const ar = lang === "ar";
 
-  const [showForm, setShowForm] = useState(false);
   const [name, setName] = useState("");
+  const [mobile, setMobile] = useState("");
   const [project, setProject] = useState("");
-  const [nameError, setNameError] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const phone = "201039207908";
 
@@ -26,7 +26,7 @@ function Contact() {
       href: "https://www.facebook.com/share/1XgDRDMitV/",
       icon: (
         <svg viewBox="0 0 24 24" fill="currentColor">
-          <path d="M22 12a10 10 0 10-11.56 9.87v-6.99H7.9V12h2.54V9.8c0-2.5 1.49-3.88 3.77-3.88 1.09 0 2.23.2 2.23.2v2.45h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.78l-.44 2.88h-2.34v6.99A10 10 0 0022 12z"/>
+          <path d="M22 12a10 10 0 10-11.56 9.87v-6.99H7.9V12h2.54V9.8c0-2.5 1.49-3.88 3.77-3.88 1.09 0 2.23.2 2.23.2v2.45h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.78l-.44 2.88h-2.34v6.99A10 10 0 0022 12z" />
         </svg>
       ),
     },
@@ -35,9 +35,9 @@ function Contact() {
       href: "https://www.instagram.com/dar.developments?igsh=N202dXdhaWEyaW85",
       icon: (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7">
-          <rect x="3" y="3" width="18" height="18" rx="5"/>
-          <circle cx="12" cy="12" r="4"/>
-          <circle cx="17.5" cy="6.5" r=".8" fill="currentColor"/>
+          <rect x="3" y="3" width="18" height="18" rx="5" />
+          <circle cx="12" cy="12" r="4" />
+          <circle cx="17.5" cy="6.5" r=".8" fill="currentColor" />
         </svg>
       ),
     },
@@ -46,32 +46,50 @@ function Contact() {
       href: `https://wa.me/${phone}`,
       icon: (
         <svg viewBox="0 0 24 24" fill="currentColor">
-          <path d="M20.5 3.5A11.8 11.8 0 0012.1 0C5.6 0 .3 5.3.3 11.8c0 2.1.5 4.1 1.6 5.9L.1 24l6.3-1.7a11.9 11.9 0 005.7 1.5c6.5 0 11.9-5.3 11.9-11.9a11.8 11.8 0 00-3.5-8.4zM12.1 21.8h-.1a9.9 9.9 0 01-5-1.4l-.4-.2-3.7 1 1-3.7-.3-.4a9.8 9.8 0 01-1.5-5.3c0-5.4 4.4-9.9 9.9-9.9a9.8 9.8 0 017 2.9 9.8 9.8 0 012.9 7c0 5.5-4.4 9.9-9.8 9.9zm5.4-7.4c-.3-.2-1.8-.9-2.1-1-.3-.1-.5-.1-.7.2-.2.3-1 1-1.2 1.2-.2.2-.4.2-.7.1-.3-.1-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3-.1-.5.1-.6.1-.2.3-.4.4-.6.2-.2.2-.3.3-.5.1-.2.1-.4 0-.5-.1-.2-.7-1.6-.9-2.2-.3-.6-.5-.5-.7-.5-.2 0-.4 0-.6 0-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5 0 1.5 1.1 2.9 1.2 3.1.2.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.8-.7 2-1.4.3-.7.3-1.3.2-1.4-.1-.2-.3-.2-.6-.4z"/>
+          <path d="M20.5 3.5A11.8 11.8 0 0012.1 0C5.6 0 .3 5.3.3 11.8c0 2.1.5 4.1 1.6 5.9L.1 24l6.3-1.7a11.9 11.9 0 005.7 1.5c6.5 0 11.9-5.3 11.9-11.9a11.8 11.8 0 00-3.5-8.4zM12.1 21.8h-.1a9.9 9.9 0 01-5-1.4l-.4-.2-3.7 1 1-3.7-.3-.4a9.8 9.8 0 01-1.5-5.3c0-5.4 4.4-9.9 9.9-9.9a9.8 9.8 0 017 2.9 9.8 9.8 0 012.9 7c0 5.5-4.4 9.9-9.8 9.9z" />
         </svg>
       ),
     },
   ];
 
-  const handleWhatsApp = () => {
-    if (!name.trim()) {
-      setNameError(true);
-      return;
+  const handleWhatsApp = (e) => {
+    e.preventDefault();
+
+    const newErrors = {};
+
+    if (!name.trim()) newErrors.name = true;
+
+    if (!mobile.trim()) {
+      newErrors.mobile = true;
+    } else if (!/^[0-9+\s()-]{8,20}$/.test(mobile.trim())) {
+      newErrors.mobile = true;
     }
 
-    const message =
-      `${t("contact", "whatsappMsg")} ${name.trim()} ` +
-      `${t("contact", "whatsappMsg2")} ${project || (ar ? "لم يتم تحديد المشروع" : "No project selected")}`;
+    if (!project) newErrors.project = true;
+
+    setErrors(newErrors);
+
+    if (Object.keys(newErrors).length > 0) return;
+
+    const message = ar
+      ? `مرحبًا، أود الاستفسار عن أحد مشاريع دار.
+
+الاسم: ${name.trim()}
+رقم الهاتف: ${mobile.trim()}
+المشروع: ${project}`
+      : `Hello DAR Developments,
+
+I would like to inquire about one of your projects.
+
+Name: ${name.trim()}
+Phone: ${mobile.trim()}
+Project: ${project}`;
 
     window.open(
       `https://wa.me/${phone}?text=${encodeURIComponent(message)}`,
       "_blank",
       "noopener,noreferrer"
     );
-  };
-
-  const closeForm = () => {
-    setShowForm(false);
-    setNameError(false);
   };
 
   return (
@@ -82,6 +100,7 @@ function Contact() {
         dir={ar ? "rtl" : "ltr"}
       >
         <style>{`
+
           .dar-contact {
             --contact-navy: #10243D;
             --contact-dark: #081321;
@@ -94,8 +113,16 @@ function Contact() {
             overflow: hidden;
             padding: 120px 24px;
             background:
-              radial-gradient(ellipse at 10% 15%, rgba(184,149,82,.06), transparent 40%),
-              linear-gradient(180deg, #FFFFFF 0%, var(--contact-ivory) 100%);
+              radial-gradient(
+                ellipse at 10% 15%,
+                rgba(184,149,82,.06),
+                transparent 40%
+              ),
+              linear-gradient(
+                180deg,
+                #FFFFFF 0%,
+                var(--contact-ivory) 100%
+              );
             color: var(--contact-navy);
             font-family: inherit;
             isolation: isolate;
@@ -111,8 +138,14 @@ function Contact() {
           }
 
           @keyframes contactFadeUp {
-            from { opacity: 0; transform: translateY(25px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+              opacity: 0;
+              transform: translateY(25px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
           }
 
           /* HEADER */
@@ -181,7 +214,11 @@ function Contact() {
             width: 55px;
             height: 2px;
             margin: 25px auto;
-            background: linear-gradient(90deg,var(--contact-gold),var(--contact-gold-light));
+            background: linear-gradient(
+              90deg,
+              var(--contact-gold),
+              var(--contact-gold-light)
+            );
           }
 
           .dar-contact-subtitle {
@@ -196,7 +233,7 @@ function Contact() {
 
           .dar-contact-panel {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: minmax(0,1fr) minmax(0,1fr);
             max-width: 1200px;
             margin: auto;
             background: #FFFFFF;
@@ -205,11 +242,12 @@ function Contact() {
             animation: contactFadeUp 1s .15s cubic-bezier(.22,.61,.36,1) both;
           }
 
-          /* INFO */
+          /* CONTACT INFORMATION */
 
           .dar-contact-info {
             padding: clamp(35px,5vw,75px);
             background: #FFFFFF;
+            min-width: 0;
           }
 
           .dar-contact-info-top {
@@ -290,7 +328,7 @@ function Contact() {
             text-decoration: none;
             font-size: 12px;
             font-weight: 700;
-            transition: gap 1s cubic-bezier(.22,.61,.36,1);
+            transition: gap .4s ease;
           }
 
           .dar-contact-map:hover {
@@ -313,11 +351,7 @@ function Contact() {
             background: #FAF9F6;
             border: 1px solid rgba(16,36,61,.08);
             text-decoration: none;
-            transition:
-              transform 1s cubic-bezier(.22,.61,.36,1),
-              color 1s ease,
-              background 1s ease,
-              border-color 1s ease;
+            transition: all .4s ease;
           }
 
           .dar-contact-social svg {
@@ -332,34 +366,33 @@ function Contact() {
             transform: translateY(-5px);
           }
 
-          /* CTA */
+          /* CONNECT SECTION - LIGHT */
 
           .dar-contact-cta {
             position: relative;
             overflow: hidden;
-            padding: clamp(40px,5vw,75px);
-            background:
-              radial-gradient(circle at 90% 10%,rgba(215,188,131,.09),transparent 35%),
-              linear-gradient(145deg,#10243D,#081321);
-            color: white;
+            padding: clamp(35px,4vw,65px);
+            background: #F8F6F1;
+            color: var(--contact-navy);
             display: flex;
             flex-direction: column;
             justify-content: center;
+            min-width: 0;
             isolation: isolate;
           }
 
           .dar-contact-cta::before {
             content: "DAR";
             position: absolute;
-            bottom: -75px;
-            inset-inline-start: -20px;
+            bottom: -55px;
+            inset-inline-start: -15px;
             z-index: -1;
             font-family: "DM Sans",sans-serif;
-            font-size: clamp(150px,18vw,260px);
+            font-size: clamp(130px,17vw,240px);
             font-weight: 900;
             letter-spacing: -15px;
             line-height: 1;
-            color: rgba(255,255,255,.025);
+            color: rgba(16,36,61,.025);
             pointer-events: none;
             user-select: none;
           }
@@ -367,90 +400,161 @@ function Contact() {
           .dar-contact-cta::after {
             content: "";
             position: absolute;
-            width: 330px;
-            height: 330px;
-            top: -190px;
-            inset-inline-end: -180px;
-            border: 1px solid rgba(215,188,131,.13);
+            width: 300px;
+            height: 300px;
+            top: -180px;
+            inset-inline-end: -170px;
+            border: 1px solid rgba(184,149,82,.13);
             border-radius: 50%;
             box-shadow:
-              0 0 0 45px rgba(215,188,131,.025),
-              0 0 0 90px rgba(215,188,131,.02);
+              0 0 0 45px rgba(184,149,82,.025),
+              0 0 0 90px rgba(184,149,82,.02);
             pointer-events: none;
           }
 
           .dar-contact-cta-content {
             position: relative;
             z-index: 1;
+            width: 100%;
           }
 
           .dar-contact-cta-label {
             display: flex;
             align-items: center;
             gap: 12px;
-            color: var(--contact-gold-light);
+            color: var(--contact-gold);
             font-family: "DM Sans",sans-serif;
             font-size: 10px;
             font-weight: 700;
             letter-spacing: 3px;
-            margin-bottom: 28px;
+            margin-bottom: 20px;
           }
 
           .dar-contact-cta-label::before {
             content: "";
             width: 28px;
             height: 1px;
-            background: var(--contact-gold-light);
+            background: var(--contact-gold);
           }
 
           .dar-contact-cta-title {
-            font-size: clamp(30px,3.5vw,48px);
-            line-height: 1.65;
+            font-size: clamp(28px,3vw,42px);
+            line-height: 1.6;
             font-weight: 800;
             margin: 0;
-            color: white;
+            color: var(--contact-navy);
           }
 
           .dar-contact-cta-title span {
-            color: var(--contact-gold-light);
+            color: var(--contact-gold);
           }
 
           .dar-contact-cta-desc {
-            color: rgba(255,255,255,.55);
-            font-size: 13px;
+            color: var(--contact-muted);
+            font-size: 12px;
             line-height: 2.2;
-            margin: 22px 0 38px;
+            margin: 15px 0 25px;
             max-width: 430px;
           }
+
+          /* FORM CARD */
+
+          .dar-contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            width: 100%;
+            padding: 25px;
+            background: #FFFFFF;
+            border: 1px solid rgba(184,149,82,.22);
+            box-shadow: 0 15px 45px rgba(16,36,61,.045);
+          }
+
+          .dar-contact-form-field {
+            display: flex;
+            flex-direction: column;
+            gap: 9px;
+          }
+
+          .dar-contact-form-field label {
+            color: #526174;
+            font-size: 12px;
+            font-weight: 700;
+          }
+
+          .dar-contact-form-input {
+            width: 100%;
+            padding: 14px 15px;
+            background: #FAF9F6;
+            border: 1px solid rgba(16,36,61,.10);
+            color: var(--contact-navy);
+            font-family: inherit;
+            font-size: 13px;
+            outline: none;
+            border-radius: 0;
+            transition:
+              border-color .4s ease,
+              box-shadow .4s ease;
+          }
+
+          .dar-contact-form-input:focus {
+            border-color: var(--contact-gold);
+            box-shadow: 0 0 0 3px rgba(184,149,82,.08);
+          }
+
+          .dar-contact-form-input::placeholder {
+            color: #A0AAB7;
+          }
+
+          .dar-contact-form-input option {
+            background: #FFFFFF;
+            color: var(--contact-navy);
+          }
+
+          .dar-contact-form-input.has-error {
+            border-color: #DC2626;
+          }
+
+          .dar-contact-form-error {
+            color: #DC2626;
+            font-size: 11px;
+            margin: 0;
+          }
+
+          /* WHATSAPP BUTTON */
 
           .dar-contact-cta-btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 16px;
-            width: fit-content;
-            padding: 17px 30px;
-            background: linear-gradient(135deg,#C9A84C,#E8C96A);
+            width: 100%;
+            margin-top: 5px;
+            padding: 16px 25px;
+            background: linear-gradient(
+              135deg,
+              #C9A84C,
+              #E8C96A
+            );
             color: #10243D;
-            border: 1px solid rgba(255,255,255,.12);
+            border: 1px solid rgba(16,36,61,.05);
             font-family: inherit;
             font-size: 13px;
             font-weight: 800;
             cursor: pointer;
             transition:
-              transform 1s cubic-bezier(.22,.61,.36,1),
-              box-shadow 1s cubic-bezier(.22,.61,.36,1),
-              background 1s ease;
+              transform .4s ease,
+              box-shadow .4s ease;
           }
 
           .dar-contact-cta-btn:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 18px 40px rgba(201,168,76,.18);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(201,168,76,.18);
           }
 
           .dar-contact-cta-btn span {
             font-size: 18px;
-            transition: transform 1s cubic-bezier(.22,.61,.36,1);
+            transition: transform .4s ease;
           }
 
           .dar-contact-cta-btn:hover span {
@@ -465,11 +569,11 @@ function Contact() {
             display: flex;
             align-items: center;
             gap: 10px;
-            color: rgba(255,255,255,.32);
+            color: var(--contact-muted);
             font-family: "DM Sans",sans-serif;
             font-size: 9px;
             letter-spacing: 1.5px;
-            margin-top: 24px;
+            margin-top: 20px;
           }
 
           .dar-contact-cta-note::before {
@@ -480,159 +584,6 @@ function Contact() {
             border-radius: 50%;
           }
 
-          /* MODAL */
-
-          .dar-contact-overlay {
-            position: fixed;
-            inset: 0;
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            background: rgba(5,13,25,.75);
-            backdrop-filter: blur(10px);
-            animation: contactFadeUp .3s ease both;
-          }
-
-          .dar-contact-modal {
-            width: 100%;
-            max-width: 480px;
-            background: #FFFFFF;
-            border: 1px solid rgba(184,149,82,.3);
-            box-shadow: 0 35px 100px rgba(0,0,0,.3);
-            padding: 42px;
-            position: relative;
-            animation: contactFadeUp .45s cubic-bezier(.22,.61,.36,1) both;
-          }
-
-          .dar-contact-modal-top {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 28px;
-          }
-
-          .dar-contact-modal-brand {
-            color: var(--contact-gold);
-            font-family: "DM Sans",sans-serif;
-            font-size: 12px;
-            font-weight: 900;
-            letter-spacing: 4px;
-          }
-
-          .dar-contact-modal-close {
-            width: 38px;
-            height: 38px;
-            background: #FAF9F6;
-            border: 1px solid rgba(16,36,61,.08);
-            color: var(--contact-navy);
-            font-size: 23px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition:
-              background 1s ease,
-              color 1s ease,
-              border-color 1s ease;
-          }
-
-          .dar-contact-modal-close:hover {
-            background: var(--contact-navy);
-            color: white;
-            border-color: var(--contact-navy);
-          }
-
-          .dar-contact-modal-title {
-            text-align: center;
-            color: var(--contact-navy);
-            font-size: 26px;
-            font-weight: 800;
-            line-height: 1.6;
-            margin: 0 0 12px;
-          }
-
-          .dar-contact-modal-desc {
-            text-align: center;
-            color: var(--contact-muted);
-            font-size: 12px;
-            line-height: 2.1;
-            margin-bottom: 35px;
-          }
-
-          .dar-contact-field {
-            margin-bottom: 22px;
-          }
-
-          .dar-contact-field label {
-            display: block;
-            color: #526174;
-            font-size: 12px;
-            font-weight: 700;
-            margin-bottom: 10px;
-          }
-
-          .dar-contact-input {
-            width: 100%;
-            padding: 15px;
-            background: #FAFAF8;
-            border: 1px solid rgba(16,36,61,.10);
-            color: var(--contact-navy);
-            font-family: inherit;
-            font-size: 13px;
-            outline: none;
-            transition:
-              border-color .5s ease,
-              box-shadow .5s ease;
-          }
-
-          .dar-contact-input:focus {
-            border-color: var(--contact-gold);
-            box-shadow: 0 0 0 4px rgba(184,149,82,.08);
-          }
-
-          .dar-contact-input::placeholder {
-            color: #A0AAB7;
-          }
-
-          .dar-contact-input option {
-            color: var(--contact-navy);
-          }
-
-          .dar-contact-error {
-            color: #DC2626;
-            font-size: 11px;
-            margin-top: 9px;
-          }
-
-          .dar-contact-submit {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            width: 100%;
-            margin-top: 10px;
-            padding: 17px;
-            background: var(--contact-navy);
-            color: white;
-            border: none;
-            font-family: inherit;
-            font-size: 13px;
-            font-weight: 800;
-            cursor: pointer;
-            transition:
-              background 1s ease,
-              color 1s ease,
-              transform 1s cubic-bezier(.22,.61,.36,1);
-          }
-
-          .dar-contact-submit:hover {
-            background: var(--contact-gold);
-            color: var(--contact-navy);
-            transform: translateY(-2px);
-          }
-
           /* FOOTER */
 
           .dar-footer {
@@ -640,7 +591,7 @@ function Contact() {
             --footer-gold: #C9A84C;
             --footer-gold-light: #E8C96A;
 
-            background: var(--footer-navy);
+            background: #081321;
             color: white;
             position: relative;
             overflow: hidden;
@@ -724,11 +675,7 @@ function Contact() {
             font-size: 11px;
             font-weight: 700;
             text-decoration: none;
-            transition:
-              background 1s ease,
-              color 1s ease,
-              border-color 1s ease,
-              transform 1s cubic-bezier(.22,.61,.36,1);
+            transition: all .4s ease;
           }
 
           .dar-footer-whatsapp:hover {
@@ -762,9 +709,7 @@ function Contact() {
             display: flex;
             align-items: center;
             gap: 10px;
-            transition:
-              color 1s ease,
-              gap 1s cubic-bezier(.22,.61,.36,1);
+            transition: all .4s ease;
           }
 
           .dar-footer-link span {
@@ -777,7 +722,7 @@ function Contact() {
             gap: 15px;
           }
 
-          /* CONTACT */
+          /* FOOTER CONTACT */
 
           .dar-footer-contact-label {
             color: rgba(255,255,255,.25);
@@ -795,7 +740,7 @@ function Contact() {
             font-weight: 700;
             direction: ltr;
             display: inline-block;
-            transition: color 1s ease;
+            transition: color .4s ease;
           }
 
           .dar-footer-phone:hover {
@@ -824,10 +769,7 @@ function Contact() {
             color: var(--footer-gold);
             border: 1px solid rgba(255,255,255,.10);
             text-decoration: none;
-            transition:
-              border-color 1s ease,
-              background 1s ease,
-              transform 1s cubic-bezier(.22,.61,.36,1);
+            transition: all .4s ease;
           }
 
           .dar-footer-social svg {
@@ -901,10 +843,7 @@ function Contact() {
             border: 1px solid rgba(201,168,76,.3);
             text-decoration: none;
             font-size: 18px;
-            transition:
-              background 1s ease,
-              color 1s ease,
-              transform 1s cubic-bezier(.22,.61,.36,1);
+            transition: all .4s ease;
           }
 
           .dar-footer-top:hover {
@@ -917,7 +856,16 @@ function Contact() {
 
           @media (max-width: 1000px) {
             .dar-contact-panel {
-              grid-template-columns: 1fr;
+              grid-template-columns: 1fr 1fr;
+            }
+
+            .dar-contact-info,
+            .dar-contact-cta {
+              padding: 35px;
+            }
+
+            .dar-contact-form {
+              padding: 20px;
             }
 
             .dar-footer-grid {
@@ -926,7 +874,7 @@ function Contact() {
             }
           }
 
-          @media (max-width: 600px) {
+          @media (max-width: 700px) {
             .dar-contact {
               padding: 85px 18px;
             }
@@ -943,6 +891,10 @@ function Contact() {
               font-size: 12px;
             }
 
+            .dar-contact-panel {
+              grid-template-columns: 1fr;
+            }
+
             .dar-contact-info,
             .dar-contact-cta {
               padding: 35px 25px;
@@ -956,12 +908,12 @@ function Contact() {
               font-size: 32px;
             }
 
-            .dar-contact-cta-btn {
-              width: 100%;
+            .dar-contact-form {
+              padding: 22px;
             }
 
-            .dar-contact-modal {
-              padding: 30px 22px;
+            .dar-contact-cta-btn {
+              width: 100%;
             }
 
             .dar-footer-container {
@@ -998,6 +950,7 @@ function Contact() {
               transition: none !important;
             }
           }
+
         `}</style>
 
         <div className="dar-contact-container">
@@ -1007,7 +960,8 @@ function Contact() {
           <header className="dar-contact-header">
             <div className="dar-contact-eyebrow">
               <span className="dar-contact-dot" />
-              {t("contact", "label") || (ar ? "تواصل معنا" : "GET IN TOUCH")}
+              {t("contact", "label") ||
+                (ar ? "تواصل معنا" : "GET IN TOUCH")}
               <span className="dar-contact-dot" />
             </div>
 
@@ -1087,10 +1041,11 @@ function Contact() {
               </div>
             </div>
 
-            {/* CTA */}
+            {/* LET'S CONNECT + FORM */}
 
             <div className="dar-contact-cta">
               <div className="dar-contact-cta-content">
+
                 <div className="dar-contact-cta-label">
                   DAR DEVELOPMENTS
                 </div>
@@ -1100,128 +1055,151 @@ function Contact() {
                 </h2>
 
                 <p className="dar-contact-cta-desc">
-                  {t("contact", "rightSub1")}
-                  <br />
-                  {t("contact", "rightSub2")}
+                  {ar
+                    ? "اترك بياناتك وسنساعدك في اختيار المشروع المناسب."
+                    : "Leave your details and our team will help you find the right project."}
                 </p>
 
-                <button
-                  type="button"
-                  className="dar-contact-cta-btn"
-                  onClick={() => setShowForm(true)}
+                <form
+                  className="dar-contact-form"
+                  onSubmit={handleWhatsApp}
                 >
-                  {t("contact", "ctaBtn")}
-                  <span>{ar ? "←" : "→"}</span>
-                </button>
+
+                  {/* NAME */}
+
+                  <div className="dar-contact-form-field">
+                    <label htmlFor="dar-contact-name">
+                      {ar ? "الاسم بالكامل" : "Full Name"}
+                    </label>
+
+                    <input
+                      id="dar-contact-name"
+                      type="text"
+                      autoComplete="name"
+                      className={`dar-contact-form-input ${
+                        errors.name ? "has-error" : ""
+                      }`}
+                      placeholder={ar ? "اكتب اسمك هنا" : "Enter your name"}
+                      value={name}
+                      onChange={(e) => {
+                        setName(e.target.value);
+                        setErrors((prev) => ({
+                          ...prev,
+                          name: false,
+                        }));
+                      }}
+                    />
+
+                    {errors.name && (
+                      <p className="dar-contact-form-error">
+                        {ar
+                          ? "من فضلك أدخل الاسم"
+                          : "Please enter your name"}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* MOBILE */}
+
+                  <div className="dar-contact-form-field">
+                    <label htmlFor="dar-contact-mobile">
+                      {ar ? "رقم الموبايل" : "Mobile Number"}
+                    </label>
+
+                    <input
+                      id="dar-contact-mobile"
+                      type="tel"
+                      autoComplete="tel"
+                      inputMode="tel"
+                      className={`dar-contact-form-input ${
+                        errors.mobile ? "has-error" : ""
+                      }`}
+                      placeholder="01xxxxxxxxx"
+                      value={mobile}
+                      onChange={(e) => {
+                        setMobile(e.target.value);
+                        setErrors((prev) => ({
+                          ...prev,
+                          mobile: false,
+                        }));
+                      }}
+                    />
+
+                    {errors.mobile && (
+                      <p className="dar-contact-form-error">
+                        {ar
+                          ? "من فضلك أدخل رقم موبايل صحيح"
+                          : "Please enter a valid mobile number"}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* PROJECT */}
+
+                  <div className="dar-contact-form-field">
+                    <label htmlFor="dar-contact-project">
+                      {ar ? "المشروع المهتم به" : "Interested Project"}
+                    </label>
+
+                    <select
+                      id="dar-contact-project"
+                      className={`dar-contact-form-input ${
+                        errors.project ? "has-error" : ""
+                      }`}
+                      value={project}
+                      onChange={(e) => {
+                        setProject(e.target.value);
+                        setErrors((prev) => ({
+                          ...prev,
+                          project: false,
+                        }));
+                      }}
+                    >
+                      <option value="">
+                        {ar ? "اختر المشروع" : "Select a project"}
+                      </option>
+
+                      {projects.map((p) => (
+                        <option key={p} value={p}>
+                          {p}
+                        </option>
+                      ))}
+                    </select>
+
+                    {errors.project && (
+                      <p className="dar-contact-form-error">
+                        {ar
+                          ? "من فضلك اختر المشروع"
+                          : "Please select a project"}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* WHATSAPP */}
+
+                  <button
+                    type="submit"
+                    className="dar-contact-cta-btn"
+                  >
+                    {ar
+                      ? "تواصل معنا عبر واتساب"
+                      : "Continue on WhatsApp"}
+                    <span>{ar ? "←" : "→"}</span>
+                  </button>
+
+                </form>
 
                 <p className="dar-contact-cta-note">
                   {ar
                     ? "فريقنا جاهز لمساعدتك"
                     : "OUR TEAM IS READY TO ASSIST YOU"}
                 </p>
+
               </div>
             </div>
 
           </div>
         </div>
-
-        {/* MODAL */}
-
-        {showForm && (
-          <div
-            className="dar-contact-overlay"
-            onClick={closeForm}
-          >
-            <div
-              className="dar-contact-modal"
-              dir={ar ? "rtl" : "ltr"}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="dar-contact-modal-top">
-                <span className="dar-contact-modal-brand">
-                  DAR DEVELOPMENTS
-                </span>
-
-                <button
-                  type="button"
-                  className="dar-contact-modal-close"
-                  onClick={closeForm}
-                  aria-label="Close"
-                >
-                  ×
-                </button>
-              </div>
-
-              <h3 className="dar-contact-modal-title">
-                {t("contact", "popupTitle")}
-              </h3>
-
-              <p className="dar-contact-modal-desc">
-                {ar
-                  ? "املأ بياناتك وسيتم تحويلك إلى واتساب لمتابعة استفسارك."
-                  : "Enter your details and continue your inquiry through WhatsApp."}
-              </p>
-
-              <div className="dar-contact-field">
-                <label>
-                  {t("contact", "namePlaceholder")}
-                </label>
-
-                <input
-                  className="dar-contact-input"
-                  placeholder={t("contact", "namePlaceholder")}
-                  value={name}
-                  onChange={(e) => {
-                    setName(e.target.value);
-                    if (e.target.value.trim()) setNameError(false);
-                  }}
-                  style={{
-                    borderColor: nameError ? "#DC2626" : undefined,
-                  }}
-                />
-
-                {nameError && (
-                  <p className="dar-contact-error">
-                    {ar
-                      ? "من فضلك أدخل الاسم"
-                      : "Please enter your name"}
-                  </p>
-                )}
-              </div>
-
-              <div className="dar-contact-field">
-                <label>
-                  {t("contact", "selectProject")}
-                </label>
-
-                <select
-                  className="dar-contact-input"
-                  value={project}
-                  onChange={(e) => setProject(e.target.value)}
-                >
-                  <option value="">
-                    {t("contact", "selectProject")}
-                  </option>
-
-                  {projects.map((p) => (
-                    <option key={p} value={p}>
-                      {p}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <button
-                type="button"
-                className="dar-contact-submit"
-                onClick={handleWhatsApp}
-              >
-                {t("contact", "sendWhatsapp")}
-                <span>{ar ? "←" : "→"}</span>
-              </button>
-            </div>
-          </div>
-        )}
       </section>
 
       {/* FOOTER */}
@@ -1289,7 +1267,12 @@ function Contact() {
                 ).map((label, i) => (
                   <a
                     key={i}
-                    href={["/#home", "/#projects", "/#about", "/#contact"][i]}
+                    href={[
+                      "/#home",
+                      "/#projects",
+                      "/#about",
+                      "/#contact",
+                    ][i]}
                     className="dar-footer-link"
                   >
                     <span>{ar ? "←" : "→"}</span>

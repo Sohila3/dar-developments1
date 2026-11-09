@@ -12,93 +12,22 @@ import { useLanguage } from "../context/LanguageContext";
 const weroodImages = [werood1, werood2, werood3, werood4];
 
 function ProjectElwroodPage() {
-  const { lang } = useLanguage();
+  const { lang, t } = useLanguage();
 
-  const ar = lang === "ar";
-  const dir = ar ? "rtl" : "ltr";
-  const textAlign = ar ? "right" : "left";
-
-  const [activeImage, setActiveImage] = useState(0);
-  const [isGalleryHovered, setIsGalleryHovered] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     project: "Dar Elwrood",
   });
+
   const [error, setError] = useState("");
+  const [activeImage, setActiveImage] = useState(0);
+  const [isGalleryHovered, setIsGalleryHovered] = useState(false);
 
   const videoRef = useRef(null);
 
-  const content = {
-    eyebrow: ar ? "مشروعات دار للتطوير" : "DAR DEVELOPMENTS",
-    title1: ar ? "دار" : "DAR",
-    title2: ar ? "الورود" : "ELWROOD",
-    description: ar
-      ? "في دار الورود، نؤمن أن المنزل ليس مجرد مساحة، بل تجربة متكاملة من الراحة والخصوصية والتفاصيل المدروسة. صُمم المشروع ليمنحك حياة أكثر هدوءًا وراحة، مع موقع مميز وتخطيط يراعي احتياجاتك."
-      : "At Dar Elwrood, we believe a home is more than a space. It is an experience built around comfort, privacy, and thoughtful details. Designed to offer a better lifestyle, with a distinctive location and carefully planned spaces.",
-    badge: ar
-      ? "تفاصيل مدروسة.. وحياة تستحقها"
-      : "Thoughtful Details. Better Living.",
-    discover: ar ? "اكتشف المشروع" : "DISCOVER THE PROJECT",
-    videoTitle: ar ? "شاهد دار الورود عن قرب" : "Discover Dar Elwrood",
-    detailsEyebrow: ar ? "تفاصيل المشروع" : "PROJECT DETAILS",
-    detailsTitle: ar ? "كل ما تحتاج معرفته" : "Everything You Need to Know",
-    locationTitle: ar ? "موقع المشروع" : "Project Location",
-    location: ar
-      ? "يقع مشروع دار الورود على طريق القاهرة – الإسكندرية، خلف عمارات الأطباء، في موقع مميز يسهل الوصول إليه."
-      : "Dar Elwrood is located on Cairo–Alexandria Road, behind Doctors' Buildings, in a distinctive and accessible location.",
-    towersTitle: ar ? "مواصفات المشروع" : "Project Highlights",
-    towers: ar
-      ? "مشروع سكني بتصميم معماري مميز، يجمع بين التخطيط العملي والمساحات المناسبة للحياة اليومية."
-      : "A residential project featuring distinctive architecture, practical planning, and spaces designed for everyday living.",
-    spacesTitle: ar ? "الوحدات والمساحات" : "Units & Spaces",
-    spaces: ar
-      ? "اختيارات متنوعة من الوحدات والمساحات لتناسب احتياجاتك وتطلعاتك.\n    122م² - 155م² - 174م² - 203م²"
-      : "A diverse selection of units and spacious layouts to suit your needs and aspirations.\n122 m² - 155 m² - 174 m² - 203 m²",
-    installmentTitle: ar ? "أنظمة السداد" : "Payment Plans",
-    installment: ar
-      ? "أنظمة سداد مرنة وقسط مريح يصل حتى 3 سنوات."
-      : "Flexible payment plans and convenient installments for up to 3 years.",
-    formEyebrow: ar ? "احجز استفسارك" : "YOUR NEXT HOME",
-    formTitle: ar ? "مهتم بدار الورود؟" : "Interested in Dar Elwrood?",
-    formDesc: ar
-      ? "اترك بياناتك وسيتواصل معك فريقنا لمساعدتك."
-      : "Leave your details and our team will get in touch.",
-    namePlaceholder: ar ? "اكتب اسمك بالكامل" : "Enter your full name",
-    projectPlaceholder: ar ? "اختر المشروع" : "Select a project",
-    whatsappBtn: ar ? "تواصل معنا عبر واتساب" : "Contact Us on WhatsApp",
-    whatsappMsg: ar ? "مرحبًا، أنا" : "Hello, my name is",
-    whatsappMsg2: ar ? "مهتم بالاستفسار عن" : "and I'm interested in",
-    whatsappMsg3: ar ? "من فضلكم تواصلوا معي." : "Please contact me.",
-    trustEyebrow: ar ? "لماذا دار؟" : "WHY DAR",
-    trustTitle: ar ? "ثقة تُبنى مع الوقت" : "Trust Built Over Time",
-    trustLabel: ar ? "ثقة ممتدة" : "TRUSTED SINCE",
-    trustHeadline: ar ? "خبرة ممتدة لأكثر من" : "Over",
-    trustYears: ar ? "8 أعوام" : "8 Years",
-    trustEnd: ar ? "" : " of Excellence",
-    trustDesc: ar
-      ? "نحن لا نبني وحدات سكنية فحسب، بل نبني علاقات تدوم. دعمنا لعملائنا لا يتوقف عند التسليم، بل يمتد معهم في كل خطوة."
-      : "We don't just build units — we build lasting relationships. Our commitment to clients extends well beyond handover, every step of the way.",
-    companyLocation: ar
-      ? "طنطا - شارع توت عنخ آمون من محمد فريد فوق مخبز الزهراء"
-      : "Tanta - Tutankhamun Street, Mohamed Farid, above Al Zahraa Bakery",
-    companyLocationTitle: ar ? "مقر الشركة:" : "Company Location:",
-    openMap: ar ? "← افتح على الخريطة" : "→ Open in Maps",
-    follow: ar ? "تابعنا على السوشيال ميديا" : "Follow us",
-    stats: ar
-      ? [
-          "سنوات خبرة في السوق العقاري",
-          "وحدة سكنية تم تسليمها بنجاح",
-          "مشاريع نشطة حاليًا في طنطا",
-          "نسبة رضا العملاء عن خدماتنا",
-        ]
-      : [
-          "Years in Real Estate",
-          "Units Successfully Delivered",
-          "Active Projects in Tanta",
-          "Client Satisfaction Rate",
-        ],
-    backBtn: ar ? "العودة إلى المشروعات" : "Back to Projects",
-  };
+  const ar = lang === "ar";
+  const dir = ar ? "rtl" : "ltr";
+  const textAlign = ar ? "right" : "left";
 
   const handleChange = (e) => {
     setFormData((prev) => ({
@@ -117,22 +46,31 @@ function ProjectElwroodPage() {
     );
   };
 
+  // AUTO SLIDER
   useEffect(() => {
     if (isGalleryHovered) return;
 
-    const interval = setInterval(nextImage, 4500);
+    const interval = setInterval(() => {
+      setActiveImage((prev) => (prev + 1) % weroodImages.length);
+    }, 4500);
+
     return () => clearInterval(interval);
   }, [isGalleryHovered]);
 
+  // WHATSAPP
   const openWhatsApp = () => {
     if (!formData.name.trim()) {
-      setError(ar ? "من فضلك اكتبي اسمك أولًا" : "Please enter your name");
+      setError(
+        ar ? "من فضلك اكتب الاسم أولاً" : "Please enter your name"
+      );
       return;
     }
 
     setError("");
 
-    const message = `${content.whatsappMsg} ${formData.name} ${content.whatsappMsg2} ${formData.project}. ${content.whatsappMsg3}`;
+    const message = `${t("elwrood", "whatsappMsg")} ${
+      formData.name
+    } ${t("elwrood", "whatsappMsg2")} ${formData.project}`;
 
     window.open(
       `https://wa.me/201039207908?text=${encodeURIComponent(message)}`,
@@ -141,6 +79,7 @@ function ProjectElwroodPage() {
     );
   };
 
+  // VIDEO AUTOPLAY
   useEffect(() => {
     const vid = videoRef.current;
     if (!vid) return;
@@ -160,34 +99,41 @@ function ProjectElwroodPage() {
     );
 
     observer.observe(vid);
+
     return () => observer.disconnect();
   }, []);
 
-  const stats = ["8+", "+100", "3", "98%"];
-
   return (
-    <div className="elwrood-page" dir={dir}>
+    <div
+      className="elwrood-page"
+      dir={dir}
+      style={{
+        background: "#F8F6F1",
+        color: "#10243D",
+        fontFamily: "'Alexandria', 'DM Sans', sans-serif",
+      }}
+    >
       <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap');
+
+        :root {
+          --dar-bg: #F8F6F1;
+          --dar-paper: #F2EEE6;
+          --dar-navy: #10243D;
+          --dar-gold: #B89552;
+          --dar-light-gold: #D7BC83;
+          --dar-text: #10243D;
+          --dar-muted: #777B80;
+        }
 
         .elwrood-page {
-          --ew-bg: #F8F6F1;
-          --ew-paper: #FFFFFF;
-          --ew-navy: #10243D;
-          --ew-gold: #B89552;
-          --ew-light-gold: #D7BC83;
-          --ew-muted: #777B80;
-          background: var(--ew-bg);
-          color: var(--ew-navy);
-          font-family: 'Alexandria','DM Sans',sans-serif;
-          min-height: 100vh;
           position: relative;
           isolation: isolate;
           overflow: hidden;
+          min-height: 100vh;
         }
 
-        .elwrood-page *,
-        .elwrood-page *::before,
-        .elwrood-page *::after {
+        .elwrood-page * {
           box-sizing: border-box;
         }
 
@@ -198,9 +144,9 @@ function ProjectElwroodPage() {
           z-index: -2;
           pointer-events: none;
           background:
-            radial-gradient(circle at 85% 15%,rgba(184,149,82,.13),transparent 30%),
-            radial-gradient(circle at 10% 75%,rgba(16,36,61,.05),transparent 35%),
-            linear-gradient(135deg,#F8F6F1,#F5F1E9 48%,#F8F6F1);
+            radial-gradient(circle at 85% 15%, rgba(184,149,82,.13), transparent 30%),
+            radial-gradient(circle at 10% 75%, rgba(16,36,61,.055), transparent 35%),
+            linear-gradient(135deg, #F8F6F1 0%, #F5F1E9 48%, #F8F6F1 100%);
         }
 
         .elwrood-page::after {
@@ -211,38 +157,38 @@ function ProjectElwroodPage() {
           pointer-events: none;
           opacity: .025;
           background-image:
-            linear-gradient(#10243D 1px,transparent 1px),
-            linear-gradient(90deg,#10243D 1px,transparent 1px);
+            linear-gradient(#10243D 1px, transparent 1px),
+            linear-gradient(90deg, #10243D 1px, transparent 1px);
           background-size: 55px 55px;
         }
 
-        .elwrood-page button,
-        .elwrood-page input,
-        .elwrood-page select {
-          font-family: inherit;
-        }
-
-        @keyframes ewReveal {
+        @keyframes elwroodReveal {
           from { opacity: 0; transform: translateY(25px); }
           to { opacity: 1; transform: translateY(0); }
         }
 
-        @keyframes ewPulse {
-          0%,100% { opacity: 1; }
+        @keyframes elwroodPulse {
+          0%, 100% { opacity: 1; }
           50% { opacity: .35; }
+        }
+
+        @keyframes elwroodShimmer {
+          0%, 100% { opacity: .55; }
+          50% { opacity: 1; }
         }
 
         /* HERO */
         .elwrood-hero {
           display: flex;
           flex-direction: column;
-          align-items: center;
           gap: 35px;
+          align-items: center;
           position: relative;
-          padding: 115px 20px 65px;
+          padding: 115px 20px 55px;
+          min-height: auto;
         }
 
-        .elwrood-glow {
+        .elwrood-hero-glow {
           position: absolute;
           width: 450px;
           height: 450px;
@@ -252,8 +198,12 @@ function ProjectElwroodPage() {
           pointer-events: none;
         }
 
-        .elwrood-glow.one { top: -150px; right: -100px; }
-        .elwrood-glow.two {
+        .elwrood-hero-glow.one {
+          top: -150px;
+          right: -100px;
+        }
+
+        .elwrood-hero-glow.two {
           bottom: -150px;
           left: -100px;
           background: rgba(16,36,61,.045);
@@ -263,14 +213,14 @@ function ProjectElwroodPage() {
           width: 100%;
           position: relative;
           z-index: 2;
-          animation: ewReveal .9s ease both;
+          animation: elwroodReveal .9s ease both;
         }
 
         .elwrood-eyebrow {
           display: inline-flex;
           align-items: center;
           gap: 10px;
-          color: var(--ew-gold);
+          color: var(--dar-gold);
           font-size: 12px;
           letter-spacing: 2px;
           font-weight: 600;
@@ -281,21 +231,21 @@ function ProjectElwroodPage() {
           content: "";
           width: 28px;
           height: 1px;
-          background: var(--ew-gold);
+          background: var(--dar-gold);
         }
 
         .elwrood-title {
-          font-size: clamp(32px,7vw,48px);
+          font-size: clamp(32px, 7vw, 46px);
           line-height: 1.45;
           font-weight: 700;
           letter-spacing: -.5px;
-          color: var(--ew-navy);
+          color: var(--dar-navy);
           margin: 0;
           overflow-wrap: anywhere;
         }
 
         .elwrood-title span {
-          color: var(--ew-gold);
+          color: var(--dar-gold);
           text-shadow: 0 0 25px rgba(184,149,82,.15);
         }
 
@@ -303,29 +253,29 @@ function ProjectElwroodPage() {
           width: 65px;
           height: 3px;
           border-radius: 10px;
-          background: linear-gradient(90deg,#B89552,#D7BC83);
+          background: linear-gradient(90deg, #B89552, #D7BC83);
           margin: 24px 0;
         }
 
         .elwrood-description {
-          color: rgba(16,36,61,.72);
+          color: rgba(16,36,61,.7);
           font-size: 15px;
           line-height: 2.3;
           text-align: justify;
           margin: 0;
         }
 
-        .elwrood-badge {
+        .elwrood-hero-badge {
           display: inline-flex;
           align-items: center;
           gap: 9px;
           border: 1px solid rgba(184,149,82,.25);
-          background: rgba(255,255,255,.65);
-          padding: 11px 17px;
+          background: rgba(255,255,255,.6);
+          padding: 10px 16px;
           border-radius: 50px;
           margin-top: 25px;
           font-size: 12px;
-          color: var(--ew-navy);
+          color: var(--dar-navy);
           box-shadow: 0 8px 25px rgba(16,36,61,.04);
         }
 
@@ -333,8 +283,8 @@ function ProjectElwroodPage() {
           width: 7px;
           height: 7px;
           border-radius: 50%;
-          background: var(--ew-gold);
-          animation: ewPulse 2s infinite;
+          background: var(--dar-gold);
+          animation: elwroodPulse 2s infinite;
         }
 
         /* GALLERY */
@@ -342,7 +292,7 @@ function ProjectElwroodPage() {
           width: 100%;
           position: relative;
           z-index: 2;
-          animation: ewReveal 1s .15s ease both;
+          animation: elwroodReveal 1s .15s ease both;
         }
 
         .elwrood-gallery {
@@ -352,9 +302,20 @@ function ProjectElwroodPage() {
           overflow: hidden;
           isolation: isolate;
           border-radius: 18px;
-          background: var(--ew-navy);
+          background: var(--dar-navy);
           border: 1px solid rgba(184,149,82,.35);
-          box-shadow: 0 25px 60px rgba(16,36,61,.15),0 0 35px rgba(184,149,82,.08);
+          box-shadow:
+            0 25px 60px rgba(16,36,61,.15),
+            0 10px 30px rgba(16,36,61,.06),
+            0 0 35px rgba(184,149,82,.08);
+          transition: box-shadow .5s ease, transform .5s ease;
+        }
+
+        .elwrood-gallery:hover {
+          box-shadow:
+            0 35px 85px rgba(16,36,61,.22),
+            0 15px 35px rgba(16,36,61,.10),
+            0 0 50px rgba(184,149,82,.18);
         }
 
         .elwrood-slide {
@@ -367,7 +328,7 @@ function ProjectElwroodPage() {
           opacity: 0;
           transform: scale(1.06);
           z-index: 1;
-          transition: opacity 1s ease,transform 5s ease;
+          transition: opacity 1s ease, transform 5s ease;
           user-select: none;
         }
 
@@ -386,10 +347,16 @@ function ProjectElwroodPage() {
           inset: 0;
           z-index: 3;
           pointer-events: none;
-          background: linear-gradient(180deg,rgba(16,36,61,.02),transparent 45%,rgba(16,36,61,.18) 70%,rgba(16,36,61,.65));
+          background: linear-gradient(
+            180deg,
+            rgba(16,36,61,.02) 0%,
+            transparent 45%,
+            rgba(16,36,61,.15) 70%,
+            rgba(16,36,61,.65) 100%
+          );
         }
 
-        .elwrood-counter {
+        .elwrood-gallery-counter {
           position: absolute;
           bottom: 22px;
           left: 24px;
@@ -398,18 +365,19 @@ function ProjectElwroodPage() {
           align-items: center;
           gap: 9px;
           color: white;
-          font-family: 'DM Sans',sans-serif;
+          font-family: 'DM Sans', sans-serif;
           font-size: 13px;
           letter-spacing: 2px;
           font-weight: 600;
+          text-shadow: 0 2px 10px rgba(0,0,0,.4);
         }
 
-        .elwrood-counter .current {
-          color: var(--ew-light-gold);
+        .elwrood-gallery-counter .current {
+          color: var(--dar-light-gold);
           font-size: 17px;
         }
 
-        .elwrood-arrow {
+        .elwrood-gallery-arrow {
           position: absolute;
           top: 50%;
           z-index: 6;
@@ -430,17 +398,23 @@ function ProjectElwroodPage() {
           opacity: 0;
         }
 
-        .elwrood-gallery:hover .elwrood-arrow { opacity: 1; }
-        .elwrood-arrow:hover {
-          background: var(--ew-gold);
-          color: var(--ew-navy);
-          border-color: var(--ew-gold);
+        .elwrood-gallery:hover .elwrood-gallery-arrow {
+          opacity: 1;
+        }
+
+        .elwrood-gallery-arrow:hover {
+          background: var(--dar-gold);
+          color: var(--dar-navy);
+          border-color: var(--dar-gold);
           transform: translateY(-50%) scale(1.08);
         }
-        .elwrood-arrow.prev { left: 18px; }
-        .elwrood-arrow.next { right: 18px; }
 
+        .elwrood-gallery-arrow.prev { left: 18px; }
+        .elwrood-gallery-arrow.next { right: 18px; }
+
+        /* THUMBNAILS */
         .elwrood-thumbnails {
+          width: 100%;
           display: flex;
           justify-content: center;
           align-items: center;
@@ -451,6 +425,7 @@ function ProjectElwroodPage() {
         }
 
         .elwrood-thumbnail {
+          position: relative;
           width: 78px;
           height: 62px;
           padding: 3px;
@@ -475,26 +450,31 @@ function ProjectElwroodPage() {
         .elwrood-thumbnail:hover {
           opacity: 1;
           transform: translateY(-4px);
-          border-color: var(--ew-gold);
+          border-color: var(--dar-gold);
+          box-shadow: 0 8px 20px rgba(184,149,82,.12);
         }
 
-        .elwrood-thumbnail:hover img { transform: scale(1.1); }
+        .elwrood-thumbnail:hover img {
+          transform: scale(1.1);
+        }
 
         .elwrood-thumbnail.active {
           opacity: 1;
-          border: 1.5px solid var(--ew-gold);
-          box-shadow: 0 0 0 2px rgba(184,149,82,.12),0 8px 20px rgba(184,149,82,.15);
+          border: 1.5px solid var(--dar-gold);
+          box-shadow:
+            0 0 0 2px rgba(184,149,82,.12),
+            0 8px 20px rgba(184,149,82,.15);
           transform: translateY(-2px);
         }
 
         /* SECTION HEADINGS */
-        .elwrood-heading {
+        .elwrood-section-heading {
           text-align: center;
           margin-bottom: 45px;
         }
 
-        .elwrood-heading .eyebrow {
-          color: var(--ew-gold);
+        .elwrood-section-heading .eyebrow {
+          color: var(--dar-gold);
           font-size: 12px;
           letter-spacing: 2px;
           font-weight: 600;
@@ -502,20 +482,20 @@ function ProjectElwroodPage() {
           display: block;
         }
 
-        .elwrood-heading h2 {
-          font-size: clamp(26px,4vw,40px);
-          color: var(--ew-navy);
+        .elwrood-section-heading h2 {
+          font-size: clamp(26px, 4vw, 40px);
+          color: var(--dar-navy);
           font-weight: 700;
           line-height: 1.5;
           margin: 0;
         }
 
-        .elwrood-heading .line {
+        .elwrood-section-heading .line {
           width: 55px;
           height: 3px;
           border-radius: 20px;
           margin: 18px auto 0;
-          background: linear-gradient(90deg,#B89552,#D7BC83);
+          background: linear-gradient(90deg, #B89552, #D7BC83);
         }
 
         /* VIDEO */
@@ -544,14 +524,18 @@ function ProjectElwroodPage() {
           border-radius: 20px;
           overflow: hidden;
           border: 1px solid rgba(184,149,82,.3);
-          background: var(--ew-navy);
-          box-shadow: 0 30px 70px rgba(16,36,61,.15),0 0 35px rgba(184,149,82,.08);
-          transition: box-shadow .4s ease,transform .4s ease;
+          background: var(--dar-navy);
+          box-shadow:
+            0 30px 70px rgba(16,36,61,.15),
+            0 0 35px rgba(184,149,82,.08);
+          transition: box-shadow .4s ease, transform .4s ease;
         }
 
         .elwrood-video-wrap:hover {
           transform: translateY(-4px);
-          box-shadow: 0 40px 90px rgba(16,36,61,.2),0 0 50px rgba(184,149,82,.15);
+          box-shadow:
+            0 40px 90px rgba(16,36,61,.2),
+            0 0 50px rgba(184,149,82,.15);
         }
 
         .elwrood-video {
@@ -561,31 +545,32 @@ function ProjectElwroodPage() {
           object-fit: cover;
         }
 
-        /* DETAILS & FORM */
+        /* DETAILS + FORM */
         .elwrood-info-section {
-          padding: 70px 20px 100px;
+          padding: 60px 20px 90px;
           display: grid;
           grid-template-columns: 1fr;
           gap: 25px;
-          align-items: stretch;
         }
 
         .elwrood-card {
           position: relative;
           overflow: hidden;
-          background: rgba(255,255,255,.86);
-          border: 1px solid rgba(184,149,82,.24);
-          border-radius: 20px;
-          padding: 30px 23px;
+          background: rgba(255,255,255,.8);
+          border: 1px solid rgba(184,149,82,.2);
+          border-radius: 18px;
+          padding: 28px 22px;
           box-shadow: 0 20px 60px rgba(16,36,61,.065);
-          transition: transform .4s ease,box-shadow .4s ease,border-color .4s ease;
-          animation: ewReveal .8s ease both;
+          transition: transform .4s ease, box-shadow .4s ease, border-color .4s ease;
+          animation: elwroodReveal .8s ease both;
         }
 
         .elwrood-card:hover {
           transform: translateY(-5px);
           border-color: rgba(184,149,82,.45);
-          box-shadow: 0 28px 70px rgba(16,36,61,.1),0 0 35px rgba(184,149,82,.07);
+          box-shadow:
+            0 28px 70px rgba(16,36,61,.1),
+            0 0 35px rgba(184,149,82,.07);
         }
 
         .elwrood-card::before {
@@ -595,90 +580,31 @@ function ProjectElwroodPage() {
           left: 0;
           right: 0;
           height: 3px;
-          background: linear-gradient(90deg,transparent,#B89552,#D7BC83,transparent);
-        }
-
-        .elwrood-card-top {
-          display: flex;
-          align-items: center;
-          gap: 14px;
-          margin-bottom: 24px;
-        }
-
-        .elwrood-card-icon {
-          width: 48px;
-          height: 48px;
-          flex-shrink: 0;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          border-radius: 13px;
-          color: var(--ew-gold);
-          background: rgba(184,149,82,.10);
-          border: 1px solid rgba(184,149,82,.2);
+          background: linear-gradient(90deg, transparent, #B89552, #D7BC83, transparent);
+          opacity: .8;
         }
 
         .elwrood-card-title {
-          font-size: 22px;
+          font-size: 23px;
           font-weight: 700;
-          color: var(--ew-navy);
-          margin: 0;
-          line-height: 1.7;
-        }
-
-        .elwrood-card-subtitle {
-          color: var(--ew-muted);
-          font-size: 12px;
-          line-height: 1.8;
-          margin-top: 3px;
+          color: var(--dar-navy);
+          margin: 0 0 12px;
+          line-height: 1.6;
         }
 
         .elwrood-card-line {
-          width: 45px;
+          width: 42px;
           height: 3px;
-          background: linear-gradient(90deg,#B89552,#D7BC83);
+          background: linear-gradient(90deg, #B89552, #D7BC83);
           border-radius: 10px;
-          margin-bottom: 24px;
-        }
-
-        .elwrood-detail-item {
-          display: flex;
-          align-items: flex-start;
-          gap: 13px;
-          padding: 17px 0;
-          border-bottom: 1px solid rgba(184,149,82,.15);
-        }
-
-        .elwrood-detail-item:last-of-type { border-bottom: none; }
-
-        .elwrood-detail-icon {
-          width: 35px;
-          height: 35px;
-          flex-shrink: 0;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          border-radius: 10px;
-          background: rgba(184,149,82,.1);
-          color: var(--ew-gold);
-          font-size: 15px;
-        }
-
-        .elwrood-detail-content { flex: 1; min-width: 0; }
-
-        .elwrood-detail-label {
-          display: block;
-          color: var(--ew-gold);
-          font-size: 12px;
-          font-weight: 600;
-          margin-bottom: 5px;
+          margin-bottom: 22px;
         }
 
         .elwrood-detail-text {
-          color: rgba(16,36,61,.72);
-          font-size: 13px;
-          line-height: 2.1;
-          margin: 0;
+          color: rgba(16,36,61,.7);
+          font-size: 14px;
+          line-height: 2.2;
+          margin-bottom: 14px;
           text-align: justify;
         }
 
@@ -686,12 +612,12 @@ function ProjectElwroodPage() {
           display: inline-flex;
           align-items: center;
           gap: 8px;
-          color: var(--ew-gold);
-          font-size: 13px;
+          color: var(--dar-gold);
+          font-size: 14px;
           font-weight: 600;
           text-decoration: none;
-          margin-top: 18px;
-          transition: color .3s,gap .3s;
+          margin: 0 0 20px;
+          transition: color .3s ease, gap .3s ease;
         }
 
         .elwrood-map-link:hover {
@@ -701,59 +627,46 @@ function ProjectElwroodPage() {
 
         /* FORM */
         .elwrood-form-card {
-          background: linear-gradient(145deg,rgba(255,255,255,.95),rgba(249,246,239,.95));
+          background: rgba(255,255,255,.88);
         }
 
-        .elwrood-form-intro {
-          margin-bottom: 25px;
+        .elwrood-form-title {
+          text-align: center;
         }
 
-        .elwrood-form-eyebrow {
-          display: block;
-          color: var(--ew-gold);
-          font-size: 11px;
-          font-weight: 600;
-          letter-spacing: 1.5px;
-          margin-bottom: 8px;
-        }
-
-        .elwrood-form-desc {
-          color: var(--ew-muted);
-          font-size: 13px;
-          line-height: 2;
-          margin: 8px 0 0;
-        }
-
-        .elwrood-input-label {
-          display: block;
-          color: var(--ew-navy);
-          font-size: 12px;
-          font-weight: 600;
-          margin-bottom: 8px;
+        .elwrood-form-title .elwrood-card-line {
+          margin: 0 auto 25px;
         }
 
         .elwrood-input {
           display: block;
           width: 100%;
-          background: #fff;
-          border: 1px solid rgba(184,149,82,.28);
-          border-radius: 10px;
-          padding: 15px 16px;
-          font-size: 13px;
-          color: var(--ew-navy);
+          box-sizing: border-box;
+          background: white;
+          border: 1.5px solid rgba(184,149,82,.3);
+          border-radius: 9px;
+          padding: 14px 16px;
+          font-family: inherit;
+          font-size: 14px;
+          color: var(--dar-navy);
           outline: none;
-          transition: border-color .25s,box-shadow .25s;
-          margin-bottom: 18px;
+          transition: border-color .25s ease, box-shadow .25s ease;
+          margin-bottom: 15px;
         }
 
         .elwrood-input:focus {
-          border-color: var(--ew-gold);
+          border-color: var(--dar-gold);
           box-shadow: 0 0 0 4px rgba(184,149,82,.1);
         }
 
-        .elwrood-input::placeholder { color: rgba(16,36,61,.4); }
+        .elwrood-input::placeholder {
+          color: rgba(16,36,61,.4);
+        }
 
-        .elwrood-select-wrapper { position: relative; width: 100%; }
+        .elwrood-select-wrapper {
+          position: relative;
+          width: 100%;
+        }
 
         .elwrood-select {
           appearance: none;
@@ -766,15 +679,15 @@ function ProjectElwroodPage() {
           position: absolute;
           top: 50%;
           transform: translateY(-50%);
-          color: var(--ew-gold);
+          color: var(--dar-gold);
           pointer-events: none;
           font-size: 12px;
         }
 
         .elwrood-error {
           color: #dc2626;
-          font-size: 12px;
-          margin: -7px 0 15px;
+          font-size: 13px;
+          margin: -5px 0 15px;
           display: flex;
           align-items: center;
           gap: 7px;
@@ -783,12 +696,13 @@ function ProjectElwroodPage() {
         .elwrood-wa-btn {
           width: 100%;
           border: 1px solid rgba(184,149,82,.3);
-          background: var(--ew-navy);
+          background: var(--dar-navy);
           color: white;
-          border-radius: 10px;
-          padding: 16px;
-          font-size: 13px;
+          border-radius: 9px;
+          padding: 15px;
+          font-size: 14px;
           font-weight: 700;
+          font-family: inherit;
           cursor: pointer;
           display: flex;
           align-items: center;
@@ -798,24 +712,16 @@ function ProjectElwroodPage() {
         }
 
         .elwrood-wa-btn:hover {
-          background: var(--ew-gold);
-          color: var(--ew-navy);
+          background: var(--dar-gold);
+          color: var(--dar-navy);
           transform: translateY(-3px);
           box-shadow: 0 12px 30px rgba(184,149,82,.25);
         }
 
-        .elwrood-form-note {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          gap: 7px;
-          color: var(--ew-muted);
-          font-size: 11px;
-          margin-top: 16px;
+        /* TRUST SECTION */
+        .elwrood-trust-section {
+          padding: 0 20px 80px;
         }
-
-        /* TRUST */
-        .elwrood-trust-section { padding: 0 20px 80px; }
 
         .elwrood-trust-grid {
           display: grid;
@@ -823,11 +729,13 @@ function ProjectElwroodPage() {
           overflow: hidden;
           border-radius: 20px;
           border: 1px solid rgba(184,149,82,.25);
-          box-shadow: 0 25px 70px rgba(16,36,61,.1),0 0 35px rgba(184,149,82,.05);
+          box-shadow:
+            0 25px 70px rgba(16,36,61,.1),
+            0 0 35px rgba(184,149,82,.05);
         }
 
         .elwrood-trust-left {
-          background: var(--ew-navy);
+          background: var(--dar-navy);
           padding: 35px 25px;
           position: relative;
           overflow: hidden;
@@ -848,32 +756,65 @@ function ProjectElwroodPage() {
         .elwrood-trust-stat {
           padding: 20px 0;
           border-bottom: 1px solid rgba(184,149,82,.18);
-          transition: padding .3s;
+          transition: padding .3s ease;
         }
 
-        .elwrood-trust-stat:last-child { border-bottom: none; }
-        .elwrood-trust-stat:hover { padding-inline: 8px; }
+        .elwrood-trust-stat:last-child {
+          border-bottom: none;
+        }
+
+        .elwrood-trust-stat:hover {
+          padding-inline: 8px;
+        }
 
         .elwrood-trust-num {
           display: block;
-          font-family: 'DM Sans',sans-serif;
-          font-size: clamp(30px,4vw,42px);
+          font-family: 'DM Sans', sans-serif;
+          font-size: clamp(30px, 4vw, 42px);
           font-weight: 700;
-          color: var(--ew-gold);
+          color: var(--dar-gold);
           line-height: 1.2;
           margin-bottom: 8px;
+          transition: color .3s ease;
+        }
+
+        .elwrood-trust-stat:hover .elwrood-trust-num {
+          color: #D7BC83;
         }
 
         .elwrood-trust-label {
-          font-size: 13px;
+          font-size: 14px;
           line-height: 1.9;
           color: rgba(16,36,61,.6);
+        }
+
+        .elwrood-trust-cta {
+          background: var(--dar-gold);
+          color: var(--dar-navy);
+          border: 1px solid rgba(215,188,131,.4);
+          border-radius: 9px;
+          padding: 14px 28px;
+          font-size: 14px;
+          font-weight: 700;
+          font-family: inherit;
+          cursor: pointer;
+          text-decoration: none;
+          display: inline-block;
+          width: fit-content;
+          margin-top: 25px;
+          transition: all .35s ease;
+        }
+
+        .elwrood-trust-cta:hover {
+          background: var(--dar-light-gold);
+          transform: translateY(-3px);
+          box-shadow: 0 10px 30px rgba(184,149,82,.25);
         }
 
         .elwrood-company-location {
           margin-top: 25px;
           color: rgba(248,246,241,.75);
-          font-size: 12px;
+          font-size: 13px;
           line-height: 2;
         }
 
@@ -889,9 +830,12 @@ function ProjectElwroodPage() {
           text-decoration: none;
           font-weight: 600;
           margin-top: 5px;
+          transition: color .3s;
         }
 
-        .elwrood-company-location a:hover { color: white; }
+        .elwrood-company-location a:hover {
+          color: white;
+        }
 
         .elwrood-socials {
           margin-top: 25px;
@@ -900,7 +844,7 @@ function ProjectElwroodPage() {
           align-items: center;
           gap: 13px;
           color: rgba(248,246,241,.7);
-          font-size: 12px;
+          font-size: 13px;
         }
 
         .elwrood-social-links {
@@ -917,7 +861,7 @@ function ProjectElwroodPage() {
           gap: 8px;
           color: #D7BC83;
           text-decoration: none;
-          transition: color .3s,transform .3s;
+          transition: color .3s ease, transform .3s ease;
         }
 
         .elwrood-social-links a:hover {
@@ -925,28 +869,7 @@ function ProjectElwroodPage() {
           transform: translateY(-3px);
         }
 
-        .elwrood-trust-cta {
-          background: var(--ew-gold);
-          color: var(--ew-navy);
-          border: 1px solid rgba(215,188,131,.4);
-          border-radius: 10px;
-          padding: 14px 25px;
-          font-size: 13px;
-          font-weight: 700;
-          cursor: pointer;
-          text-decoration: none;
-          display: inline-block;
-          width: fit-content;
-          margin-top: 25px;
-          transition: all .35s;
-        }
-
-        .elwrood-trust-cta:hover {
-          background: var(--ew-light-gold);
-          transform: translateY(-3px);
-        }
-
-        /* BACK */
+        /* BACK BUTTON */
         .elwrood-back-section {
           text-align: center;
           padding: 15px 20px 65px;
@@ -957,22 +880,23 @@ function ProjectElwroodPage() {
           align-items: center;
           justify-content: center;
           gap: 12px;
-          background: var(--ew-navy);
+          background: var(--dar-navy);
           color: white;
-          padding: 14px 35px;
-          border-radius: 10px;
+          padding: 14px 38px;
+          border-radius: 9px;
           border: 1px solid rgba(184,149,82,.3);
-          font-size: 13px;
+          font-size: 14px;
           font-weight: 600;
           text-decoration: none;
-          transition: all .35s;
+          transition: all .35s ease;
           box-shadow: 0 10px 30px rgba(16,36,61,.08);
         }
 
         .elwrood-back-btn:hover {
-          background: var(--ew-gold);
-          color: var(--ew-navy);
+          background: var(--dar-gold);
+          color: var(--dar-navy);
           transform: translateY(-3px);
+          box-shadow: 0 15px 35px rgba(184,149,82,.2);
         }
 
         /* DESKTOP */
@@ -984,67 +908,157 @@ function ProjectElwroodPage() {
             gap: 6%;
           }
 
-          .elwrood-hero.hero-en { flex-direction: row-reverse; }
-          .elwrood-hero-content { width: 45%; }
-          .elwrood-gallery-column { width: 55%; }
+          .elwrood-hero.hero-en {
+            flex-direction: row-reverse;
+          }
+
+          .elwrood-hero-content {
+            width: 45%;
+          }
+
+          .elwrood-gallery-column {
+            width: 55%;
+          }
 
           .elwrood-gallery {
-            height: clamp(480px,72vh,780px);
+            height: clamp(480px, 72vh, 780px);
             border-radius: 24px;
           }
 
-          .elwrood-title { font-size: clamp(42px,4.5vw,72px); }
-          .elwrood-description { font-size: 16px; line-height: 2.5; }
+          .elwrood-title {
+            font-size: clamp(42px, 4.5vw, 72px);
+          }
 
-          .elwrood-thumbnail { width: 95px; height: 72px; }
-          .elwrood-thumbnails { gap: 14px; margin-top: 20px; }
+          .elwrood-description {
+            font-size: 16px;
+            line-height: 2.5;
+          }
 
-          .elwrood-video-section { padding: 100px 5% 120px; }
-          .elwrood-heading { margin-bottom: 55px; }
+          .elwrood-thumbnails {
+            gap: 14px;
+            margin-top: 20px;
+          }
+
+          .elwrood-thumbnail {
+            width: 95px;
+            height: 72px;
+          }
+
+          .elwrood-video-section {
+            padding: 100px 5% 120px;
+          }
+
+          .elwrood-section-heading {
+            margin-bottom: 55px;
+          }
 
           .elwrood-info-section {
-            grid-template-columns: repeat(2,minmax(0,1fr));
+            grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 35px;
             padding: 100px 7%;
           }
 
-          .elwrood-card { padding: 42px; border-radius: 22px; }
-          .elwrood-card-title { font-size: 25px; }
-          .elwrood-detail-text { font-size: 14px; line-height: 2.3; }
+          .elwrood-card {
+            padding: 45px;
+            border-radius: 22px;
+          }
 
-          .elwrood-trust-section { padding: 0 7% 110px; }
+          .elwrood-card-title {
+            font-size: 26px;
+          }
+
+          .elwrood-detail-text {
+            font-size: 15px;
+            line-height: 2.4;
+          }
+
+          .elwrood-trust-section {
+            padding: 0 7% 110px;
+          }
+
           .elwrood-trust-grid {
-            grid-template-columns: repeat(2,minmax(0,1fr));
+            grid-template-columns: repeat(2, minmax(0, 1fr));
             border-radius: 24px;
           }
 
           .elwrood-trust-left,
-          .elwrood-trust-right { padding: 55px 50px; }
+          .elwrood-trust-right {
+            padding: 55px 50px;
+          }
 
-          .elwrood-trust-left { min-height: 620px; }
+          .elwrood-trust-left {
+            min-height: 620px;
+          }
         }
 
+        /* MOBILE */
         @media (max-width: 767px) {
-          .elwrood-arrow { opacity: 1; width: 36px; height: 36px; font-size: 14px; }
-          .elwrood-arrow.prev { left: 10px; }
-          .elwrood-arrow.next { right: 10px; }
-          .elwrood-counter { bottom: 16px; left: 15px; }
-          .elwrood-thumbnails { gap: 8px; margin-top: 14px; }
-          .elwrood-thumbnail { width: 65px; height: 52px; }
+          .elwrood-gallery-arrow {
+            opacity: 1;
+            width: 36px;
+            height: 36px;
+            font-size: 14px;
+          }
+
+          .elwrood-gallery-arrow.prev { left: 10px; }
+          .elwrood-gallery-arrow.next { right: 10px; }
+
+          .elwrood-gallery-counter {
+            bottom: 16px;
+            left: 15px;
+          }
+
+          .elwrood-thumbnails {
+            gap: 8px;
+            margin-top: 14px;
+          }
+
+          .elwrood-thumbnail {
+            width: 65px;
+            height: 52px;
+          }
+
+          .elwrood-trust-left {
+            min-height: auto;
+          }
         }
 
         @media (max-width: 380px) {
-          .elwrood-hero { padding: 95px 14px 40px; gap: 25px; }
-          .elwrood-gallery { height: 240px; }
-          .elwrood-title { font-size: 29px; }
-          .elwrood-description { font-size: 14px; }
-          .elwrood-thumbnail { width: 56px; height: 45px; }
-          .elwrood-card { padding: 22px 17px; }
+          .elwrood-hero {
+            padding: 95px 14px 40px;
+            gap: 25px;
+          }
+
+          .elwrood-gallery {
+            height: 240px;
+          }
+
+          .elwrood-title {
+            font-size: 29px;
+          }
+
+          .elwrood-description {
+            font-size: 14px;
+          }
+
+          .elwrood-thumbnail {
+            width: 56px;
+            height: 45px;
+          }
+
+          .elwrood-card {
+            padding: 22px 17px;
+          }
         }
 
         @media (prefers-reduced-motion: reduce) {
-          .elwrood-slide { transition: opacity .3s ease; }
-          .elwrood-gallery:hover .elwrood-slide.active { transform: none; }
+          .elwrood-slide {
+            transition: opacity .3s ease;
+          }
+
+          .elwrood-gallery:hover .elwrood-slide.active {
+            transform: none;
+          }
         }
       `}</style>
 
@@ -1052,9 +1066,10 @@ function ProjectElwroodPage() {
 
       {/* HERO */}
       <section className={`elwrood-hero ${ar ? "hero-ar" : "hero-en"}`}>
-        <div className="elwrood-glow one" />
-        <div className="elwrood-glow two" />
+        <div className="elwrood-hero-glow one" />
+        <div className="elwrood-hero-glow two" />
 
+        {/* GALLERY */}
         <div className="elwrood-gallery-column">
           <div
             className="elwrood-gallery"
@@ -1066,7 +1081,9 @@ function ProjectElwroodPage() {
                 key={index}
                 src={image}
                 alt={`Dar Elwrood ${index + 1}`}
-                className={`elwrood-slide ${activeImage === index ? "active" : ""}`}
+                className={`elwrood-slide ${
+                  activeImage === index ? "active" : ""
+                }`}
                 draggable="false"
               />
             ))}
@@ -1075,7 +1092,7 @@ function ProjectElwroodPage() {
 
             <button
               type="button"
-              className="elwrood-arrow prev"
+              className="elwrood-gallery-arrow prev"
               onClick={prevImage}
               aria-label="Previous image"
             >
@@ -1084,14 +1101,14 @@ function ProjectElwroodPage() {
 
             <button
               type="button"
-              className="elwrood-arrow next"
+              className="elwrood-gallery-arrow next"
               onClick={nextImage}
               aria-label="Next image"
             >
               &#10095;
             </button>
 
-            <div className="elwrood-counter">
+            <div className="elwrood-gallery-counter">
               <span className="current">
                 {String(activeImage + 1).padStart(2, "0")}
               </span>
@@ -1100,29 +1117,41 @@ function ProjectElwroodPage() {
             </div>
           </div>
 
+          {/* THUMBNAILS */}
           <div className="elwrood-thumbnails">
             {weroodImages.map((image, index) => (
               <button
                 key={index}
                 type="button"
-                className={`elwrood-thumbnail ${activeImage === index ? "active" : ""}`}
+                className={`elwrood-thumbnail ${
+                  activeImage === index ? "active" : ""
+                }`}
                 onClick={() => setActiveImage(index)}
                 aria-label={`Show image ${index + 1}`}
                 aria-current={activeImage === index ? "true" : undefined}
               >
-                <img src={image} alt={`Dar Elwrood thumbnail ${index + 1}`} />
+                <img
+                  src={image}
+                  alt={`Dar Elwrood thumbnail ${index + 1}`}
+                />
               </button>
             ))}
           </div>
         </div>
 
-        <div className="elwrood-hero-content" style={{ textAlign }} dir={dir}>
+        {/* HERO TEXT */}
+        <div
+          className="elwrood-hero-content"
+          style={{ textAlign }}
+          dir={dir}
+        >
           <div className="elwrood-eyebrow">
             {ar ? "مشروعات دار للتطوير" : "DAR DEVELOPMENTS"}
           </div>
 
           <h1 className="elwrood-title">
-            <span>{content.title1}</span> {content.title2}
+            <span>{t("elwrood", "title1")}</span>{" "}
+            {t("elwrood", "title2")}
           </h1>
 
           <div
@@ -1130,11 +1159,17 @@ function ProjectElwroodPage() {
             style={{ margin: ar ? "24px 0 24px auto" : "24px 0" }}
           />
 
-          <p className="elwrood-description">{content.description}</p>
+          <p className="elwrood-description">
+            {t("elwrood", "desc")}
+          </p>
 
-          <div className="elwrood-badge">
+          <div className="elwrood-hero-badge">
             <span className="elwrood-badge-dot" />
-            <span>{content.badge}</span>
+            <span>
+              {ar
+                ? "تفاصيل مدروسة.. وحياة تستحقها"
+                : "Thoughtful Details. Better Living."}
+            </span>
           </div>
         </div>
       </section>
@@ -1143,9 +1178,15 @@ function ProjectElwroodPage() {
       <section className="elwrood-video-section">
         <div className="elwrood-video-glow" />
 
-        <div className="elwrood-heading">
-          <span className="eyebrow">{content.discover}</span>
-          <h2>{content.videoTitle}</h2>
+        <div className="elwrood-section-heading">
+          <span className="eyebrow">
+            {ar ? "اكتشف المشروع" : "DISCOVER THE PROJECT"}
+          </span>
+
+          <h2>
+            {ar ? "شاهد دار الورود عن قرب" : "Discover Dar Elwrood"}
+          </h2>
+
           <div className="line" />
         </div>
 
@@ -1162,87 +1203,80 @@ function ProjectElwroodPage() {
       </section>
 
       {/* DETAILS + FORM */}
-      <section className="elwrood-info-section" dir={dir}>
-        {/* PROJECT DETAILS */}
+      <section
+        className="elwrood-info-section"
+        dir={dir}
+      >
+        {/* DETAILS */}
         <div
           className="elwrood-card"
-          style={{ textAlign, order: ar ? 1 : 2 }}
+          style={{
+            textAlign,
+            order: ar ? 1 : 2,
+          }}
         >
-          <div className="elwrood-card-top">
-            <div className="elwrood-card-icon">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                <path d="M3 21h18M5 21V7l7-4 7 4v14M9 10h2m2 0h2m-6 4h2m2 0h2m-6 4h2m2 0h2"/>
-              </svg>
-            </div>
-            <div>
-              <h2 className="elwrood-card-title">{content.detailsTitle}</h2>
-              <div className="elwrood-card-subtitle">{content.detailsEyebrow}</div>
-            </div>
-          </div>
+          <h2 className="elwrood-card-title">
+            {t("elwrood", "detailsTitle")}
+          </h2>
 
-          <div className="elwrood-card-line" />
+          <div
+            className="elwrood-card-line"
+            style={{ marginInlineStart: ar ? "auto" : "0" }}
+          />
 
-          <div className="elwrood-detail-item">
-            <div className="elwrood-detail-icon">⌖</div>
-            <div className="elwrood-detail-content">
-              <span className="elwrood-detail-label">{content.locationTitle}</span>
-              <p className="elwrood-detail-text">{content.location}</p>
-              <a
-                href="https://www.google.com/maps?q=30.809358596801758,31.007654190063477&z=17&hl=en"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="elwrood-map-link"
-              >
-                {ar ? "← عرض الموقع على الخريطة" : "View on Google Maps →"}
-              </a>
-            </div>
-          </div>
+          <p className="elwrood-detail-text">
+            {t("elwrood", "location")}
+          </p>
 
-          <div className="elwrood-detail-item">
-            <div className="elwrood-detail-icon">⌂</div>
-            <div className="elwrood-detail-content">
-              <span className="elwrood-detail-label">{content.towersTitle}</span>
-              <p className="elwrood-detail-text">{content.towers}</p>
-            </div>
-          </div>
+          <a
+            href="https://www.google.com/maps?q=30.809358596801758,31.007654190063477&z=17&hl=en"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="elwrood-map-link"
+          >
+            <span>{ar ? "←" : "→"}</span>
+            {ar
+              ? "عرض الموقع على الخريطة"
+              : "View on Google Maps"}
+          </a>
 
-          <div className="elwrood-detail-item">
-            <div className="elwrood-detail-icon">▦</div>
-            <div className="elwrood-detail-content">
-              <span className="elwrood-detail-label">{content.spacesTitle}</span>
-              <p className="elwrood-detail-text">{content.spaces}</p>
-            </div>
-          </div>
+          <p className="elwrood-detail-text">
+            {t("elwrood", "towers")}
+          </p>
 
-          <div className="elwrood-detail-item">
-            <div className="elwrood-detail-icon">◈</div>
-            <div className="elwrood-detail-content">
-              <span className="elwrood-detail-label">{content.installmentTitle}</span>
-              <p className="elwrood-detail-text">{content.installment}</p>
-            </div>
-          </div>
+          <p className="elwrood-detail-text">
+            {t("elwrood", "spaces")}
+          </p>
+
+          <p className="elwrood-detail-text">
+            {t("elwrood", "downPayment")}
+          </p>
+
+          <p className="elwrood-detail-text" style={{ marginBottom: 0 }}>
+            {t("elwrood", "installment")}
+          </p>
         </div>
 
-        {/* WHATSAPP FORM */}
+        {/* FORM */}
         <div
           className="elwrood-card elwrood-form-card"
-          style={{ direction: dir, order: ar ? 2 : 1 }}
+          style={{
+            direction: dir,
+            order: ar ? 2 : 1,
+          }}
         >
-          <div className="elwrood-form-intro">
-            <span className="elwrood-form-eyebrow">{content.formEyebrow}</span>
-            <h2 className="elwrood-card-title">{content.formTitle}</h2>
-            <p className="elwrood-form-desc">{content.formDesc}</p>
+          <div className="elwrood-form-title">
+            <h2 className="elwrood-card-title">
+              {t("elwrood", "formTitle")}
+            </h2>
+
+            <div className="elwrood-card-line" />
           </div>
 
-          <label className="elwrood-input-label" htmlFor="elwrood-name">
-            {ar ? "الاسم بالكامل" : "Full Name"}
-          </label>
-
           <input
-            id="elwrood-name"
             name="name"
             type="text"
-            placeholder={content.namePlaceholder}
+            placeholder={t("elwrood", "namePlaceholder")}
             className="elwrood-input"
             value={formData.name}
             onChange={(e) => {
@@ -1253,18 +1287,13 @@ function ProjectElwroodPage() {
 
           {error && (
             <div className="elwrood-error">
-              <span>⚠</span>
+              <span>⚠️</span>
               {error}
             </div>
           )}
 
-          <label className="elwrood-input-label" htmlFor="elwrood-project">
-            {ar ? "المشروع المهتم به" : "Interested Project"}
-          </label>
-
           <div className="elwrood-select-wrapper">
             <select
-              id="elwrood-project"
               name="project"
               className="elwrood-input elwrood-select"
               value={formData.project}
@@ -1273,7 +1302,6 @@ function ProjectElwroodPage() {
               <option value="Dar Elwrood">Dar Elwrood</option>
               <option value="Dar Damac">Dar Damac</option>
               <option value="Dar Landmark">Dar Landmark</option>
-              <option value="Palm 2">Palm 2</option>
             </select>
 
             <span
@@ -1284,70 +1312,175 @@ function ProjectElwroodPage() {
             </span>
           </div>
 
-          <button type="button" className="elwrood-wa-btn" onClick={openWhatsApp}>
-            <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor">
+          <button
+            type="button"
+            className="elwrood-wa-btn"
+            onClick={openWhatsApp}
+          >
+            <svg
+              width="19"
+              height="19"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+            >
               <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
             </svg>
-            {content.whatsappBtn}
-          </button>
 
-          <div className="elwrood-form-note">
-            <span>✦</span>
-            {ar ? "فريقنا جاهز للإجابة عن استفساراتك" : "Our team is ready to assist you"}
-          </div>
+            {t("elwrood", "whatsappBtn")}
+          </button>
         </div>
       </section>
 
-      {/* TRUST */}
+      {/* TRUST SECTION */}
       <section className="elwrood-trust-section" dir={dir}>
-        <div className="elwrood-heading">
-          <span className="eyebrow">{content.trustEyebrow}</span>
-          <h2>{content.trustTitle}</h2>
+        <div className="elwrood-section-heading">
+          <span className="eyebrow">
+            {ar ? "لماذا دار؟" : "WHY DAR"}
+          </span>
+
+          <h2>
+            {ar ? "ثقة تُبنى مع الوقت" : "Trust Built Over Time"}
+          </h2>
+
           <div className="line" />
         </div>
 
         <div className="elwrood-trust-grid">
+          {/* LEFT */}
           <div
             className="elwrood-trust-left"
             style={{ order: ar ? 1 : 2 }}
           >
-            <div className="elwrood-trust-glow one" />
-            <div className="elwrood-trust-glow two" />
+            {/* GLOW */}
+            <div
+              style={{
+                position: "absolute",
+                top: -70,
+                right: -70,
+                width: 250,
+                height: 250,
+                borderRadius: "50%",
+                pointerEvents: "none",
+                background:
+                  "radial-gradient(circle,rgba(184,149,82,.15) 0%,transparent 70%)",
+              }}
+            />
 
-            <div className="elwrood-trust-label-top">
-              <span className="elwrood-badge-dot" />
-              {content.trustLabel}
+            <div
+              style={{
+                position: "absolute",
+                bottom: -50,
+                left: -50,
+                width: 180,
+                height: 180,
+                borderRadius: "50%",
+                pointerEvents: "none",
+                background:
+                  "radial-gradient(circle,rgba(184,149,82,.1) 0%,transparent 70%)",
+              }}
+            />
+
+            <div
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "9px",
+                marginBottom: "18px",
+                alignSelf: ar ? "flex-end" : "flex-start",
+              }}
+            >
+              <span
+                style={{
+                  width: 7,
+                  height: 7,
+                  borderRadius: "50%",
+                  background: "#B89552",
+                  display: "inline-block",
+                  animation: "elwroodPulse 2s infinite",
+                }}
+              />
+
+              <span
+                style={{
+                  fontSize: "12px",
+                  color: "#D7BC83",
+                  letterSpacing: "1.5px",
+                }}
+              >
+                {ar ? "ثقة ممتدة" : "TRUSTED SINCE"}
+              </span>
             </div>
 
-            <h2 className="elwrood-trust-headline" style={{ textAlign }}>
-              {content.trustHeadline}{" "}
-              <span>{content.trustYears}</span>
-              {content.trustEnd}
+            <h2
+              style={{
+                fontSize: "clamp(26px, 3.5vw, 42px)",
+                fontWeight: 700,
+                color: "#F8F6F1",
+                lineHeight: 1.6,
+                margin: 0,
+                marginBottom: "15px",
+                textAlign,
+              }}
+            >
+              {ar ? "خبرة ممتدة لأكثر من" : "Over"}{" "}
+              <span style={{ color: "#D7BC83" }}>
+                {ar ? "8 أعوام" : "8 Years"}
+              </span>
+              {ar ? "" : " of Excellence"}
             </h2>
 
             <div
-              className="elwrood-title-line"
-              style={{ margin: ar ? "22px 0 22px auto" : "22px 0" }}
+              style={{
+                width: 45,
+                height: 3,
+                background: "linear-gradient(90deg,#B89552,#D7BC83)",
+                borderRadius: 2,
+                marginBottom: 22,
+                alignSelf: ar ? "flex-end" : "flex-start",
+              }}
             />
 
-            <p className="elwrood-trust-description" style={{ textAlign }}>
-              {content.trustDesc}
+            <p
+              style={{
+                color: "rgba(248,246,241,.65)",
+                fontSize: "14px",
+                lineHeight: 2.2,
+                maxWidth: 420,
+                textAlign,
+                margin: 0,
+              }}
+            >
+              {ar
+                ? "نحن لا نبني وحدات سكنية فحسب — نبني علاقات تدوم. دعمنا لعملائنا لا يتوقف عند التسليم، بل يمتد معهم في كل خطوة."
+                : "We don't just build units — we build lasting relationships. Our commitment to clients extends well beyond handover, every step of the way."}
             </p>
 
+            {/* COMPANY LOCATION */}
             <div className="elwrood-company-location" style={{ textAlign }}>
-              <strong>{content.companyLocationTitle}</strong>
-              <div>{content.companyLocation}</div>
+              <strong>
+                {ar ? "مقر الشركة:" : "Company Location:"}
+              </strong>
+
+              <div>
+                {ar
+                  ? "طنطا - شارع توت عنخ آمون من محمد فريد فوق مخبز الزهراء"
+                  : "Tanta - Tutankhamun Street, Mohamed Farid, above Al Zahraa Bakery"}
+              </div>
+
               <a
                 href="https://maps.app.goo.gl/CjGnSencAK6vsoh19?g_st=aw"
                 target="_blank"
                 rel="noreferrer"
               >
-                {content.openMap}
+                {ar ? "← افتح على الخريطة" : "→ Open in Maps"}
               </a>
             </div>
 
+            {/* SOCIAL */}
             <div className="elwrood-socials">
-              <div style={{ fontWeight: 600 }}>{content.follow}</div>
+              <div style={{ fontWeight: 600 }}>
+                {ar ? "تابعنا على السوشيال ميديا:" : "Follow us"}
+              </div>
 
               <div className="elwrood-social-links">
                 <a
@@ -1375,14 +1508,44 @@ function ProjectElwroodPage() {
             </div>
           </div>
 
+          {/* RIGHT - STATS */}
           <div
             className="elwrood-trust-right"
-            style={{ order: ar ? 2 : 1, textAlign }}
+            style={{
+              order: ar ? 2 : 1,
+              textAlign,
+            }}
           >
-            {stats.map((num, index) => (
+            {[
+              {
+                num: "8+",
+                ar: "سنوات خبرة في السوق العقاري",
+                en: "Years in Real Estate",
+              },
+              {
+                num: "+100",
+                ar: "وحدة سكنية تم تسليمها بنجاح",
+                en: "Units Successfully Delivered",
+              },
+              {
+                num: "3",
+                ar: "مشاريع نشطة حالياً في طنطا",
+                en: "Active Projects in Tanta",
+              },
+              {
+                num: "98%",
+                ar: "نسبة رضا العملاء عن خدماتنا",
+                en: "Client Satisfaction Rate",
+              },
+            ].map((stat, index) => (
               <div className="elwrood-trust-stat" key={index}>
-                <span className="elwrood-trust-num">{num}</span>
-                <span className="elwrood-trust-label">{content.stats[index]}</span>
+                <span className="elwrood-trust-num">
+                  {stat.num}
+                </span>
+
+                <span className="elwrood-trust-label">
+                  {ar ? stat.ar : stat.en}
+                </span>
               </div>
             ))}
           </div>
@@ -1393,56 +1556,9 @@ function ProjectElwroodPage() {
       <div className="elwrood-back-section">
         <a href="/#projects" className="elwrood-back-btn">
           <span>{ar ? "→" : "←"}</span>
-          {content.backBtn}
+          {t("elwrood", "backBtn")}
         </a>
       </div>
-
-      <style>{`
-        .elwrood-trust-glow {
-          position: absolute;
-          border-radius: 50%;
-          pointer-events: none;
-        }
-        .elwrood-trust-glow.one {
-          top: -70px;
-          right: -70px;
-          width: 250px;
-          height: 250px;
-          background: radial-gradient(circle,rgba(184,149,82,.15),transparent 70%);
-        }
-        .elwrood-trust-glow.two {
-          bottom: -50px;
-          left: -50px;
-          width: 180px;
-          height: 180px;
-          background: radial-gradient(circle,rgba(184,149,82,.1),transparent 70%);
-        }
-        .elwrood-trust-label-top {
-          display: inline-flex;
-          align-items: center;
-          gap: 9px;
-          margin-bottom: 18px;
-          align-self: ${ar ? "flex-end" : "flex-start"};
-          color: #D7BC83;
-          font-size: 12px;
-          letter-spacing: 1.5px;
-        }
-        .elwrood-trust-headline {
-          font-size: clamp(26px,3.5vw,42px);
-          font-weight: 700;
-          color: #F8F6F1;
-          line-height: 1.6;
-          margin: 0 0 15px;
-        }
-        .elwrood-trust-headline span { color: #D7BC83; }
-        .elwrood-trust-description {
-          color: rgba(248,246,241,.65);
-          font-size: 14px;
-          line-height: 2.2;
-          max-width: 420px;
-          margin: 0;
-        }
-      `}</style>
     </div>
   );
 }
