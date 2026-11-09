@@ -1,10 +1,9 @@
 import { useEffect, useRef } from "react";
-import logodar from "../assets/logodar.jpeg";
 import heroBg from "../assets/palm5.jpeg";
 import { useLanguage } from "../context/LanguageContext";
 
 function Hero() {
-  const { lang, t } = useLanguage();
+  const { lang } = useLanguage();
   const ar = lang === "ar";
   const imgRef = useRef(null);
 
@@ -56,11 +55,6 @@ function Hero() {
         @keyframes scrollBounce {
           0%,100% { transform: translateY(0); }
           50% { transform: translateY(7px); }
-        }
-
-        @keyframes spinRing {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
         }
 
         @keyframes revealRight {
@@ -182,37 +176,6 @@ function Hero() {
           background: rgba(16,36,61,0.14);
         }
 
-        .nav-link-hero {
-          color: rgba(255,255,255,0.78);
-          font-size: 12px;
-          font-weight: 500;
-          text-decoration: none;
-          letter-spacing: 0.5px;
-          transition: color .2s;
-        }
-
-        .nav-link-hero:hover {
-          color: #E8C96A;
-        }
-
-        .lang-toggle {
-          background: rgba(255,255,255,0.08);
-          border: 1px solid rgba(201,168,76,0.55);
-          color: #E8C96A;
-          padding: 5px 12px;
-          font-size: 11px;
-          font-weight: 600;
-          letter-spacing: 1px;
-          border-radius: 1px;
-          cursor: pointer;
-          transition: all .2s;
-          font-family: inherit;
-        }
-
-        .lang-toggle:hover {
-          background: rgba(201,168,76,0.18);
-        }
-
         .scroll-ind {
           display: flex;
           flex-direction: column;
@@ -234,14 +197,6 @@ function Hero() {
           writing-mode: vertical-rl;
         }
 
-        .logo-ring-spin {
-          position: absolute;
-          inset: -8px;
-          border-radius: 50%;
-          border: 1px dashed rgba(201,168,76,0.55);
-          animation: spinRing 12s linear infinite;
-        }
-
         .img-number {
           position: absolute;
           bottom: 40px;
@@ -255,34 +210,40 @@ function Hero() {
           letter-spacing: -4px;
         }
 
+        /* ——— MOBILE ——— */
         @media (max-width: 767px) {
-          .hero-split {
-            flex-direction: column !important;
+          .hero-section {
+            height: auto !important;
+            min-height: 100vh;
           }
 
+          .hero-split {
+            flex-direction: column !important;
+            height: auto !important;
+          }
+
+          /* الصورة فوق والكلام تحتها في العربي والإنجليزي */
           .img-panel-wrap {
+            order: 1 !important;
             width: 100% !important;
             height: 45vh !important;
             min-height: 300px !important;
           }
 
           .text-panel-wrap {
+            order: 2 !important;
             width: 100% !important;
             min-height: unset !important;
-            padding: 40px 24px 48px !important;
+            padding: 40px 24px 56px !important;
             justify-content: flex-start !important;
-          }
-
-          .hero-nav {
-            padding: 18px 20px !important;
-          }
-
-          .nav-links-wrap {
-            display: none !important;
           }
 
           .hero-headline {
             font-size: clamp(38px, 10vw, 56px) !important;
+          }
+
+          .hero-sub {
+            max-width: 100% !important;
           }
 
           .scroll-ind-wrap,
@@ -293,6 +254,7 @@ function Hero() {
       `}</style>
 
       <section
+        className="hero-section"
         style={{
           position: "relative",
           width: "100%",
@@ -301,110 +263,6 @@ function Hero() {
           overflow: "hidden",
         }}
       >
-        {/* NAV */}
-        <nav
-          className="hero-nav"
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            zIndex: 50,
-            padding: "24px 48px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            background:
-              "linear-gradient(to bottom, rgba(11,26,46,0.62), transparent)",
-          }}
-        >
-          {/* LOGO */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "12px",
-            }}
-          >
-            <div
-              style={{
-                position: "relative",
-                width: 44,
-                height: 44,
-              }}
-            >
-              <div className="logo-ring-spin" />
-
-              <img
-                src={logodar}
-                alt="DAR"
-                style={{
-                  width: 44,
-                  height: 44,
-                  borderRadius: "50%",
-                  objectFit: "cover",
-                  border: "1.5px solid rgba(201,168,76,0.6)",
-                  position: "relative",
-                  zIndex: 2,
-                }}
-              />
-            </div>
-
-            <div>
-              <p
-                style={{
-                  color: "#fff",
-                  fontWeight: 800,
-                  fontSize: "15px",
-                  letterSpacing: "4px",
-                  lineHeight: 1,
-                  margin: 0,
-                }}
-              >
-                DAR
-              </p>
-
-              <p
-                style={{
-                  color: "rgba(232,201,106,0.85)",
-                  fontSize: "9px",
-                  letterSpacing: "2px",
-                  margin: 0,
-                }}
-              >
-                {ar ? "للاستثمار العقاري" : "DEVELOPMENTS"}
-              </p>
-            </div>
-          </div>
-
-          {/* LINKS */}
-          <div
-            className="nav-links-wrap"
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "32px",
-            }}
-          >
-            {(ar
-              ? ["الرئيسية", "المشاريع", "عن الشركة", "تواصل معنا"]
-              : ["Home", "Projects", "About", "Contact"]
-            ).map((lnk, i) => (
-              <a
-                key={i}
-                href={["/#home", "/#projects", "/#about", "/#contact"][i]}
-                className="nav-link-hero"
-              >
-                {lnk}
-              </a>
-            ))}
-
-            <button className="lang-toggle">
-              {ar ? "EN" : "ع"}
-            </button>
-          </div>
-        </nav>
-
         {/* SPLIT LAYOUT */}
         <div
           className="hero-split"
@@ -459,8 +317,6 @@ function Hero() {
             >
               02
             </div>
-
-            {/* Location badge removed as requested */}
           </div>
 
           {/* LIGHT TEXT PANEL */}
@@ -504,7 +360,7 @@ function Hero() {
               }}
             />
 
-            {/* Location / eyebrow label */}
+            {/* Location label */}
             <div className="a1" style={{ marginBottom: "28px" }}>
               <span
                 style={{
@@ -542,16 +398,12 @@ function Hero() {
               {ar ? (
                 <>
                   نصنع ملامح
-                  <span className="hero-headline-gold">
-                    المستقبل.
-                  </span>
+                  <span className="hero-headline-gold">المستقبل.</span>
                 </>
               ) : (
                 <>
                   WE SHAPE
-                  <span className="hero-headline-gold">
-                    THE FUTURE.
-                  </span>
+                  <span className="hero-headline-gold">THE FUTURE.</span>
                 </>
               )}
             </h1>
@@ -561,6 +413,8 @@ function Hero() {
               className="gold-line a3"
               style={{
                 marginTop: "24px",
+                marginLeft: ar ? "auto" : 0,
+                marginRight: ar ? 0 : "auto",
               }}
             />
 
@@ -608,21 +462,9 @@ function Hero() {
               }}
             >
               {[
-                {
-                  num: "+100",
-                  ar: "وحدة سُلِّمت",
-                  en: "Units Delivered",
-                },
-                {
-                  num: "98%",
-                  ar: "رضا العملاء",
-                  en: "Satisfaction",
-                },
-                {
-                  num: "8+",
-                  ar: "سنوات خبرة",
-                  en: "Yrs Experience",
-                },
+                { num: "+100", ar: "وحدة سُلِّمت", en: "Units Delivered" },
+                { num: "98%", ar: "رضا العملاء", en: "Satisfaction" },
+                { num: "8+", ar: "سنوات خبرة", en: "Yrs Experience" },
               ].map((s, i) => (
                 <div
                   key={i}
@@ -676,10 +518,7 @@ function Hero() {
               }}
             >
               <div className="scroll-ind">
-                <span className="scroll-ind-txt">
-                  SCROLL
-                </span>
-
+                <span className="scroll-ind-txt">SCROLL</span>
                 <div className="scroll-ind-line" />
               </div>
             </div>

@@ -1,6 +1,5 @@
-
 import Navbar from "../components/Navbar";
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useLanguage } from "../context/LanguageContext";
 
 import palm1 from "../assets/palm1.jpeg";
@@ -14,174 +13,131 @@ import palm8 from "../assets/palm8.jpeg";
 
 const IMAGES = [palm1, palm2, palm3, palm4, palm5, palm6, palm7, palm8];
 
+const details = {
+  ar: {
+    title1: "بالم",
+    title2: "المرحلة الثانية",
+    desc: "بالم 2 هو استكمال للمرحلة الأولى من مشروع بالم، أكبر كمباوند سكني في كورنيش بلازا بطنطا، والذي يضم إجمالي 8 أبراج سكنية. وتضم المرحلة الثانية المطروحة حاليًا 4 أبراج سكنية، بمساحات متنوعة وأنظمة سداد مرنة، لتوفر فرصًا مميزة للسكن والاستثمار العقاري.",
+    detailsTitle: "تفاصيل المشروع",
+    location: "📍 الموقع: كورنيش بلازا، تقاطع شارع أحمد الخشاب، طنطا، مصر.",
+    mapsLabel: "عرض الموقع على الخريطة",
+    towersTitle: "🏢 الأبراج السكنية ومساحات الوحدات:",
+    towers: `البرج الأول: 131م² | 138م² | 115م² | 134م² | 135م² | 114م²
+البرج الثاني: 130م² | 138م² | 115م² | 138م² | 141م² | 114م² | 136م²
+البرج الثالث: 101م² | 105م²
+البرج الرابع: 155م² | 118م²`,
+    downPayment: "💰 المقدم: يبدأ من 30%",
+    installment: "📅 التقسيط: على 4 سنوات",
+    delivery: "🏠 الاستلام: يبدأ من سنتين ونصف — على الطوب",
+    featuresTitle: "✨ أهم مميزات المشروع:",
+    features: [
+      "أكبر كمباوند سكني في كورنيش بلازا",
+      "8 أبراج بالمشروع، والمرحلة الثانية 4 أبراج",
+      "مساحات متنوعة تناسب مختلف الاحتياجات",
+      "أنظمة سداد مرنة",
+      "استلام يبدأ من سنتين ونصف",
+      "كمباوند مسوّر بالكامل (Exclusive Gated Community)",
+      "على بُعد دقيقتين من الطرق الرئيسية والسريعة",
+      "موقع استراتيجي في قلب طنطا",
+      "خصوصية تامة",
+      "تصميم متكامل ومدروس",
+      "مسجد داخل المشروع",
+      "نافورة",
+      "مساحات خضراء",
+      "جراج",
+    ],
+    formTitle: "تواصل معنا",
+    namePlaceholder: "اكتب اسمك",
+    whatsappBtn: "تواصل عبر واتساب",
+    backBtn: "← العودة للمشاريع",
+  },
+  en: {
+    title1: "Palm",
+    title2: "Phase Two",
+    desc: "Palm 2 is the continuation of the first phase of the Palm project — the largest residential compound in Corniche Plaza, Tanta, comprising a total of 8 residential towers. Phase Two currently offers 4 residential towers with diverse spaces and flexible payment plans, providing outstanding opportunities for housing and real estate investment.",
+    detailsTitle: "Project Details",
+    location: "📍 Location: Corniche Plaza, Ahmed Al-Khashab Street intersection, Tanta, Egypt.",
+    mapsLabel: "View on Google Maps",
+    towersTitle: "🏢 Residential Towers & Unit Spaces:",
+    towers: `Tower 1: 131m² | 138m² | 115m² | 134m² | 135m² | 114m²
+Tower 2: 130m² | 138m² | 115m² | 138m² | 141m² | 114m² | 136m²
+Tower 3: 101m² | 105m²
+Tower 4: 155m² | 118m²`,
+    downPayment: "💰 Down Payment: Starting from 30%",
+    installment: "📅 Installments: Over 4 years",
+    delivery: "🏠 Delivery: Starting from 2.5 years — Red brick finishing",
+    featuresTitle: "✨ Key Project Features:",
+    features: [
+      "Largest residential compound in Corniche Plaza",
+      "8 towers in total — Phase Two includes 4 towers",
+      "Varied spaces to suit different needs",
+      "Flexible payment plans",
+      "Delivery starting from 2.5 years",
+      "Exclusive Gated Community",
+      "2 minutes away from main roads & highways",
+      "Strategically located in the heart of Tanta",
+      "Full privacy",
+      "Thoughtful layout",
+      "Mosque",
+      "Fountain",
+      "Green areas",
+      "Garage",
+    ],
+    formTitle: "Contact Us",
+    namePlaceholder: "Enter your name",
+    whatsappBtn: "Contact via WhatsApp",
+    backBtn: "Back to Projects →",
+  },
+};
+
 function ProjectPalm2Page() {
   const { lang } = useLanguage();
+  const ar = lang === "ar";
+  const dir = ar ? "rtl" : "ltr";
+  const textAlign = ar ? "right" : "left";
+  const c = details[lang];
 
-  const [formData, setFormData] = useState({
-    name: "",
-    project: "Palm 2",
-  });
-
+  const [formData, setFormData] = useState({ name: "", project: "Palm 2" });
   const [error, setError] = useState("");
   const [current, setCurrent] = useState(0);
 
-  const sliderRef = useRef(null);
-
-  const prev = useCallback(() => {
-    setCurrent((i) => (i === 0 ? IMAGES.length - 1 : i - 1));
-  }, []);
-
-  const next = useCallback(() => {
-    setCurrent((i) => (i === IMAGES.length - 1 ? 0 : i + 1));
-  }, []);
+  const prev = useCallback(
+    () => setCurrent((i) => (i === 0 ? IMAGES.length - 1 : i - 1)),
+    []
+  );
+  const next = useCallback(
+    () => setCurrent((i) => (i === IMAGES.length - 1 ? 0 : i + 1)),
+    []
+  );
 
   useEffect(() => {
     const timer = setInterval(next, 4000);
     return () => clearInterval(timer);
   }, [next]);
 
-  const handleChange = (e) => {
-    setFormData((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
-  };
+  const handleChange = (e) =>
+    setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const openWhatsApp = () => {
     if (!formData.name.trim()) {
-      setError(
-        lang === "ar"
-          ? "من فضلك اكتب الاسم أولاً"
-          : "Please enter your name"
-      );
+      setError(ar ? "من فضلك اكتب الاسم أولاً" : "Please enter your name");
       return;
     }
-
     setError("");
-
-    const message =
-      lang === "ar"
-        ? `اسم العميل: ${formData.name}\nالمشروع: ${formData.project}`
-        : `Client Name: ${formData.name}\nProject: ${formData.project}`;
-
+    const message = ar
+      ? `اسم العميل: ${formData.name}\nالمشروع: ${formData.project}`
+      : `Client Name: ${formData.name}\nProject: ${formData.project}`;
     window.open(
       `https://wa.me/201039207908?text=${encodeURIComponent(message)}`,
-      "_blank",
-      "noopener,noreferrer"
+      "_blank"
     );
   };
-
-  const dir = lang === "ar" ? "rtl" : "ltr";
-  const textAlign = lang === "ar" ? "right" : "left";
-
-  const details = {
-    ar: {
-      title1: "بالم",
-      title2: "المرحلة الثانية",
-
-      desc: "بالم 2 هو استكمال للمرحلة الأولى من مشروع بالم، أكبر كمباوند سكني في كورنيش بلازا بطنطا، والذي يضم إجمالي 8 أبراج سكنية. وتضم المرحلة الثانية المطروحة حاليًا 4 أبراج سكنية، بمساحات متنوعة وأنظمة سداد مرنة، لتوفر فرصًا مميزة للسكن والاستثمار العقاري.",
-
-      detailsTitle: "تفاصيل المشروع",
-
-      location:
-        "📍 الموقع: كورنيش بلازا، تقاطع شارع أحمد الخشاب، طنطا، مصر.",
-
-      mapsLabel: "عرض الموقع على الخريطة",
-
-      towersTitle: "🏢 الأبراج السكنية ومساحات الوحدات:",
-
-      towers: `البرج الأول: 131م² | 138م² | 115م² | 134م² | 135م² | 114م²
-البرج الثاني: 130م² | 138م² | 115م² | 138م² | 141م² | 114م² | 136م²
-البرج الثالث: 101م² | 105م²
-البرج الرابع: 155م² | 118م²`,
-
-      downPayment: "💰 المقدم: يبدأ من 30%",
-
-      installment: "📅 التقسيط: على 4 سنوات",
-
-      delivery: "🏠 الاستلام: خلال سنتين ونصف — على الطوب",
-
-      featuresTitle: "✨ أهم مميزات المشروع:",
-
-      features: [
-        "أكبر كمباوند سكني في كورنيش بلازا",
-        "مساحات متنوعة تناسب مختلف الاحتياجات",
-        "كمباوند مسوّر بالكامل — Exclusive Gated Community",
-        "على بُعد دقيقتين من الطرق الرئيسية والسريعة",
-        "خصوصية تامة",
-        "مسجد داخل المشروع",
-        "نافورة",
-        "مساحات خضراء",
-        "جراج",
-      ],
-
-      formTitle: "تواصل معنا",
-
-      namePlaceholder: "اكتب اسمك",
-
-      whatsappBtn: "تواصل عبر واتساب",
-
-      backBtn: "← العودة للمشاريع",
-    },
-
-    en: {
-      title1: "Palm",
-      title2: "Phase Two",
-
-      desc: "Palm 2 is the continuation of the first phase of the Palm project — the largest residential compound in Corniche Plaza, Tanta, comprising a total of 8 residential towers. Phase Two currently offers 4 residential towers with diverse spaces and flexible payment plans, providing outstanding opportunities for housing and real estate investment.",
-
-      detailsTitle: "Project Details",
-
-      location:
-        "📍 Location: Corniche Plaza, Ahmed Al-Khashab Street intersection, Tanta, Egypt.",
-
-      mapsLabel: "View on Google Maps",
-
-      towersTitle: "🏢 Residential Towers & Unit Spaces:",
-
-      towers: `Tower 1: 131m² | 138m² | 115m² | 134m² | 135m² | 114m²
-Tower 2: 130m² | 138m² | 115m² | 138m² | 141m² | 114m² | 136m²
-Tower 3: 101m² | 105m²
-Tower 4: 155m² | 118m²`,
-
-      downPayment: "💰 Down Payment: Starting from 30%",
-
-      installment: "📅 Installments: Over 4 years",
-
-      delivery: "🏠 Delivery: Starting from 2.5 years — Red brick finishing",
-
-      featuresTitle: "✨ Key Project Features:",
-
-      features: [
-        "Largest residential compound in Corniche Plaza",
-        "Varied spaces to suit different needs",
-        "Exclusive Gated Community",
-        "2 Minutes Away from Main Roads & Highways",
-        "Full Privacy",
-        "Mosque within the compound",
-        "Fountain",
-        "Green Areas",
-        "Garage",
-      ],
-
-      formTitle: "Contact Us",
-
-      namePlaceholder: "Enter your name",
-
-      whatsappBtn: "Contact via WhatsApp",
-
-      backBtn: "Back to Projects →",
-    },
-  };
-
-  const c = details[lang] || details.ar;
 
   return (
     <div
       className="w-full overflow-x-hidden"
       style={{
-        background:
-          "linear-gradient(135deg,#ffffff 0%,#eef6ff 35%,#dbeafe 100%)",
+        background: "linear-gradient(135deg,#ffffff 0%,#eef6ff 35%,#dbeafe 100%)",
         fontFamily: "'Noto Naskh Arabic', serif",
         direction: dir,
       }}
@@ -195,16 +151,147 @@ Tower 4: 155m² | 118m²`,
         }
 
         @keyframes countUp {
-          from {
-            opacity: 0;
-            transform: translateY(10px);
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* HERO — صورة فوق والكلام تحتها على الموبايل */
+        .project-hero {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          position: relative;
+          overflow: hidden;
+          padding: 100px 20px 50px;
+          gap: 28px;
+        }
+
+        .project-hero-image {
+          width: 100%;
+          height: 300px;
+          border-radius: 16px;
+          overflow: hidden;
+          box-shadow: 0 20px 50px rgba(0,0,0,.12);
+          position: relative;
+          flex-shrink: 0;
+        }
+
+        .project-hero-text {
+          width: 100%;
+          box-sizing: border-box;
+        }
+
+        .project-hero-title {
+          font-size: clamp(28px, 8vw, 40px);
+          line-height: 1.5;
+          overflow-wrap: anywhere;
+        }
+
+        .project-hero-description {
+          font-size: 15px;
+          line-height: 2;
+          overflow-wrap: anywhere;
+        }
+
+        @media (min-width: 768px) {
+          .project-hero {
+            flex-direction: row;
+            min-height: 100vh;
+            padding: 160px 80px 60px;
+            gap: 64px;
           }
-          to {
-            opacity: 1;
-            transform: translateY(0);
+
+          .project-hero.hero-en {
+            flex-direction: row-reverse;
+          }
+
+          .project-hero-image {
+            width: 50%;
+            height: 80vh;
+            min-height: 450px;
+          }
+
+          .project-hero-text {
+            width: 50%;
+          }
+
+          .project-hero-title {
+            font-size: clamp(42px, 5vw, 72px);
+            line-height: 1.3;
+          }
+
+          .project-hero-description {
+            font-size: 17px;
+            line-height: 2.5;
           }
         }
 
+        @media (max-width: 380px) {
+          .project-hero {
+            padding: 90px 14px 40px;
+            gap: 20px;
+          }
+
+          .project-hero-image { height: 240px; }
+          .project-hero-title { font-size: 27px; }
+          .project-hero-description { font-size: 14px; }
+        }
+
+        /* SLIDER */
+        .slider-img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          display: block;
+        }
+
+        .slider-btn {
+          position: absolute;
+          top: 50%;
+          transform: translateY(-50%);
+          background: rgba(11,26,46,0.6);
+          color: #C9A84C;
+          border: none;
+          border-radius: 50%;
+          width: 38px;
+          height: 38px;
+          font-size: 18px;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: background .2s;
+          z-index: 10;
+        }
+
+        .slider-btn:hover { background: #C9A84C; color: #0B1A2E; }
+        .slider-btn-prev { left: 10px; }
+        .slider-btn-next { right: 10px; }
+
+        .slider-dots {
+          position: absolute;
+          bottom: 12px;
+          left: 50%;
+          transform: translateX(-50%);
+          display: flex;
+          gap: 6px;
+          z-index: 10;
+        }
+
+        .slider-dot {
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background: rgba(255,255,255,0.5);
+          cursor: pointer;
+          transition: background .2s, transform .2s;
+          border: none;
+          padding: 0;
+        }
+
+        .slider-dot.active { background: #C9A84C; transform: scale(1.3); }
+
+        /* FORM */
         .custom-select-wrapper {
           position: relative;
           width: 100%;
@@ -236,7 +323,7 @@ Tower 4: 155m² | 118m²`,
         .custom-select-arrow {
           position: absolute;
           top: 50%;
-          ${lang === "ar" ? "left: 14px;" : "right: 14px;"}
+          ${ar ? "left: 14px;" : "right: 14px;"}
           transform: translateY(-50%);
           pointer-events: none;
           color: #C9A84C;
@@ -245,6 +332,7 @@ Tower 4: 155m² | 118m²`,
 
         .custom-input {
           width: 100%;
+          box-sizing: border-box;
           border: 1.5px solid rgba(201,168,76,0.35);
           border-radius: 6px;
           padding: 13px 16px;
@@ -256,7 +344,6 @@ Tower 4: 155m² | 118m²`,
           margin-bottom: 8px;
           direction: ${dir};
           display: block;
-          box-sizing: border-box;
         }
 
         .custom-input:focus {
@@ -264,9 +351,7 @@ Tower 4: 155m² | 118m²`,
           box-shadow: 0 0 0 3px rgba(201,168,76,0.12);
         }
 
-        .custom-input::placeholder {
-          color: rgba(11,26,46,0.35);
-        }
+        .custom-input::placeholder { color: rgba(11,26,46,0.35); }
 
         .wa-btn {
           width: 100%;
@@ -293,140 +378,6 @@ Tower 4: 155m² | 118m²`,
           box-shadow: 0 8px 24px rgba(201,168,76,0.25);
         }
 
-        .slider-wrapper {
-          position: relative;
-          width: 100%;
-          height: 100%;
-          border-radius: 16px;
-          overflow: hidden;
-        }
-
-        .slider-img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-          transition: opacity 0.5s ease;
-        }
-
-        .slider-btn {
-          position: absolute;
-          top: 50%;
-          transform: translateY(-50%);
-          background: rgba(11,26,46,0.6);
-          color: #C9A84C;
-          border: none;
-          border-radius: 50%;
-          width: 40px;
-          height: 40px;
-          font-size: 18px;
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          transition: background .2s;
-          z-index: 10;
-        }
-
-        .slider-btn:hover {
-          background: #C9A84C;
-          color: #0B1A2E;
-        }
-
-        .slider-btn-prev {
-          left: 12px;
-        }
-
-        .slider-btn-next {
-          right: 12px;
-        }
-
-        .slider-dots {
-          position: absolute;
-          bottom: 12px;
-          left: 50%;
-          transform: translateX(-50%);
-          display: flex;
-          gap: 6px;
-          z-index: 10;
-        }
-
-        .slider-dot {
-          width: 8px;
-          height: 8px;
-          border-radius: 50%;
-          background: rgba(255,255,255,0.5);
-          cursor: pointer;
-          transition: background .2s, transform .2s;
-          border: none;
-          padding: 0;
-        }
-
-        .slider-dot.active {
-          background: #C9A84C;
-          transform: scale(1.3);
-        }
-
-        .trust-grid {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          overflow: hidden;
-          border-radius: 10px;
-          box-shadow: 0 20px 60px rgba(0,0,0,0.12);
-        }
-
-        @media (max-width: 768px) {
-          .trust-grid {
-            grid-template-columns: 1fr;
-          }
-
-          .trust-left,
-          .trust-right {
-            padding: 32px 24px !important;
-          }
-        }
-
-        .trust-left {
-          background: #0B1A2E;
-          padding: 56px 48px;
-          position: relative;
-          overflow: hidden;
-          display: flex;
-          flex-direction: column;
-        }
-
-        .trust-right {
-          background: white;
-          padding: 56px 48px;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-        }
-
-        .trust-stat {
-          display: flex;
-          flex-direction: column;
-          padding: 18px 0;
-          border-bottom: 1px solid rgba(201,168,76,0.15);
-          animation: countUp 0.6s ease forwards;
-        }
-
-        .trust-stat:last-child {
-          border-bottom: none;
-        }
-
-        .trust-stat-num {
-          font-size: clamp(28px, 4vw, 40px);
-          font-weight: 700;
-          color: #C9A84C;
-          line-height: 1;
-          margin-bottom: 4px;
-        }
-
-        .trust-stat-lbl {
-          font-size: 14px;
-          color: rgba(30,58,95,0.55);
-        }
-
         .back-btn {
           display: inline-block;
           background: #0B1A2E;
@@ -446,106 +397,131 @@ Tower 4: 155m² | 118m²`,
           transform: translateY(-2px);
         }
 
+        /* FEATURES — خط أصغر وعمودين على الشاشات الكبيرة */
+        .features-grid {
+          display: grid;
+          grid-template-columns: 1fr;
+          column-gap: 24px;
+        }
+
+        @media (min-width: 768px) {
+          .features-grid { grid-template-columns: 1fr 1fr; }
+        }
+
         .feature-item {
           display: flex;
           align-items: center;
-          gap: 10px;
-          padding: 8px 0;
-          border-bottom: 1px solid rgba(201,168,76,0.1);
-          color: rgba(11,26,46,0.75);
-          font-size: 14px;
-        }
-
-        .feature-item:last-child {
-          border-bottom: none;
+          gap: 8px;
+          padding: 6px 0;
+          border-bottom: 1px solid rgba(201,168,76,0.12);
+          color: rgba(11,26,46,0.72);
+          font-size: 13px;
+          line-height: 1.7;
         }
 
         .feature-dot {
-          width: 7px;
-          height: 7px;
+          width: 6px;
+          height: 6px;
           border-radius: 50%;
           background: #C9A84C;
           flex-shrink: 0;
+        }
+
+        /* TRUST */
+        .trust-section {
+          display: grid;
+          grid-template-columns: 1fr;
+          overflow: hidden;
+          border-radius: 10px;
+        }
+
+        .trust-left {
+          background: #0B1A2E;
+          padding: 35px 24px;
+          position: relative;
+          overflow: hidden;
+          display: flex;
+          flex-direction: column;
+          min-width: 0;
+        }
+
+        .trust-right {
+          background: white;
+          padding: 35px 24px;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          min-width: 0;
+        }
+
+        .trust-stat {
+          display: flex;
+          flex-direction: column;
+          padding: 18px 0;
+          border-bottom: 1px solid rgba(201,168,76,0.15);
+          animation: countUp 0.6s ease forwards;
+        }
+
+        .trust-stat:last-child { border-bottom: none; }
+
+        .trust-stat-num {
+          font-size: clamp(28px, 4vw, 40px);
+          font-weight: 700;
+          color: #C9A84C;
+          line-height: 1;
+          margin-bottom: 4px;
+        }
+
+        .trust-stat-lbl {
+          font-size: 14px;
+          color: rgba(30,58,95,0.55);
+        }
+
+        @media (min-width: 768px) {
+          .trust-section { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+          .trust-left, .trust-right { padding: 56px 48px; }
         }
       `}</style>
 
       <Navbar />
 
       {/* HERO */}
-      <section
-        className="flex flex-col md:flex-row min-h-screen pt-32 md:pt-40 gap-16 px-6 md:px-20 items-center relative overflow-hidden"
-        style={{
-          flexDirection: lang === "ar" ? "row" : "row-reverse",
-        }}
-      >
+      <section className={`project-hero ${ar ? "hero-ar" : "hero-en"}`}>
         <div className="absolute w-[500px] h-[500px] bg-[#C9A84C]/10 blur-[140px] top-[-120px] right-[-120px]" />
-
         <div className="absolute w-[450px] h-[450px] bg-blue-200/20 blur-[140px] bottom-[-120px] left-[-120px]" />
 
-        {/* SLIDER */}
-        <div
-          ref={sliderRef}
-          className="w-full md:w-1/2 h-[360px] md:h-[80vh] relative"
-        >
-          <div className="slider-wrapper h-full shadow-2xl">
-            <img
-              src={IMAGES[current]}
-              alt={`Palm 2 - Image ${current + 1}`}
-              className="slider-img"
-            />
+        {/* SLIDER — الصورة الأول */}
+        <div className="project-hero-image">
+          <img
+            src={IMAGES[current]}
+            alt={`Palm 2 - ${current + 1}`}
+            className="slider-img"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0B1A2E]/10 to-transparent pointer-events-none" />
 
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0B1A2E]/10 to-transparent" />
+          <button className="slider-btn slider-btn-prev" onClick={prev} aria-label="Previous">
+            ‹
+          </button>
+          <button className="slider-btn slider-btn-next" onClick={next} aria-label="Next">
+            ›
+          </button>
 
-            <button
-              type="button"
-              aria-label="Previous image"
-              className="slider-btn slider-btn-prev"
-              onClick={prev}
-            >
-              ‹
-            </button>
-
-            <button
-              type="button"
-              aria-label="Next image"
-              className="slider-btn slider-btn-next"
-              onClick={next}
-            >
-              ›
-            </button>
-
-            <div className="slider-dots">
-              {IMAGES.map((_, i) => (
-                <button
-                  type="button"
-                  key={i}
-                  aria-label={`Go to image ${i + 1}`}
-                  className={`slider-dot ${
-                    i === current ? "active" : ""
-                  }`}
-                  onClick={() => setCurrent(i)}
-                />
-              ))}
-            </div>
+          <div className="slider-dots">
+            {IMAGES.map((_, i) => (
+              <button
+                key={i}
+                className={`slider-dot ${i === current ? "active" : ""}`}
+                onClick={() => setCurrent(i)}
+                aria-label={`Image ${i + 1}`}
+              />
+            ))}
           </div>
         </div>
 
-        {/* TEXT */}
-        <div
-          className="w-full md:w-1/2 relative z-10"
-          style={{ textAlign }}
-          dir={dir}
-        >
-          <h1
-            className="text-5xl md:text-7xl font-bold text-[#0B1A2E]"
-            style={{ lineHeight: 1.3 }}
-          >
-            <span
-              style={{
-                color: "#C9A84C",
-                textShadow: "0 0 10px rgba(201,168,76,0.35)",
-              }}
-            >
+        {/* TEXT — تحت الصورة على الموبايل */}
+        <div className="project-hero-text relative z-10" style={{ textAlign }} dir={dir}>
+          <h1 className="project-hero-title font-bold text-[#0B1A2E]">
+            <span style={{ color: "#C9A84C", textShadow: "0 0 10px rgba(201,168,76,0.35)" }}>
               {c.title1}
             </span>{" "}
             {c.title2}
@@ -556,14 +532,11 @@ Tower 4: 155m² | 118m²`,
               width: "80px",
               height: "2px",
               background: "linear-gradient(90deg,#C9A84C,#E8C96A)",
-              margin:
-                lang === "ar"
-                  ? "16px 0 24px auto"
-                  : "16px auto 24px 0",
+              margin: ar ? "16px 0 24px auto" : "16px auto 24px 0",
             }}
           />
 
-          <p className="text-[#0B1A2E]/70 leading-10 text-justify">
+          <p className="project-hero-description text-[#0B1A2E]/70 text-justify">
             {c.desc}
           </p>
         </div>
@@ -571,21 +544,16 @@ Tower 4: 155m² | 118m²`,
 
       {/* INFO + FORM */}
       <section
-        className="grid grid-cols-1 md:grid-cols-2 gap-16 px-6 md:px-24 py-28"
+        className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 px-4 md:px-24 py-12 md:py-28"
         style={{ direction: dir }}
       >
         {/* DETAILS */}
         <div
-          className="bg-white shadow-xl rounded-2xl p-10"
-          style={{
-            textAlign,
-            order: lang === "ar" ? 1 : 2,
-          }}
+          className="bg-white shadow-xl rounded-2xl p-5 md:p-10"
+          style={{ textAlign, order: ar ? 1 : 2 }}
           dir={dir}
         >
-          <h2 className="text-2xl font-bold text-[#0B1A2E] mb-2">
-            {c.detailsTitle}
-          </h2>
+          <h2 className="text-2xl font-bold text-[#0B1A2E] mb-2">{c.detailsTitle}</h2>
 
           <div
             style={{
@@ -594,14 +562,12 @@ Tower 4: 155m² | 118m²`,
               background: "linear-gradient(90deg,#C9A84C,#E8C96A)",
               marginBottom: "20px",
               borderRadius: "2px",
-              marginLeft: lang === "ar" ? "auto" : "0",
-              marginRight: lang === "ar" ? "0" : "auto",
+              marginLeft: ar ? "auto" : "0",
+              marginRight: ar ? "0" : "auto",
             }}
           />
 
-          <p className="mb-3 text-[#0B1A2E]/70">
-            {c.location}
-          </p>
+          <p className="mb-3 text-[#0B1A2E]/70">{c.location}</p>
 
           <a
             href="https://maps.app.goo.gl/jrCCR6BjsDAi9TJw7?g_st=ac"
@@ -618,21 +584,14 @@ Tower 4: 155m² | 118m²`,
               marginBottom: "16px",
               transition: "color .3s",
             }}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.color = "#9A7535")
-            }
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.color = "#C9A84C")
-            }
+            onMouseEnter={(e) => (e.currentTarget.style.color = "#9A7535")}
+            onMouseLeave={(e) => (e.currentTarget.style.color = "#C9A84C")}
           >
-            <span>{lang === "ar" ? "←" : "→"}</span>
+            <span>{ar ? "←" : "→"}</span>
             {c.mapsLabel}
           </a>
 
-          <p className="mb-2 text-[#0B1A2E]/80 font-semibold">
-            {c.towersTitle}
-          </p>
-
+          <p className="mb-2 text-[#0B1A2E]/80 font-semibold">{c.towersTitle}</p>
           <p
             className="mb-4 text-[#0B1A2E]/70 text-sm leading-8"
             style={{ whiteSpace: "pre-line" }}
@@ -640,23 +599,12 @@ Tower 4: 155m² | 118m²`,
             {c.towers}
           </p>
 
-          <p className="mb-3 text-[#0B1A2E]/70">
-            {c.downPayment}
-          </p>
+          <p className="mb-3 text-[#0B1A2E]/70">{c.downPayment}</p>
+          <p className="mb-3 text-[#0B1A2E]/70">{c.installment}</p>
+          <p className="mb-5 text-[#0B1A2E]/70">{c.delivery}</p>
 
-          <p className="mb-3 text-[#0B1A2E]/70">
-            {c.installment}
-          </p>
-
-          <p className="mb-5 text-[#0B1A2E]/70">
-            {c.delivery}
-          </p>
-
-          <p className="mb-3 text-[#0B1A2E]/80 font-semibold">
-            {c.featuresTitle}
-          </p>
-
-          <div>
+          <p className="mb-3 text-[#0B1A2E]/80 font-semibold">{c.featuresTitle}</p>
+          <div className="features-grid">
             {c.features.map((f, i) => (
               <div key={i} className="feature-item">
                 <span className="feature-dot" />
@@ -668,16 +616,10 @@ Tower 4: 155m² | 118m²`,
 
         {/* FORM */}
         <div
-          className="bg-white shadow-xl rounded-2xl p-10"
-          style={{
-            direction: dir,
-            order: lang === "ar" ? 2 : 1,
-          }}
+          className="bg-white shadow-xl rounded-2xl p-5 md:p-10"
+          style={{ direction: dir, order: ar ? 2 : 1 }}
         >
-          <h2
-            className="text-2xl font-bold text-[#0B1A2E] mb-2"
-            style={{ textAlign: "center" }}
-          >
+          <h2 className="text-2xl font-bold text-[#0B1A2E] mb-2 text-center">
             {c.formTitle}
           </h2>
 
@@ -693,9 +635,9 @@ Tower 4: 155m² | 118m²`,
 
           <input
             name="name"
-            value={formData.name}
             placeholder={c.namePlaceholder}
             className="custom-input"
+            value={formData.name}
             onChange={(e) => {
               handleChange(e);
               if (error) setError("");
@@ -718,11 +660,11 @@ Tower 4: 155m² | 118m²`,
             </div>
           )}
 
-          <div className="custom-select-wrapper">
+          <div className="custom-select-wrapper" style={{ marginTop: "8px" }}>
             <select
               name="project"
-              value={formData.project}
               className="custom-select"
+              value={formData.project}
               onChange={handleChange}
             >
               <option value="Palm 2">Palm 2</option>
@@ -730,38 +672,23 @@ Tower 4: 155m² | 118m²`,
               <option value="Dar Landmark">Dar Landmark</option>
               <option value="Dar Elwrood">Dar Elwrood</option>
             </select>
-
             <span className="custom-select-arrow">▼</span>
           </div>
 
-          <button
-            type="button"
-            className="wa-btn"
-            onClick={openWhatsApp}
-          >
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-            >
-              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+          <button className="wa-btn" onClick={openWhatsApp}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
             </svg>
-
             {c.whatsappBtn}
           </button>
         </div>
       </section>
 
       {/* TRUST */}
-      <section className="px-6 md:px-24 pb-28" style={{ direction: dir }}>
-        <div className="max-w-6xl mx-auto trust-grid">
-
-          {/* LEFT — DARK */}
-          <div
-            className="trust-left"
-            style={{ order: lang === "ar" ? 1 : 2 }}
-          >
+      <section className="px-4 md:px-24 pb-12 md:pb-28" style={{ direction: dir }}>
+        <div className="max-w-6xl mx-auto trust-section shadow-xl">
+          {/* DARK SIDE */}
+          <div className="trust-left" style={{ order: ar ? 1 : 2 }}>
             <div
               style={{
                 position: "absolute",
@@ -771,11 +698,9 @@ Tower 4: 155m² | 118m²`,
                 height: 220,
                 borderRadius: "50%",
                 pointerEvents: "none",
-                background:
-                  "radial-gradient(circle,rgba(201,168,76,0.08) 0%,transparent 70%)",
+                background: "radial-gradient(circle,rgba(201,168,76,0.08) 0%,transparent 70%)",
               }}
             />
-
             <div
               style={{
                 position: "absolute",
@@ -785,8 +710,7 @@ Tower 4: 155m² | 118m²`,
                 height: 160,
                 borderRadius: "50%",
                 pointerEvents: "none",
-                background:
-                  "radial-gradient(circle,rgba(201,168,76,0.05) 0%,transparent 70%)",
+                background: "radial-gradient(circle,rgba(201,168,76,0.05) 0%,transparent 70%)",
               }}
             />
 
@@ -796,7 +720,7 @@ Tower 4: 155m² | 118m²`,
                 alignItems: "center",
                 gap: "8px",
                 marginBottom: "16px",
-                alignSelf: lang === "ar" ? "flex-end" : "flex-start",
+                alignSelf: ar ? "flex-end" : "flex-start",
               }}
             >
               <span
@@ -809,15 +733,8 @@ Tower 4: 155m² | 118m²`,
                   animation: "pulse 2s infinite",
                 }}
               />
-
-              <span
-                style={{
-                  fontSize: "12px",
-                  color: "#9A7535",
-                  letterSpacing: "1.5px",
-                }}
-              >
-                {lang === "ar" ? "ثقة ممتدة" : "Trusted Since"}
+              <span style={{ fontSize: "12px", color: "#9A7535", letterSpacing: "1.5px" }}>
+                {ar ? "ثقة ممتدة" : "Trusted Since"}
               </span>
             </div>
 
@@ -828,15 +745,12 @@ Tower 4: 155m² | 118m²`,
                 color: "#FAF6EE",
                 lineHeight: 1.4,
                 marginBottom: "6px",
-                textAlign: lang === "ar" ? "right" : "left",
+                textAlign: ar ? "right" : "left",
               }}
             >
-              {lang === "ar" ? "خبرة ممتدة لأكثر من" : "Over"}{" "}
-              <span style={{ color: "#C9A84C" }}>
-                {lang === "ar" ? "8 أعوام" : "8 Years"}
-              </span>
-
-              {lang === "en" && " of Excellence"}
+              {ar ? "خبرة ممتدة لأكثر من" : "Over"}{" "}
+              <span style={{ color: "#C9A84C" }}>{ar ? "8 أعوام" : "8 Years"}</span>
+              {!ar && " of Excellence"}
             </h2>
 
             <div
@@ -846,7 +760,7 @@ Tower 4: 155m² | 118m²`,
                 background: "linear-gradient(90deg,#C9A84C,#E8C96A)",
                 borderRadius: "2px",
                 marginBottom: "20px",
-                alignSelf: lang === "ar" ? "flex-end" : "flex-start",
+                alignSelf: ar ? "flex-end" : "flex-start",
               }}
             />
 
@@ -856,11 +770,11 @@ Tower 4: 155m² | 118m²`,
                 fontSize: "clamp(14px, 1.5vw, 16px)",
                 lineHeight: 2,
                 maxWidth: "380px",
-                textAlign: lang === "ar" ? "right" : "left",
-                alignSelf: lang === "ar" ? "flex-end" : "flex-start",
+                textAlign: ar ? "right" : "left",
+                alignSelf: ar ? "flex-end" : "flex-start",
               }}
             >
-              {lang === "ar"
+              {ar
                 ? "نحن لا نبني وحدات سكنية فحسب — نبني علاقات تدوم. دعمنا لعملائنا لا يتوقف عند التسليم، بل يمتد معهم في كل خطوة."
                 : "We don't just build units — we build lasting relationships. Our commitment to clients extends well beyond handover, every step of the way."}
             </p>
@@ -873,21 +787,19 @@ Tower 4: 155m² | 118m²`,
                 fontSize: "14px",
                 lineHeight: 1.9,
                 direction: dir,
-                textAlign: lang === "ar" ? "right" : "left",
+                textAlign: ar ? "right" : "left",
                 maxWidth: "420px",
-                alignSelf: lang === "ar" ? "flex-end" : "flex-start",
+                alignSelf: ar ? "flex-end" : "flex-start",
               }}
             >
               <div style={{ fontWeight: 600, marginBottom: "6px" }}>
-                {lang === "ar" ? "مقر الشركة:" : "Company Location:"}
+                {ar ? "مقر الشركة:" : "Company Location:"}
               </div>
-
               <div style={{ lineHeight: 1.8 }}>
-                {lang === "ar"
+                {ar
                   ? "طنطا - شارع توت عنخ آمون من محمد فريد فوق مخبز الزهراء"
                   : "Tanta - Tutankhamun Street, Mohamed Farid, above Al Zahraa Bakery"}
               </div>
-
               <a
                 href="https://maps.app.goo.gl/CjGnSencAK6vsoh19?g_st=aw"
                 target="_blank"
@@ -900,9 +812,7 @@ Tower 4: 155m² | 118m²`,
                   fontWeight: 600,
                 }}
               >
-                {lang === "ar"
-                  ? "← افتح على الخريطة"
-                  : "→ Open in Maps"}
+                {ar ? "← افتح على الخريطة" : "→ Open in Maps"}
               </a>
             </div>
 
@@ -918,11 +828,8 @@ Tower 4: 155m² | 118m²`,
               }}
             >
               <div style={{ fontWeight: 600, marginBottom: "12px" }}>
-                {lang === "ar"
-                  ? "تابعنا على السوشيال ميديا:"
-                  : "Follow us:"}
+                {ar ? "تابعنا على السوشيال ميديا:" : "Follow us:"}
               </div>
-
               <div
                 style={{
                   display: "flex",
@@ -945,17 +852,11 @@ Tower 4: 155m² | 118m²`,
                     fontWeight: 500,
                   }}
                 >
-                  <svg
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="#C9A84C"
-                  >
-                    <path d="M22 12a10 10 0 10-11.56 9.87v-6.99H7.9V12h2.54V9.8c0-2.5 1.49-3.88 3.77-3.88 1.09 0 2.23.2 2.23.2v2.45h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.78l-.44 2.88h-2.34v6.99A10 10 0 0022 12z"/>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="#C9A84C">
+                    <path d="M22 12a10 10 0 10-11.56 9.87v-6.99H7.9V12h2.54V9.8c0-2.5 1.49-3.88 3.77-3.88 1.09 0 2.23.2 2.23.2v2.45h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.78l-.44 2.88h-2.34v6.99A10 10 0 0022 12z" />
                   </svg>
                   Facebook
                 </a>
-
                 <a
                   href="https://www.instagram.com/dar.developments?igsh=N202dXdhaWEyaW85"
                   target="_blank"
@@ -969,13 +870,8 @@ Tower 4: 155m² | 118m²`,
                     fontWeight: 500,
                   }}
                 >
-                  <svg
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="#C9A84C"
-                  >
-                    <path d="M7 2C4.24 2 2 4.24 2 7v10c0 2.76 2.24 5 5 5h10c2.76 0 5-2.24 5-5V7c0-2.76-2.24-5-5-5H7zm10 2a3 3 0 013 3v10a3 3 0 01-3 3H7a3 3 0 01-3-3V7a3 3 0 013-3h10zm-5 3.5A4.5 4.5 0 1016.5 12 4.5 4.5 0 0012 7.5zm0 2A2.5 2.5 0 1114.5 12 2.5 2.5 0 0112 9.5zM17.8 6.2a1 1 0 11-1 1 1 0 011-1z"/>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="#C9A84C">
+                    <path d="M7 2C4.24 2 2 4.24 2 7v10c0 2.76 2.24 5 5 5h10c2.76 0 5-2.24 5-5V7c0-2.76-2.24-5-5-5H7zm10 2a3 3 0 013 3v10a3 3 0 01-3 3H7a3 3 0 01-3-3V7a3 3 0 013-3h10zm-5 3.5A4.5 4.5 0 1016.5 12 4.5 4.5 0 0012 7.5zm0 2A2.5 2.5 0 1114.5 12 2.5 2.5 0 0112 9.5zM17.8 6.2a1 1 0 11-1 1 1 1 0 011-1z" />
                   </svg>
                   Instagram
                 </a>
@@ -983,48 +879,20 @@ Tower 4: 155m² | 118m²`,
             </div>
           </div>
 
-          {/* RIGHT — STATS */}
+          {/* STATS */}
           <div
             className="trust-right"
-            style={{
-              order: lang === "ar" ? 2 : 1,
-              textAlign: lang === "ar" ? "right" : "left",
-            }}
+            style={{ order: ar ? 2 : 1, textAlign: ar ? "right" : "left" }}
           >
             {[
-              {
-                num: "8+",
-                ar: "سنوات خبرة في السوق العقاري",
-                en: "Years in Real Estate",
-              },
-              {
-                num: "+150",
-                ar: "وحدة سكنية تم تسليمها بنجاح",
-                en: "Units Successfully Delivered",
-              },
-              {
-                num: "3",
-                ar: "مشاريع نشطة حالياً في طنطا",
-                en: "Active Projects in Tanta",
-              },
-              {
-                num: "98%",
-                ar: "نسبة رضا العملاء عن خدماتنا",
-                en: "Client Satisfaction Rate",
-              },
+              { num: "8+", ar: "سنوات خبرة في السوق العقاري", en: "Years in Real Estate" },
+              { num: "+150", ar: "وحدة سكنية تم تسليمها بنجاح", en: "Units Successfully Delivered" },
+              { num: "3", ar: "مشاريع نشطة حالياً في طنطا", en: "Active Projects in Tanta" },
+              { num: "98%", ar: "نسبة رضا العملاء عن خدماتنا", en: "Client Satisfaction Rate" },
             ].map((s, i) => (
-              <div
-                key={i}
-                className="trust-stat"
-                style={{
-                  textAlign: lang === "ar" ? "right" : "left",
-                }}
-              >
+              <div key={i} className="trust-stat" style={{ textAlign: ar ? "right" : "left" }}>
                 <span className="trust-stat-num">{s.num}</span>
-
-                <span className="trust-stat-lbl">
-                  {lang === "ar" ? s.ar : s.en}
-                </span>
+                <span className="trust-stat-lbl">{ar ? s.ar : s.en}</span>
               </div>
             ))}
           </div>
@@ -1032,7 +900,7 @@ Tower 4: 155m² | 118m²`,
       </section>
 
       {/* BACK */}
-      <div className="text-center py-16">
+      <div className="text-center py-10 md:py-16">
         <a href="/#projects" className="back-btn">
           {c.backBtn}
         </a>

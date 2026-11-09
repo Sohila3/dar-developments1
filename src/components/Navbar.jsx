@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import logo from "../assets/logodar.jpeg";
 import { Link } from "react-router-dom";
@@ -20,30 +19,32 @@ function Navbar() {
           width: 100%;
           height: 72px;
           z-index: 100;
-          background: rgba(30,58,95,0.15);
-          backdrop-filter: blur(12px);
-          border-bottom: 1px solid rgba(201,168,76,0.15);
+          background: rgba(11,26,46,0.9);
+          backdrop-filter: blur(14px);
+          -webkit-backdrop-filter: blur(14px);
+          border-bottom: 1px solid rgba(201,168,76,0.18);
           direction: ltr;
         }
 
         .dar-nav-inner {
-          display: flex;
+          display: grid;
+          grid-template-columns: 1fr auto 1fr;
           align-items: center;
-          justify-content: space-between;
           height: 100%;
           padding: 0 32px;
-          position: relative;
           box-sizing: border-box;
         }
 
+        .dar-nav-left {
+          justify-self: start;
+          min-width: 0;
+        }
+
         .dar-nav-logo {
-          position: absolute;
-          left: 50%;
-          transform: translateX(-50%);
+          justify-self: center;
           display: flex;
           align-items: center;
           gap: 10px;
-          z-index: 101;
           white-space: nowrap;
         }
 
@@ -51,8 +52,9 @@ function Navbar() {
           width: 40px;
           height: 40px;
           border-radius: 50%;
-          border: 1.5px solid rgba(201,168,76,0.4);
+          border: 1.5px solid rgba(201,168,76,0.5);
           object-fit: cover;
+          flex-shrink: 0;
         }
 
         .dar-nav-logo span {
@@ -63,15 +65,16 @@ function Navbar() {
         }
 
         .dar-nav-right {
+          justify-self: end;
           display: flex;
           align-items: center;
           gap: 12px;
-          flex-shrink: 0;
+          min-width: 0;
         }
 
         .nav-contact-btn {
           background: #C9A84C;
-          color: #1E3A5F;
+          color: #0B1A2E;
           border: none;
           border-radius: 4px;
           padding: 8px 20px;
@@ -96,17 +99,15 @@ function Navbar() {
           align-items: center;
           gap: 6px;
           background: transparent;
-          border: 1.5px solid rgba(255,255,255,0.35);
+          border: 1.5px solid rgba(255,255,255,0.3);
           border-radius: 4px;
-          padding: 6px 14px;
+          padding: 6px 12px;
           cursor: pointer;
-          transition: all .3s ease;
-          flex-shrink: 0;
+          transition: border-color .3s ease;
+          white-space: nowrap;
         }
 
-        .lang-btn:hover {
-          border-color: #C9A84C;
-        }
+        .lang-btn:hover { border-color: #C9A84C; }
 
         .lang-ar {
           font-family: 'Noto Naskh Arabic', serif;
@@ -129,15 +130,17 @@ function Navbar() {
 
         .dar-menu-btn {
           background: transparent;
-          border: 1.5px solid rgba(255,255,255,0.35);
+          border: 1.5px solid rgba(255,255,255,0.3);
           border-radius: 4px;
-          padding: 7px 10px;
+          padding: 7px 9px;
           cursor: pointer;
           display: flex;
           flex-direction: column;
           gap: 4px;
-          flex-shrink: 0;
+          transition: border-color .3s ease;
         }
+
+        .dar-menu-btn:hover { border-color: #C9A84C; }
 
         .dar-menu-btn span {
           display: block;
@@ -186,22 +189,13 @@ function Navbar() {
           color: #1E3A5F;
         }
 
-        /* MOBILE NAVBAR */
+        /* ——— MOBILE ——— */
         @media (max-width: 600px) {
-          .dar-navbar {
-            height: 64px;
-          }
+          .dar-navbar { height: 60px; }
 
-          .dar-nav-inner {
-            padding: 0 12px;
-          }
+          .dar-nav-inner { padding: 0 12px; }
 
-          .dar-nav-logo {
-            position: static;
-            transform: none;
-            gap: 6px;
-            margin-left: 8px;
-          }
+          .dar-nav-logo { gap: 7px; }
 
           .dar-nav-logo img {
             width: 32px;
@@ -209,73 +203,31 @@ function Navbar() {
           }
 
           .dar-nav-logo span {
-            font-size: 12px;
-            letter-spacing: 2px;
-          }
-
-          .dar-nav-right {
-            gap: 7px;
+            font-size: 13px;
+            letter-spacing: 3px;
           }
 
           .lang-btn {
             gap: 4px;
-            padding: 5px 7px;
+            padding: 5px 8px;
           }
 
-          .lang-ar {
-            font-size: 11px;
-          }
+          .lang-ar { font-size: 11px; }
+          .lang-en { font-size: 10px; letter-spacing: 1px; }
+          .lang-divider { height: 10px; }
 
-          .lang-en {
-            font-size: 10px;
-            letter-spacing: 1px;
-          }
+          .dar-menu-btn { padding: 6px 7px; }
+          .dar-menu-btn span { width: 17px; }
 
-          .lang-divider {
-            height: 10px;
-          }
-
-          .dar-menu-btn {
-            padding: 6px 7px;
-          }
-
-          .dar-menu-btn span {
-            width: 17px;
-          }
-
-          .nav-contact-btn {
-            display: none;
-          }
+          .nav-contact-btn { display: none; }
         }
 
-        /* EXTRA SMALL MOBILE */
+        /* ——— VERY SMALL PHONES ——— */
         @media (max-width: 360px) {
-          .dar-nav-inner {
-            padding: 0 8px;
-          }
-
-          .dar-nav-logo {
-            gap: 4px;
-            margin-left: 4px;
-          }
-
-          .dar-nav-logo img {
-            width: 28px;
-            height: 28px;
-          }
-
-          .dar-nav-logo span {
-            font-size: 11px;
-            letter-spacing: 1.5px;
-          }
-
-          .lang-btn {
-            padding: 4px 5px;
-          }
-
-          .dar-nav-right {
-            gap: 5px;
-          }
+          .dar-nav-inner { padding: 0 8px; }
+          .dar-nav-logo img { width: 28px; height: 28px; }
+          .dar-nav-logo span { font-size: 11px; letter-spacing: 2px; }
+          .lang-btn { padding: 4px 6px; }
         }
       `}</style>
 
@@ -283,38 +235,33 @@ function Navbar() {
       <nav className="dar-navbar">
         <div className="dar-nav-inner">
 
-          {/* LANGUAGE */}
-          <button className="lang-btn" onClick={toggleLang}>
-            <span
-              className="lang-ar"
-              style={{
-                color: lang === "ar" ? "#D4AF37" : "#0A192F",
-              }}
-            >
-              عربي
-            </span>
-
-            <span className="lang-divider" />
-
-            <span
-              className="lang-en"
-              style={{
-                color: lang === "en" ? "#D4AF37" : "#0A192F",
-              }}
-            >
-              EN
-            </span>
-          </button>
-
-          {/* LOGO */}
-          <div className="dar-nav-logo">
-            <img src={logo} alt="DAR Logo" />
-            <span>DAR</span>
+          {/* LEFT — LANGUAGE */}
+          <div className="dar-nav-left">
+            <button className="lang-btn" onClick={toggleLang} aria-label="Switch language">
+              <span
+                className="lang-ar"
+                style={{ color: lang === "ar" ? "#D4AF37" : "rgba(255,255,255,0.6)" }}
+              >
+                عربي
+              </span>
+              <span className="lang-divider" />
+              <span
+                className="lang-en"
+                style={{ color: lang === "en" ? "#D4AF37" : "rgba(255,255,255,0.6)" }}
+              >
+                EN
+              </span>
+            </button>
           </div>
 
-          {/* RIGHT */}
-          <div className="dar-nav-right">
+          {/* CENTER — LOGO */}
+          <Link to="/" className="dar-nav-logo" style={{ textDecoration: "none" }}>
+            <img src={logo} alt="DAR Logo" />
+            <span>DAR</span>
+          </Link>
 
+          {/* RIGHT — CTA + MENU */}
+          <div className="dar-nav-right">
             <a href="/#contact" className="nav-contact-btn">
               {lang === "ar" ? "تواصل معنا" : "Contact Us"}
             </a>
@@ -324,12 +271,12 @@ function Navbar() {
               onClick={() => setOpen(true)}
               aria-label="Open menu"
             >
-              {[0, 1, 2].map(i => (
+              {[0, 1, 2].map((i) => (
                 <span key={i} />
               ))}
             </button>
-
           </div>
+
         </div>
       </nav>
 
@@ -355,7 +302,7 @@ function Navbar() {
           width: "min(300px, 85vw)",
           background: "white",
           zIndex: 300,
-          boxShadow: "-8px 0 40px rgba(0,0,0,0.15)",
+          boxShadow: open ? "-8px 0 40px rgba(0,0,0,0.15)" : "none",
           transition: "transform .3s ease",
           right: 0,
           left: "auto",
@@ -382,10 +329,10 @@ function Navbar() {
                 width: 36,
                 height: 36,
                 borderRadius: "50%",
+                objectFit: "cover",
                 border: "1.5px solid rgba(201,168,76,0.4)",
               }}
             />
-
             <span
               style={{
                 color: "#1E3A5F",
@@ -400,6 +347,7 @@ function Navbar() {
 
           <button
             onClick={() => setOpen(false)}
+            aria-label="Close menu"
             style={{
               background: "none",
               border: "none",
@@ -421,6 +369,7 @@ function Navbar() {
             display: "flex",
             flexDirection: "column",
             textAlign: lang === "ar" ? "right" : "left",
+            overflowY: "auto",
           }}
         >
           <Link to="/" className="sidebar-link" onClick={() => setOpen(false)}>
