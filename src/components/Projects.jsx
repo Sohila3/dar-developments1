@@ -1,4 +1,8 @@
 
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { useLanguage } from "../context/LanguageContext";
+
 import p1 from "../assets/project-1.png";
 import p2 from "../assets/project-2.png";
 import p3 from "../assets/project-3.png";
@@ -10,12 +14,12 @@ import p8 from "../assets/project-8.jpeg";
 import palm1 from "../assets/palm1.jpeg";
 import float1 from "../assets/float1.png";
 import float2 from "../assets/float2.png";
-import { Link } from "react-router-dom";
-import { useLanguage } from "../context/LanguageContext";
 
 function Projects() {
   const { lang, t } = useLanguage();
   const ar = lang === "ar";
+
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   const currentProjects = [
     {
@@ -54,6 +58,22 @@ function Projects() {
     { name: "DAR ELBOUSERY", image: p8 },
   ];
 
+  const nextSlide = () => {
+    setCurrentIndex((prev) => (prev + 1) % currentProjects.length);
+  };
+
+  const prevSlide = () => {
+    setCurrentIndex(
+      (prev) =>
+        (prev - 1 + currentProjects.length) % currentProjects.length
+    );
+  };
+
+  const visibleProjects = [
+    currentProjects[currentIndex],
+    currentProjects[(currentIndex + 1) % currentProjects.length],
+  ];
+
   return (
     <section
       id="projects"
@@ -61,352 +81,724 @@ function Projects() {
       style={{
         direction: ar ? "rtl" : "ltr",
         fontFamily: ar
-          ? "'Noto Naskh Arabic', serif"
-          : "'Montserrat', sans-serif",
+          ? "'Alexandria', sans-serif"
+          : "'DM Sans', sans-serif",
       }}
     >
       <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;600;700&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
+
         .dar-projects {
+          --dp-ivory: #F8F6F1;
+          --dp-navy: #10243D;
+          --dp-gold: #B89552;
+          --dp-gold-light: #D7BC83;
+          --dp-muted: #777B80;
+
           width: 100%;
-          padding: 110px 24px;
-          background: linear-gradient(180deg, #FFFFFF 0%, #F4F7FA 100%);
+          padding: 115px 24px;
+          background: var(--dp-ivory);
           overflow: hidden;
           position: relative;
+          color: var(--dp-navy);
         }
 
         .dar-projects-container {
-          max-width: 1350px;
-          margin: auto;
+          max-width: 1280px;
+          margin: 0 auto;
         }
 
-        /* SECTION HEADERS */
-        .dar-projects-header {
-          margin-bottom: 55px;
+        /* SECTION HEADER */
+
+        .dp-header {
+          text-align: center;
+          margin-bottom: 52px;
         }
 
-        .dar-projects-eyebrow {
+        .dp-eyebrow {
           display: flex;
           align-items: center;
           justify-content: center;
-          gap: 10px;
-          color: #9A7535;
-          font-size: 11px;
-          font-weight: 700;
-          letter-spacing: 3px;
-          margin-bottom: 18px;
+          gap: 12px;
+          color: #96743E;
+          font-size: 10px;
+          font-weight: 600;
+          letter-spacing: 2.5px;
+          margin-bottom: 20px;
         }
 
-        .dar-projects-dot {
-          width: 6px;
-          height: 6px;
-          background: #C9A84C;
+        .dp-dot {
+          width: 5px;
+          height: 5px;
+          background: var(--dp-gold);
           border-radius: 50%;
+          flex-shrink: 0;
         }
 
-        .dar-projects-title {
-          color: #10243D;
+        .dp-title {
           font-size: clamp(32px, 4vw, 52px);
-          font-weight: 800;
-          line-height: 1.3;
+          font-weight: 500;
+          line-height: 1.5;
           margin: 0;
-          text-align: center;
+          color: var(--dp-navy);
         }
 
-        .dar-projects-title span {
-          color: #B8953F;
+        .dp-title span {
+          color: var(--dp-gold);
         }
 
-        .dar-projects-divider {
-          width: 48px;
-          height: 2px;
-          background: linear-gradient(90deg, #C9A84C, #E8C96A);
+        .dp-divider {
+          width: 50px;
+          height: 1px;
+          background: var(--dp-gold);
           margin: 22px auto 0;
         }
 
-        /* CURRENT PROJECTS */
-        .dar-current-grid {
-          display: grid;
-          grid-template-columns: repeat(2, minmax(0, 1fr));
-          gap: 28px;
-          margin-bottom: 100px;
+        .dp-description {
+          color: var(--dp-muted);
+          font-size: 13px;
+          line-height: 2;
+          max-width: 500px;
+          margin: 22px auto 0;
         }
 
-        .dar-project-card {
+        /* CURRENT PROJECTS CAROUSEL */
+
+        .dp-carousel {
+          position: relative;
+        }
+
+        .dp-cards {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 26px;
+        }
+
+        /* SHARED PROJECT CARD */
+
+        .dp-card {
           display: block;
           text-decoration: none;
-          background: #FFFFFF;
+          color: inherit;
+          background: #fff;
           border: 1px solid rgba(16,36,61,.08);
           overflow: hidden;
           position: relative;
-          transition: transform .45s ease, box-shadow .45s ease,
-                      border-color .45s ease;
+          min-width: 0;
+
+          transition:
+            transform 1s cubic-bezier(.22,.61,.36,1),
+            box-shadow 1s cubic-bezier(.22,.61,.36,1),
+            border-color 1s ease;
         }
 
-        .dar-project-card:hover {
-          transform: translateY(-7px);
-          border-color: rgba(201,168,76,.45);
-          box-shadow: 0 24px 55px rgba(16,36,61,.10);
+        .dp-card:hover {
+          transform: translateY(-4px);
+          border-color: rgba(184,149,82,.4);
+          box-shadow: 0 20px 50px rgba(16,36,61,.08);
         }
 
-        .dar-project-image {
+        .dp-image {
           position: relative;
-          height: 330px;
+          height: 360px;
           overflow: hidden;
-          background: #E8EDF3;
+          background: #E8E5DE;
         }
 
-        .dar-project-image img {
+        .dp-image img {
+          display: block;
           width: 100%;
           height: 100%;
-          display: block;
           object-fit: cover;
-          transition: transform .8s cubic-bezier(.2,.8,.2,1);
+
+          transition:
+            transform 1.6s cubic-bezier(.22,.61,.36,1),
+            filter 1.4s ease;
         }
 
-        .dar-project-card:hover .dar-project-image img {
-          transform: scale(1.06);
+        .dp-card:hover .dp-image img {
+          transform: scale(1.035);
+          filter: brightness(.96);
         }
 
-        .dar-project-image::after {
+        .dp-image::after {
           content: "";
           position: absolute;
           inset: 0;
           background: linear-gradient(
-            180deg,
-            rgba(11,26,46,0.02) 40%,
-            rgba(11,26,46,0.35) 100%
+            to top,
+            rgba(10,24,39,.58),
+            transparent 48%
           );
           pointer-events: none;
         }
 
-        .dar-project-number {
+        .dp-number {
           position: absolute;
-          top: 20px;
-          left: 20px;
+          top: 22px;
+          inset-inline-start: 22px;
           z-index: 2;
-          color: #FFFFFF;
-          font-size: 11px;
-          font-weight: 700;
+          color: #fff;
+          background: rgba(16,36,61,.72);
+          border: 1px solid rgba(215,188,131,.35);
+          backdrop-filter: blur(10px);
+          padding: 9px 13px;
+          font-family: 'DM Sans', sans-serif;
+          font-size: 10px;
           letter-spacing: 2px;
-          padding: 8px 12px;
-          background: rgba(16,36,61,.65);
-          backdrop-filter: blur(8px);
         }
 
-        .dar-project-content {
-          padding: 28px 30px 30px;
+        .dp-image-label {
+          position: absolute;
+          bottom: 23px;
+          inset-inline-start: 25px;
+          z-index: 2;
+          color: rgba(255,255,255,.85);
+          font-family: 'DM Sans', sans-serif;
+          font-size: 10px;
+          letter-spacing: 2px;
         }
 
-        .dar-project-name {
-          color: #10243D;
-          font-size: 22px;
-          font-weight: 800;
-          margin: 0 0 12px;
-          transition: color .3s ease;
+        .dp-card-content {
+          padding: 27px 28px 28px;
         }
 
-        .dar-project-card:hover .dar-project-name {
-          color: #B8953F;
+        .dp-card-top {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          gap: 12px;
+          margin-bottom: 16px;
         }
 
-        .dar-project-location {
-          color: #7B8797;
-          font-size: 12px;
+        .dp-card-tag {
           display: flex;
           align-items: center;
           gap: 8px;
-          justify-content: center;
+          color: #96743E;
+          font-size: 9px;
+          font-weight: 600;
+          letter-spacing: 1.5px;
         }
 
-        .dar-project-location-dot {
+        .dp-card-tag i {
           width: 5px;
           height: 5px;
+          background: var(--dp-gold);
           border-radius: 50%;
-          background: #C9A84C;
-          flex-shrink: 0;
         }
 
-        .dar-project-button {
+        .dp-card-number {
+          font-family: 'DM Sans', sans-serif;
+          color: #A0A2A4;
+          font-size: 10px;
+          letter-spacing: 1px;
+        }
+
+        .dp-card-name {
+          font-family: 'Playfair Display', serif;
+          font-size: clamp(23px, 2.5vw, 32px);
+          font-weight: 500;
+          line-height: 1.3;
+          margin: 0;
+          color: var(--dp-navy);
+
+          transition: color 1s ease;
+        }
+
+        .dp-card:hover .dp-card-name {
+          color: var(--dp-gold);
+        }
+
+        .dp-card-location {
+          display: flex;
+          align-items: center;
+          gap: 9px;
+          color: #7C838A;
+          font-size: 11px;
+          line-height: 1.8;
+          margin-top: 12px;
+        }
+
+        .dp-location-icon {
+          color: var(--dp-gold);
+          font-size: 13px;
+        }
+
+        .dp-card-footer {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          gap: 12px;
+          border-top: 1px solid rgba(16,36,61,.10);
+          padding-top: 20px;
+          margin-top: 23px;
+        }
+
+        .dp-card-link {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          color: var(--dp-navy);
+          font-size: 11px;
+          font-weight: 600;
+        }
+
+        .dp-card-arrow {
           display: inline-flex;
           align-items: center;
           justify-content: center;
-          gap: 12px;
-          margin-top: 24px;
-          padding: 13px 24px;
-          background: #10243D;
-          color: #FFFFFF;
-          font-size: 11px;
-          font-weight: 700;
-          letter-spacing: 1px;
-          transition: all .3s ease;
-        }
-
-        .dar-project-button-arrow {
-          color: #E8C96A;
+          width: 34px;
+          height: 34px;
+          border: 1px solid rgba(184,149,82,.4);
+          color: var(--dp-gold);
           font-size: 17px;
-          transition: transform .3s ease;
+
+          transition:
+            background 1s ease,
+            color 1s ease,
+            border-color 1s ease,
+            transform 1s cubic-bezier(.22,.61,.36,1);
         }
 
-        .dar-project-card:hover .dar-project-button {
-          background: #C9A84C;
-          color: #10243D;
+        .dp-card:hover .dp-card-arrow {
+          background: var(--dp-navy);
+          color: var(--dp-gold-light);
+          border-color: var(--dp-navy);
+          transform: translateX(${ar ? "-3px" : "3px"});
         }
 
-        .dar-project-card:hover .dar-project-button-arrow {
-          color: #10243D;
-          transform: translateX(${ar ? "-4px" : "4px"});
+        /* CAROUSEL CONTROLS */
+
+        .dp-controls {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-top: 34px;
         }
 
-        /* FLOATING IMAGES */
-        .dar-project-showcase {
+        .dp-controls-info {
+          display: flex;
+          align-items: center;
+          gap: 14px;
+          color: #85888B;
+          font-family: 'DM Sans', sans-serif;
+          font-size: 10px;
+          letter-spacing: 1px;
+        }
+
+        .dp-progress {
+          width: 110px;
+          height: 1px;
+          background: rgba(16,36,61,.13);
+          position: relative;
+          overflow: hidden;
+        }
+
+        .dp-progress-fill {
+          position: absolute;
+          top: 0;
+          inset-inline-start: 0;
+          height: 100%;
+          background: var(--dp-gold);
+          transition: width .8s ease;
+        }
+
+        .dp-arrows {
+          display: flex;
+          gap: 10px;
+        }
+
+        .dp-arrow-btn {
+          width: 48px;
+          height: 48px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border: 1px solid rgba(16,36,61,.16);
+          background: transparent;
+          color: var(--dp-navy);
+          font-size: 20px;
+          cursor: pointer;
+
+          transition:
+            background .8s ease,
+            border-color .8s ease,
+            color .8s ease;
+        }
+
+        .dp-arrow-btn:hover {
+          background: var(--dp-navy);
+          border-color: var(--dp-navy);
+          color: var(--dp-gold-light);
+        }
+
+        /* ARCHITECTURAL SHOWCASE */
+
+        .dp-showcase {
           display: grid;
           grid-template-columns: 1fr 1fr;
           gap: 30px;
           align-items: center;
           max-width: 1000px;
-          margin: 0 auto 110px;
+          margin: 115px auto;
         }
 
-        .dar-showcase-image {
+        .dp-showcase-image {
           position: relative;
           overflow: hidden;
           aspect-ratio: 4 / 3;
-          border: 1px solid rgba(201,168,76,.25);
-          background: #E8EDF3;
+          background: #E8E5DE;
+          border: 1px solid rgba(184,149,82,.25);
         }
 
-        .dar-showcase-image:first-child {
+        .dp-showcase-image:first-child {
           margin-top: 45px;
         }
 
-        .dar-showcase-image:last-child {
+        .dp-showcase-image:last-child {
           margin-bottom: 45px;
         }
 
-        .dar-showcase-image img {
+        .dp-showcase-image img {
           width: 100%;
           height: 100%;
           object-fit: cover;
           display: block;
-          transition: transform .8s ease;
+
+          transition:
+            transform 1.8s cubic-bezier(.22,.61,.36,1),
+            filter 1.4s ease;
         }
 
-        .dar-showcase-image:hover img {
-          transform: scale(1.05);
+        .dp-showcase-image:hover img {
+          transform: scale(1.035);
+          filter: brightness(.96);
         }
 
         /* COMPLETED PROJECTS */
-        .dar-completed-grid {
+
+        .dp-completed-section {
+          margin-top: 0;
+        }
+
+        .dp-completed-header {
+          margin-bottom: 48px;
+        }
+
+        .dp-completed-grid {
           display: grid;
           grid-template-columns: repeat(3, minmax(0, 1fr));
-          gap: 22px;
+          gap: 24px;
         }
 
-        .dar-completed-card {
-          background: #FFFFFF;
+        .dp-completed-card {
+          display: block;
+          position: relative;
+          overflow: hidden;
+          min-width: 0;
+          background: #fff;
           border: 1px solid rgba(16,36,61,.08);
+          text-decoration: none;
+          color: inherit;
+
+          transition:
+            transform 1s cubic-bezier(.22,.61,.36,1),
+            box-shadow 1s cubic-bezier(.22,.61,.36,1),
+            border-color 1s ease;
+        }
+
+        .dp-completed-card:hover {
+          transform: translateY(-4px);
+          border-color: rgba(184,149,82,.4);
+          box-shadow: 0 20px 50px rgba(16,36,61,.08);
+        }
+
+        .dp-completed-image {
+          position: relative;
+          height: 245px;
           overflow: hidden;
-          transition: all .4s ease;
+          background: #E8E5DE;
         }
 
-        .dar-completed-card:hover {
-          border-color: rgba(201,168,76,.45);
-          transform: translateY(-5px);
-          box-shadow: 0 16px 40px rgba(16,36,61,.08);
-        }
-
-        .dar-completed-image {
-          height: 220px;
-          overflow: hidden;
-          background: #E8EDF3;
-        }
-
-        .dar-completed-image img {
+        .dp-completed-image img {
           width: 100%;
           height: 100%;
           object-fit: cover;
           display: block;
-          transition: transform .7s ease;
+
+          transition:
+            transform 1.6s cubic-bezier(.22,.61,.36,1),
+            filter 1.4s ease;
         }
 
-        .dar-completed-card:hover img {
-          transform: scale(1.06);
+        .dp-completed-card:hover .dp-completed-image img {
+          transform: scale(1.035);
+          filter: brightness(.96);
         }
 
-        .dar-completed-name {
-          padding: 22px 15px;
-          text-align: center;
-          color: #10243D;
-          font-size: 12px;
-          font-weight: 700;
-          letter-spacing: .5px;
-          border-top: 2px solid #C9A84C;
+        .dp-completed-image::after {
+          content: "";
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(
+            to top,
+            rgba(10,24,39,.50),
+            transparent 55%
+          );
+          pointer-events: none;
         }
 
-        @media (max-width: 900px) {
+        .dp-completed-number {
+          position: absolute;
+          top: 18px;
+          inset-inline-start: 18px;
+          z-index: 2;
+          color: #fff;
+          background: rgba(16,36,61,.72);
+          border: 1px solid rgba(215,188,131,.35);
+          backdrop-filter: blur(10px);
+          padding: 8px 11px;
+          font-family: 'DM Sans', sans-serif;
+          font-size: 9px;
+          letter-spacing: 1.5px;
+        }
+
+        .dp-completed-image-label {
+          position: absolute;
+          bottom: 20px;
+          inset-inline-start: 20px;
+          z-index: 2;
+          color: rgba(255,255,255,.85);
+          font-family: 'DM Sans', sans-serif;
+          font-size: 9px;
+          letter-spacing: 1.5px;
+        }
+
+        .dp-completed-content {
+          padding: 23px 22px 22px;
+        }
+
+        .dp-completed-tag {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          color: #96743E;
+          font-size: 9px;
+          font-weight: 600;
+          letter-spacing: 1.5px;
+          margin-bottom: 14px;
+        }
+
+        .dp-completed-tag i {
+          width: 5px;
+          height: 5px;
+          background: var(--dp-gold);
+          border-radius: 50%;
+        }
+
+        .dp-completed-name {
+          color: var(--dp-navy);
+          font-family: 'Playfair Display', serif;
+          font-size: 20px;
+          font-weight: 500;
+          line-height: 1.4;
+          margin: 0;
+
+          transition: color 1s ease;
+        }
+
+        .dp-completed-card:hover .dp-completed-name {
+          color: var(--dp-gold);
+        }
+
+        .dp-completed-footer {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 10px;
+          border-top: 1px solid rgba(16,36,61,.10);
+          margin-top: 18px;
+          padding-top: 16px;
+        }
+
+        .dp-completed-status {
+          display: flex;
+          align-items: center;
+          gap: 7px;
+          color: #85888B;
+          font-size: 10px;
+        }
+
+        .dp-completed-status i {
+          width: 5px;
+          height: 5px;
+          background: var(--dp-gold);
+          border-radius: 50%;
+        }
+
+        .dp-completed-arrow {
+          color: var(--dp-gold);
+          font-size: 17px;
+          transition:
+            color 1s ease,
+            transform 1s cubic-bezier(.22,.61,.36,1);
+        }
+
+        .dp-completed-card:hover .dp-completed-arrow {
+          color: var(--dp-navy);
+          transform: translateX(${ar ? "-3px" : "3px"});
+        }
+
+        /* RESPONSIVE */
+
+        @media (max-width: 1000px) {
+          .dp-image {
+            height: 300px;
+          }
+
+          .dp-card-content {
+            padding: 24px 22px;
+          }
+
+          .dp-showcase {
+            margin: 90px auto;
+          }
+
+          .dp-completed-image {
+            height: 210px;
+          }
+
+          .dp-completed-content {
+            padding: 20px 18px;
+          }
+        }
+
+        @media (max-width: 700px) {
           .dar-projects {
-            padding: 85px 24px;
+            padding: 80px 20px;
           }
 
-          .dar-project-image {
-            height: 270px;
+          .dp-header {
+            margin-bottom: 38px;
           }
 
-          .dar-completed-grid {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-          }
-        }
-
-        @media (max-width: 600px) {
-          .dar-projects {
-            padding: 70px 20px;
+          .dp-title {
+            font-size: clamp(29px, 8vw, 40px);
           }
 
-          .dar-projects-header {
-            margin-bottom: 40px;
+          .dp-description {
+            font-size: 12px;
           }
 
-          .dar-current-grid {
+          .dp-cards {
             grid-template-columns: 1fr;
-            gap: 22px;
-            margin-bottom: 75px;
+            gap: 18px;
           }
 
-          .dar-project-image {
-            height: 260px;
+          .dp-card:nth-child(2) {
+            display: none;
           }
 
-          .dar-project-content {
-            padding: 24px 20px;
+          .dp-image {
+            height: 280px;
           }
 
-          .dar-project-name {
-            font-size: 20px;
+          .dp-card-content {
+            padding: 23px 20px;
           }
 
-          .dar-project-showcase {
+          .dp-card-name {
+            font-size: 27px;
+          }
+
+          .dp-controls {
+            margin-top: 25px;
+          }
+
+          .dp-progress {
+            width: 75px;
+          }
+
+          .dp-arrow-btn {
+            width: 43px;
+            height: 43px;
+          }
+
+          .dp-showcase {
             grid-template-columns: 1fr;
             gap: 20px;
-            margin-bottom: 75px;
+            margin: 80px auto;
           }
 
-          .dar-showcase-image:first-child,
-          .dar-showcase-image:last-child {
+          .dp-showcase-image:first-child,
+          .dp-showcase-image:last-child {
             margin: 0;
           }
 
-          .dar-showcase-image:last-child {
+          .dp-showcase-image:last-child {
             max-width: 85%;
-            margin-${ar ? "right" : "left"}: auto;
+            margin-inline-start: auto;
           }
 
-          .dar-completed-grid {
-            grid-template-columns: 1fr;
-            gap: 20px;
+          .dp-completed-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 15px;
           }
 
-          .dar-completed-image {
+          .dp-completed-image {
+            height: 175px;
+          }
+
+          .dp-completed-content {
+            padding: 17px 14px;
+          }
+
+          .dp-completed-name {
+            font-size: 17px;
+          }
+
+          .dp-completed-footer {
+            margin-top: 14px;
+            padding-top: 13px;
+          }
+
+          .dp-completed-status {
+            font-size: 9px;
+          }
+        }
+
+        @media (max-width: 380px) {
+          .dar-projects {
+            padding-inline: 15px;
+          }
+
+          .dp-image {
             height: 240px;
+          }
+
+          .dp-card-name {
+            font-size: 24px;
+          }
+
+          .dp-controls-info {
+            gap: 8px;
+          }
+
+          .dp-progress {
+            width: 55px;
+          }
+
+          .dp-completed-grid {
+            grid-template-columns: 1fr;
+          }
+
+          .dp-completed-image {
+            height: 230px;
+          }
+
+          .dp-completed-name {
+            font-size: 20px;
           }
         }
 
@@ -422,70 +814,133 @@ function Projects() {
 
       <div className="dar-projects-container">
 
-        {/* CURRENT PROJECTS */}
-        <div className="dar-projects-header">
-          <div className="dar-projects-eyebrow">
-            <span className="dar-projects-dot" />
+        {/* CURRENT PROJECTS HEADER */}
+
+        <div className="dp-header">
+          <div className="dp-eyebrow">
+            <span className="dp-dot" />
             {ar ? "مشاريع دار" : "DAR DEVELOPMENTS"}
-            <span className="dar-projects-dot" />
+            <span className="dp-dot" />
           </div>
 
-          <h2 className="dar-projects-title">
+          <h2 className="dp-title">
             {t("projects", "currentTitle")}
           </h2>
 
-          <div className="dar-projects-divider" />
+          <div className="dp-divider" />
+
+          <p className="dp-description">
+            {ar
+              ? "اكتشف مشروعاتنا العقارية التي تجمع بين التصميم المميز والقيمة الاستثمارية."
+              : "Discover our developments, where distinctive architecture meets lasting investment value."}
+          </p>
         </div>
 
-        <div className="dar-current-grid">
-          {currentProjects.map((project, i) => (
-            <Link
-              to={project.path}
-              className="dar-project-card"
-              key={project.name}
-            >
-              <div className="dar-project-image">
-                <img
-                  src={project.image}
-                  alt={project.name}
-                  loading="lazy"
-                />
+        {/* CURRENT PROJECTS CAROUSEL */}
 
-                <span className="dar-project-number">
-                  0{i + 1} / 04
-                </span>
-              </div>
+        <div className="dp-carousel">
+          <div className="dp-cards">
+            {visibleProjects.map((project, i) => (
+              <Link
+                to={project.path}
+                className="dp-card"
+                key={`${project.name}-${currentIndex}`}
+              >
+                <div className="dp-image">
+                  <img
+                    src={project.image}
+                    alt={project.name}
+                    loading="lazy"
+                  />
 
-              <div className="dar-project-content">
-                <h3 className="dar-project-name">
-                  {project.name}
-                </h3>
+                  <span className="dp-number">
+                    0{((currentIndex + i) % 4) + 1} / 04
+                  </span>
 
-                <div className="dar-project-location">
-                  <span className="dar-project-location-dot" />
-                  {project.location}
-                </div>
-
-                <div
-                  className="dar-project-button"
-                  style={{
-                    width: "fit-content",
-                  }}
-                >
-                  {t("projects", "viewBtn")}
-
-                  <span className="dar-project-button-arrow">
-                    {ar ? "←" : "→"}
+                  <span className="dp-image-label">
+                    DAR DEVELOPMENTS — TANTA
                   </span>
                 </div>
+
+                <div className="dp-card-content">
+                  <div className="dp-card-top">
+                    <span className="dp-card-tag">
+                      <i />
+                      {ar ? "مشروع عقاري" : "RESIDENTIAL PROJECT"}
+                    </span>
+
+                    <span className="dp-card-number">
+                      0{((currentIndex + i) % 4) + 1}
+                    </span>
+                  </div>
+
+                  <h3 className="dp-card-name">
+                    {project.name}
+                  </h3>
+
+                  <div className="dp-card-location">
+                    <span className="dp-location-icon">⌖</span>
+                    {project.location}
+                  </div>
+
+                  <div className="dp-card-footer">
+                    <span className="dp-card-link">
+                      {t("projects", "viewBtn")}
+                    </span>
+
+                    <span className="dp-card-arrow">
+                      {ar ? "←" : "→"}
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+
+          {/* CAROUSEL NAVIGATION */}
+
+          <div className="dp-controls">
+            <div className="dp-controls-info">
+              <span>0{currentIndex + 1}</span>
+
+              <div className="dp-progress">
+                <div
+                  className="dp-progress-fill"
+                  style={{
+                    width: `${((currentIndex + 1) / currentProjects.length) * 100}%`,
+                  }}
+                />
               </div>
-            </Link>
-          ))}
+
+              <span>0{currentProjects.length}</span>
+            </div>
+
+            <div className="dp-arrows">
+              <button
+                type="button"
+                className="dp-arrow-btn"
+                onClick={prevSlide}
+                aria-label={ar ? "المشروع السابق" : "Previous project"}
+              >
+                {ar ? "→" : "←"}
+              </button>
+
+              <button
+                type="button"
+                className="dp-arrow-btn"
+                onClick={nextSlide}
+                aria-label={ar ? "المشروع التالي" : "Next project"}
+              >
+                {ar ? "←" : "→"}
+              </button>
+            </div>
+          </div>
         </div>
 
         {/* ARCHITECTURAL SHOWCASE */}
-        <div className="dar-project-showcase">
-          <div className="dar-showcase-image">
+
+        <div className="dp-showcase">
+          <div className="dp-showcase-image">
             <img
               src={float1}
               alt="DAR Architecture"
@@ -493,7 +948,7 @@ function Projects() {
             />
           </div>
 
-          <div className="dar-showcase-image">
+          <div className="dp-showcase-image">
             <img
               src={float2}
               alt="DAR Developments"
@@ -502,40 +957,77 @@ function Projects() {
           </div>
         </div>
 
-        {/* COMPLETED PROJECTS */}
-        <div className="dar-projects-header">
-          <div className="dar-projects-eyebrow">
-            <span className="dar-projects-dot" />
+        {/* COMPLETED PROJECTS HEADER */}
+
+        <div className="dp-header dp-completed-header">
+          <div className="dp-eyebrow">
+            <span className="dp-dot" />
             {ar ? "إنجازاتنا" : "OUR ACHIEVEMENTS"}
-            <span className="dar-projects-dot" />
+            <span className="dp-dot" />
           </div>
 
-          <h2 className="dar-projects-title">
+          <h2 className="dp-title">
             {t("projects", "completedTitle")}
           </h2>
 
-          <div className="dar-projects-divider" />
+          <div className="dp-divider" />
+
+          <p className="dp-description">
+            {ar
+              ? "مشروعات نفذناها وتركنا فيها بصمة تعكس جودة أعمالنا."
+              : "A portfolio of completed developments reflecting our commitment to quality."}
+          </p>
         </div>
 
-        <div className="dar-completed-grid">
-          {completedProjects.map((project, i) => (
-            <div
-              className="dar-completed-card"
-              key={project.name}
-            >
-              <div className="dar-completed-image">
-                <img
-                  src={project.image}
-                  alt={project.name}
-                  loading="lazy"
-                />
-              </div>
+        {/* COMPLETED PROJECTS GRID */}
 
-              <div className="dar-completed-name">
-                {project.name}
+        <div className="dp-completed-section">
+          <div className="dp-completed-grid">
+            {completedProjects.map((project, i) => (
+              <div
+                className="dp-completed-card"
+                key={project.name}
+              >
+                <div className="dp-completed-image">
+                  <img
+                    src={project.image}
+                    alt={project.name}
+                    loading="lazy"
+                  />
+
+                  <span className="dp-completed-number">
+                    0{i + 1} / 05
+                  </span>
+
+                  <span className="dp-completed-image-label">
+                    DAR DEVELOPMENTS
+                  </span>
+                </div>
+
+                <div className="dp-completed-content">
+                  <div className="dp-completed-tag">
+                    <i />
+                    {ar ? "مشروع مكتمل" : "COMPLETED PROJECT"}
+                  </div>
+
+                  <h3 className="dp-completed-name">
+                    {project.name}
+                  </h3>
+
+                  <div className="dp-completed-footer">
+                    <span className="dp-completed-status">
+                      <i />
+                      {ar ? "تم التنفيذ" : "Successfully Delivered"}
+                    </span>
+
+                    <span className="dp-completed-arrow">
+                      {ar ? "←" : "→"}
+                    </span>
+                  </div>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
 
       </div>

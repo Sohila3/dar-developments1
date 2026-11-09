@@ -1,5 +1,6 @@
 
 import { useLanguage } from "../context/LanguageContext";
+
 import chemas from "../assets/chemas.png";
 import elmazlom from "../assets/elmazlom.png";
 import elswedy from "../assets/elswedy.png";
@@ -19,199 +20,339 @@ function Partners() {
   return (
     <section
       id="partners"
-      className="dar-partners"
-      style={{
-        direction: ar ? "rtl" : "ltr",
-        fontFamily: ar
-          ? "'Noto Naskh Arabic', serif"
-          : "'Montserrat', sans-serif",
-      }}
+      className={`dar-partners ${ar ? "is-ar" : "is-en"}`}
+      dir={ar ? "rtl" : "ltr"}
     >
       <style>{`
-        @keyframes partnersFadeUp {
-          from { opacity: 0; transform: translateY(25px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-
         .dar-partners {
+          --partner-navy: #10243D;
+          --partner-gold: #B89552;
+          --partner-gold-light: #D7BC83;
+          --partner-ivory: #F8F6F1;
+          --partner-muted: #788391;
+
           position: relative;
           overflow: hidden;
-          padding: 110px 24px;
-          background: linear-gradient(180deg, #FFFFFF 0%, #F4F7FA 100%);
+          padding: 120px 24px;
+          background:
+            radial-gradient(
+              ellipse at 85% 15%,
+              rgba(184,149,82,.06),
+              transparent 40%
+            ),
+            linear-gradient(180deg, #FFFFFF 0%, var(--partner-ivory) 100%);
+          color: var(--partner-navy);
+          isolation: isolate;
+        }
+
+        .dar-partners *,
+        .dar-partners *::before,
+        .dar-partners *::after {
+          box-sizing: border-box;
         }
 
         .dar-partners-container {
-          max-width: 1350px;
-          margin: auto;
+          max-width: 1380px;
+          margin: 0 auto;
           position: relative;
           z-index: 1;
         }
 
+        /* BACKGROUND TYPOGRAPHY */
+
+        .dar-partners-bg-text {
+          position: absolute;
+          top: 5px;
+          left: 50%;
+          transform: translateX(-50%);
+          white-space: nowrap;
+          font-family: "DM Sans", sans-serif;
+          font-size: clamp(100px, 20vw, 280px);
+          font-weight: 700;
+          letter-spacing: -10px;
+          color: rgba(16,36,61,.022);
+          pointer-events: none;
+          user-select: none;
+          z-index: -1;
+        }
+
+        /* HEADER */
+
         .dar-partners-header {
           text-align: center;
           margin-bottom: 25px;
-          animation: partnersFadeUp .8s ease both;
+          animation: partnerFadeUp .9s cubic-bezier(.22,.61,.36,1) both;
         }
 
         .dar-partners-eyebrow {
           display: flex;
           align-items: center;
           justify-content: center;
-          gap: 10px;
-          color: #9A7535;
-          font-size: 11px;
+          gap: 13px;
+          color: var(--partner-gold);
+          font-family: "DM Sans", sans-serif;
+          font-size: 10px;
           font-weight: 700;
-          letter-spacing: 2.5px;
-          margin-bottom: 18px;
+          letter-spacing: 3px;
+          text-transform: uppercase;
+          margin-bottom: 25px;
         }
 
         .dar-partners-dot {
-          width: 6px;
-          height: 6px;
+          width: 5px;
+          height: 5px;
           border-radius: 50%;
-          background: #C9A84C;
+          background: var(--partner-gold);
         }
 
         .dar-partners-title {
-          color: #10243D;
-          font-size: clamp(30px, 4vw, 52px);
+          color: var(--partner-navy);
+          font-size: clamp(34px, 5vw, 65px);
           font-weight: 800;
-          line-height: 1.4;
+          line-height: 1.5;
           margin: 0;
+          letter-spacing: -.6px;
         }
 
         .dar-partners-title span {
-          color: #B8953F;
+          display: inline-block;
+          position: relative;
+          color: var(--partner-gold);
+          margin-inline-start: 10px;
+        }
+
+        .dar-partners-title span::after {
+          content: "";
+          position: absolute;
+          bottom: 5px;
+          left: 0;
+          width: 100%;
+          height: 7px;
+          background: rgba(184,149,82,.12);
+          z-index: -1;
         }
 
         .dar-partners-divider {
-          width: 48px;
+          width: 55px;
           height: 2px;
-          background: linear-gradient(90deg, #C9A84C, #E8C96A);
-          margin: 22px auto;
+          margin: 25px auto;
+          background: linear-gradient(
+            90deg,
+            var(--partner-gold),
+            var(--partner-gold-light)
+          );
         }
 
         .dar-partners-subtitle {
-          max-width: 650px;
-          margin: 0 auto 65px;
+          max-width: 680px;
+          margin: 0 auto 70px;
           text-align: center;
-          color: #7B8797;
+          color: var(--partner-muted);
           font-size: clamp(13px, 1.5vw, 15px);
           line-height: 2.2;
-          animation: partnersFadeUp .8s .15s ease both;
+          animation: partnerFadeUp .9s .15s cubic-bezier(.22,.61,.36,1) both;
         }
 
-        /* PARTNER GRID */
+        /* PARTNERS SHOWCASE */
 
         .dar-partners-grid {
           display: grid;
           grid-template-columns: repeat(4, minmax(0, 1fr));
-          gap: 24px;
-          max-width: 1150px;
+          max-width: 1200px;
           margin: auto;
+          gap: 20px;
         }
 
         .dar-partner-card {
           position: relative;
-          height: 185px;
-          background: #FFFFFF;
+          height: 220px;
           display: flex;
           align-items: center;
           justify-content: center;
-          padding: 30px;
-          border: 1px solid rgba(201,168,76,.20);
+          padding: 35px;
+          background: rgba(255,255,255,.86);
+          border: 1px solid rgba(16,36,61,.075);
           overflow: hidden;
-          box-shadow: 0 10px 35px rgba(16,36,61,.035);
-          transition: transform .45s ease,
-                      box-shadow .45s ease,
-                      border-color .45s ease;
-          animation: partnersFadeUp .8s ease both;
+          box-shadow: 0 12px 40px rgba(16,36,61,.025);
+
+          transition:
+            transform 1.1s cubic-bezier(.22,.61,.36,1),
+            box-shadow 1.1s cubic-bezier(.22,.61,.36,1),
+            border-color 1.1s cubic-bezier(.22,.61,.36,1),
+            background 1.1s cubic-bezier(.22,.61,.36,1);
+
+          animation: partnerFadeUp .9s cubic-bezier(.22,.61,.36,1) both;
         }
 
-        /* GOLD TOP LINE */
+        /* GOLD ACCENT */
 
         .dar-partner-card::before {
           content: "";
           position: absolute;
           top: 0;
-          left: 0;
+          inset-inline-start: 0;
           width: 100%;
           height: 2px;
-          background: linear-gradient(90deg, transparent, #C9A84C, transparent);
-          transform: scaleX(0);
-          transition: transform .45s ease;
+          background: linear-gradient(
+            90deg,
+            transparent,
+            var(--partner-gold),
+            var(--partner-gold-light),
+            transparent
+          );
+          transform: scaleX(.15);
+          opacity: 0;
+          transition:
+            transform 1.1s cubic-bezier(.22,.61,.36,1),
+            opacity 1.1s cubic-bezier(.22,.61,.36,1);
+        }
+
+        /* CORNER DETAIL */
+
+        .dar-partner-card::after {
+          content: "";
+          position: absolute;
+          bottom: 0;
+          inset-inline-end: 0;
+          width: 35px;
+          height: 35px;
+          border-inline-end: 1px solid rgba(184,149,82,.25);
+          border-bottom: 1px solid rgba(184,149,82,.25);
+          opacity: .5;
+          transition:
+            width 1s cubic-bezier(.22,.61,.36,1),
+            height 1s cubic-bezier(.22,.61,.36,1),
+            opacity 1s ease;
         }
 
         .dar-partner-card:hover {
-          transform: translateY(-8px);
-          border-color: rgba(201,168,76,.5);
-          box-shadow: 0 25px 55px rgba(16,36,61,.09),
-                      0 0 25px rgba(201,168,76,.08);
+          transform: translateY(-7px);
+          background: #FFFFFF;
+          border-color: rgba(184,149,82,.3);
+          box-shadow:
+            0 28px 65px rgba(16,36,61,.07),
+            0 5px 20px rgba(184,149,82,.035);
         }
 
         .dar-partner-card:hover::before {
           transform: scaleX(1);
+          opacity: 1;
         }
+
+        .dar-partner-card:hover::after {
+          width: 55px;
+          height: 55px;
+          opacity: 1;
+        }
+
+        /* LOGO */
 
         .dar-partner-logo {
           width: 100%;
-          max-width: 175px;
-          max-height: 95px;
+          max-width: 190px;
+          max-height: 105px;
           object-fit: contain;
           display: block;
-          transition: transform .5s ease;
+          filter: grayscale(12%);
+          opacity: .85;
+
+          transition:
+            transform 1.2s cubic-bezier(.22,.61,.36,1),
+            opacity 1.2s cubic-bezier(.22,.61,.36,1),
+            filter 1.2s cubic-bezier(.22,.61,.36,1);
         }
 
         .dar-partner-card:hover .dar-partner-logo {
-          transform: scale(1.08);
+          transform: scale(1.055);
+          filter: grayscale(0%);
+          opacity: 1;
         }
+
+        /* NUMBER */
 
         .dar-partner-number {
           position: absolute;
-          bottom: 12px;
-          left: 15px;
+          bottom: 17px;
+          inset-inline-start: 20px;
+          color: rgba(16,36,61,.25);
+          font-family: "DM Sans", sans-serif;
           font-size: 9px;
           font-weight: 700;
-          letter-spacing: 1.5px;
-          color: rgba(16,36,61,.22);
+          letter-spacing: 2px;
+          transition: color 1s ease;
         }
+
+        .dar-partner-card:hover .dar-partner-number {
+          color: var(--partner-gold);
+        }
+
+        /* BOTTOM SIGNATURE */
 
         .dar-partners-bottom {
           display: flex;
           align-items: center;
           justify-content: center;
-          gap: 15px;
-          margin-top: 45px;
-          color: #9AA5B3;
-          font-size: 10px;
-          letter-spacing: 2px;
+          gap: 16px;
+          margin-top: 55px;
+          color: rgba(16,36,61,.42);
+          font-family: "DM Sans", sans-serif;
+          font-size: 9px;
+          font-weight: 700;
+          letter-spacing: 3px;
+          text-align: center;
+          animation: partnerFadeUp 1s .45s both;
         }
 
         .dar-partners-bottom-line {
-          width: 35px;
+          width: 40px;
           height: 1px;
-          background: rgba(201,168,76,.6);
+          background: rgba(184,149,82,.6);
         }
 
-        @media (max-width: 900px) {
+        .dar-partners-bottom span:nth-child(2) {
+          color: var(--partner-gold);
+        }
+
+        /* ANIMATION */
+
+        @keyframes partnerFadeUp {
+          from {
+            opacity: 0;
+            transform: translateY(25px);
+          }
+
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        /* RESPONSIVE */
+
+        @media (max-width: 1000px) {
           .dar-partners-grid {
             grid-template-columns: repeat(2, minmax(0, 1fr));
-            max-width: 650px;
-            gap: 20px;
+            max-width: 750px;
+            gap: 22px;
           }
 
           .dar-partner-card {
-            height: 170px;
+            height: 200px;
           }
         }
 
         @media (max-width: 600px) {
           .dar-partners {
-            padding: 80px 20px;
+            padding: 85px 20px;
+          }
+
+          .dar-partners-title {
+            font-size: 35px;
           }
 
           .dar-partners-subtitle {
-            margin-bottom: 40px;
+            margin-bottom: 45px;
+            font-size: 12px;
           }
 
           .dar-partners-grid {
@@ -219,23 +360,46 @@ function Partners() {
           }
 
           .dar-partner-card {
-            height: 135px;
+            height: 155px;
             padding: 20px;
           }
 
           .dar-partner-logo {
-            max-height: 70px;
+            max-width: 145px;
+            max-height: 75px;
           }
 
           .dar-partner-number {
+            bottom: 12px;
+            inset-inline-start: 12px;
             font-size: 8px;
-            bottom: 8px;
-            left: 10px;
           }
 
           .dar-partners-bottom {
+            margin-top: 38px;
             font-size: 8px;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
+            gap: 10px;
+          }
+
+          .dar-partners-bottom-line {
+            width: 25px;
+          }
+
+          .dar-partners-bg-text {
+            font-size: 100px;
+            letter-spacing: -5px;
+          }
+        }
+
+        @media (max-width: 360px) {
+          .dar-partners-grid {
+            grid-template-columns: 1fr;
+            max-width: 260px;
+          }
+
+          .dar-partner-card {
+            height: 165px;
           }
         }
 
@@ -249,11 +413,15 @@ function Partners() {
         }
       `}</style>
 
+      <div className="dar-partners-bg-text" aria-hidden="true">
+        PARTNERS
+      </div>
+
       <div className="dar-partners-container">
 
         {/* HEADER */}
 
-        <div className="dar-partners-header">
+        <header className="dar-partners-header">
           <div className="dar-partners-eyebrow">
             <span className="dar-partners-dot" />
             {t("partners", "label")}
@@ -266,7 +434,7 @@ function Partners() {
           </h2>
 
           <div className="dar-partners-divider" />
-        </div>
+        </header>
 
         {/* SUBTITLE */}
 
@@ -274,14 +442,14 @@ function Partners() {
           {t("partners", "subtitle")}
         </p>
 
-        {/* LOGOS */}
+        {/* PARTNERS */}
 
         <div className="dar-partners-grid">
           {partners.map((partner, i) => (
-            <div
+            <article
               className="dar-partner-card"
               key={partner.name}
-              style={{ animationDelay: `${i * 0.12}s` }}
+              style={{ animationDelay: `${i * 0.16}s` }}
             >
               <img
                 src={partner.logo}
@@ -293,15 +461,17 @@ function Partners() {
               <span className="dar-partner-number">
                 0{i + 1}
               </span>
-            </div>
+            </article>
           ))}
         </div>
 
-        {/* BOTTOM DECORATION */}
+        {/* SIGNATURE */}
 
         <div className="dar-partners-bottom">
           <span className="dar-partners-bottom-line" />
+          <span>✦</span>
           {ar ? "شركاء النجاح" : "PARTNERS IN EXCELLENCE"}
+          <span>✦</span>
           <span className="dar-partners-bottom-line" />
         </div>
 

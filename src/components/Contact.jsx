@@ -60,7 +60,7 @@ function Contact() {
 
     const message =
       `${t("contact", "whatsappMsg")} ${name.trim()} ` +
-      `${t("contact", "whatsappMsg2")} ${project}`;
+      `${t("contact", "whatsappMsg2")} ${project || (ar ? "لم يتم تحديد المشروع" : "No project selected")}`;
 
     window.open(
       `https://wa.me/${phone}?text=${encodeURIComponent(message)}`,
@@ -78,164 +78,223 @@ function Contact() {
     <>
       <section
         id="contact"
-        className="dar-contact"
-        style={{
-          direction: ar ? "rtl" : "ltr",
-          fontFamily: ar
-            ? "'Noto Naskh Arabic', serif"
-            : "'Montserrat', sans-serif",
-        }}
+        className={`dar-contact ${ar ? "is-ar" : "is-en"}`}
+        dir={ar ? "rtl" : "ltr"}
       >
         <style>{`
-          @keyframes darContactFade {
+          .dar-contact {
+            --contact-navy: #10243D;
+            --contact-dark: #081321;
+            --contact-gold: #B89552;
+            --contact-gold-light: #D7BC83;
+            --contact-ivory: #F8F6F1;
+            --contact-muted: #788391;
+
+            position: relative;
+            overflow: hidden;
+            padding: 120px 24px;
+            background:
+              radial-gradient(ellipse at 10% 15%, rgba(184,149,82,.06), transparent 40%),
+              linear-gradient(180deg, #FFFFFF 0%, var(--contact-ivory) 100%);
+            color: var(--contact-navy);
+            font-family: inherit;
+            isolation: isolate;
+          }
+
+          .dar-contact *,
+          .dar-contact *::before,
+          .dar-contact *::after,
+          .dar-footer *,
+          .dar-footer *::before,
+          .dar-footer *::after {
+            box-sizing: border-box;
+          }
+
+          @keyframes contactFadeUp {
             from { opacity: 0; transform: translateY(25px); }
             to { opacity: 1; transform: translateY(0); }
           }
 
-          .dar-contact {
-            padding: 110px 24px;
-            background: linear-gradient(180deg,#FFFFFF 0%,#F4F7FA 100%);
-            position: relative;
-            overflow: hidden;
-          }
+          /* HEADER */
 
           .dar-contact-container {
-            max-width: 1250px;
+            max-width: 1380px;
             margin: auto;
+            position: relative;
+            z-index: 1;
           }
-
-          /* HEADER */
 
           .dar-contact-header {
             text-align: center;
-            margin-bottom: 60px;
-            animation: darContactFade .7s ease both;
+            margin-bottom: 65px;
+            animation: contactFadeUp .9s cubic-bezier(.22,.61,.36,1) both;
           }
 
           .dar-contact-eyebrow {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            color: #9A7535;
-            font-size: 11px;
+            gap: 13px;
+            color: var(--contact-gold);
+            font-family: "DM Sans", sans-serif;
+            font-size: 10px;
             font-weight: 700;
-            letter-spacing: 2.5px;
-            margin-bottom: 18px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 25px;
           }
 
           .dar-contact-dot {
-            width: 6px;
-            height: 6px;
-            background: #C9A84C;
+            width: 5px;
+            height: 5px;
+            background: var(--contact-gold);
             border-radius: 50%;
           }
 
           .dar-contact-title {
-            color: #10243D;
-            font-size: clamp(32px,4vw,52px);
-            font-weight: 800;
-            line-height: 1.4;
-            margin: 0;
-          }
-
-          .dar-contact-title span {
-            color: #B8953F;
-          }
-
-          .dar-contact-divider {
-            width: 48px;
-            height: 2px;
-            background: linear-gradient(90deg,#C9A84C,#E8C96A);
-            margin: 22px auto;
-          }
-
-          .dar-contact-subtitle {
-            color: #7B8797;
-            font-size: 14px;
-            line-height: 2;
-            max-width: 600px;
-            margin: auto;
-          }
-
-          /* CONTACT PANEL */
-
-          .dar-contact-panel {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            background: white;
-            border: 1px solid rgba(201,168,76,.2);
-            box-shadow: 0 30px 80px rgba(16,36,61,.07);
-            animation: darContactFade .8s .15s ease both;
-          }
-
-          .dar-contact-info {
-            padding: clamp(30px,5vw,65px);
-            background: #FFFFFF;
-          }
-
-          .dar-contact-info-title {
-            color: #10243D;
-            font-size: clamp(25px,3vw,36px);
+            color: var(--contact-navy);
+            font-size: clamp(35px,5vw,65px);
             font-weight: 800;
             line-height: 1.5;
             margin: 0;
           }
 
+          .dar-contact-title span {
+            position: relative;
+            display: inline-block;
+            color: var(--contact-gold);
+            margin-inline-start: 10px;
+          }
+
+          .dar-contact-title span::after {
+            content: "";
+            position: absolute;
+            bottom: 5px;
+            left: 0;
+            width: 100%;
+            height: 7px;
+            background: rgba(184,149,82,.12);
+            z-index: -1;
+          }
+
+          .dar-contact-divider {
+            width: 55px;
+            height: 2px;
+            margin: 25px auto;
+            background: linear-gradient(90deg,var(--contact-gold),var(--contact-gold-light));
+          }
+
+          .dar-contact-subtitle {
+            max-width: 680px;
+            margin: auto;
+            color: var(--contact-muted);
+            font-size: 14px;
+            line-height: 2.2;
+          }
+
+          /* MAIN PANEL */
+
+          .dar-contact-panel {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            max-width: 1200px;
+            margin: auto;
+            background: #FFFFFF;
+            border: 1px solid rgba(16,36,61,.075);
+            box-shadow: 0 35px 90px rgba(16,36,61,.065);
+            animation: contactFadeUp 1s .15s cubic-bezier(.22,.61,.36,1) both;
+          }
+
+          /* INFO */
+
+          .dar-contact-info {
+            padding: clamp(35px,5vw,75px);
+            background: #FFFFFF;
+          }
+
+          .dar-contact-info-top {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--contact-gold);
+            font-family: "DM Sans",sans-serif;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 2.5px;
+            margin-bottom: 28px;
+          }
+
+          .dar-contact-info-top::before {
+            content: "";
+            width: 28px;
+            height: 1px;
+            background: var(--contact-gold);
+          }
+
+          .dar-contact-info-title {
+            color: var(--contact-navy);
+            font-size: clamp(27px,3vw,42px);
+            font-weight: 800;
+            line-height: 1.55;
+            margin: 0;
+          }
+
           .dar-contact-info-title span {
-            color: #C9A84C;
+            color: var(--contact-gold);
           }
 
           .dar-contact-info-intro {
-            color: #7B8797;
+            color: var(--contact-muted);
             font-size: 13px;
-            line-height: 2;
-            margin: 15px 0 35px;
+            line-height: 2.2;
+            margin: 18px 0 45px;
+            max-width: 450px;
           }
 
           .dar-contact-detail {
-            margin-bottom: 30px;
+            margin-bottom: 35px;
           }
 
           .dar-contact-detail-label {
             display: flex;
             align-items: center;
-            gap: 10px;
-            color: #9A7535;
-            font-size: 11px;
-            font-weight: 800;
-            letter-spacing: 1px;
-            margin-bottom: 12px;
+            gap: 12px;
+            color: var(--contact-gold);
+            font-family: "DM Sans",sans-serif;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
           }
 
           .dar-contact-detail-label::before {
             content: "";
-            width: 22px;
+            width: 24px;
             height: 1px;
-            background: #C9A84C;
+            background: var(--contact-gold);
           }
 
           .dar-contact-detail-text {
             color: #526174;
             font-size: 13px;
-            line-height: 2;
+            line-height: 2.2;
             margin: 0;
           }
 
           .dar-contact-map {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            margin-top: 12px;
-            color: #B8953F;
+            gap: 10px;
+            margin-top: 16px;
+            color: var(--contact-gold);
             text-decoration: none;
             font-size: 12px;
             font-weight: 700;
-            transition: gap .3s;
+            transition: gap 1s cubic-bezier(.22,.61,.36,1);
           }
 
           .dar-contact-map:hover {
-            gap: 14px;
+            gap: 17px;
           }
 
           .dar-contact-socials {
@@ -245,16 +304,20 @@ function Contact() {
           }
 
           .dar-contact-social {
-            width: 42px;
-            height: 42px;
+            width: 46px;
+            height: 46px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #10243D;
-            background: #F4F7FA;
+            color: var(--contact-navy);
+            background: #FAF9F6;
             border: 1px solid rgba(16,36,61,.08);
-            transition: all .3s;
             text-decoration: none;
+            transition:
+              transform 1s cubic-bezier(.22,.61,.36,1),
+              color 1s ease,
+              background 1s ease,
+              border-color 1s ease;
           }
 
           .dar-contact-social svg {
@@ -263,34 +326,56 @@ function Contact() {
           }
 
           .dar-contact-social:hover {
-            color: #B8953F;
-            background: white;
-            border-color: #C9A84C;
-            transform: translateY(-4px);
+            color: var(--contact-gold);
+            background: #FFFFFF;
+            border-color: rgba(184,149,82,.55);
+            transform: translateY(-5px);
           }
 
-          /* CTA PANEL */
+          /* CTA */
 
           .dar-contact-cta {
             position: relative;
             overflow: hidden;
-            padding: clamp(35px,5vw,65px);
-            background: linear-gradient(145deg,#10243D,#0B1A2E);
+            padding: clamp(40px,5vw,75px);
+            background:
+              radial-gradient(circle at 90% 10%,rgba(215,188,131,.09),transparent 35%),
+              linear-gradient(145deg,#10243D,#081321);
             color: white;
             display: flex;
             flex-direction: column;
             justify-content: center;
+            isolation: isolate;
           }
 
           .dar-contact-cta::before {
             content: "DAR";
             position: absolute;
-            bottom: -65px;
-            left: -20px;
-            font-size: 190px;
+            bottom: -75px;
+            inset-inline-start: -20px;
+            z-index: -1;
+            font-family: "DM Sans",sans-serif;
+            font-size: clamp(150px,18vw,260px);
             font-weight: 900;
-            letter-spacing: -10px;
+            letter-spacing: -15px;
+            line-height: 1;
             color: rgba(255,255,255,.025);
+            pointer-events: none;
+            user-select: none;
+          }
+
+          .dar-contact-cta::after {
+            content: "";
+            position: absolute;
+            width: 330px;
+            height: 330px;
+            top: -190px;
+            inset-inline-end: -180px;
+            border: 1px solid rgba(215,188,131,.13);
+            border-radius: 50%;
+            box-shadow:
+              0 0 0 45px rgba(215,188,131,.025),
+              0 0 0 90px rgba(215,188,131,.02);
             pointer-events: none;
           }
 
@@ -300,68 +385,99 @@ function Contact() {
           }
 
           .dar-contact-cta-label {
-            color: #D0B16A;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--contact-gold-light);
+            font-family: "DM Sans",sans-serif;
             font-size: 10px;
             font-weight: 700;
             letter-spacing: 3px;
-            margin-bottom: 25px;
+            margin-bottom: 28px;
+          }
+
+          .dar-contact-cta-label::before {
+            content: "";
+            width: 28px;
+            height: 1px;
+            background: var(--contact-gold-light);
           }
 
           .dar-contact-cta-title {
-            font-size: clamp(28px,3vw,42px);
-            line-height: 1.5;
+            font-size: clamp(30px,3.5vw,48px);
+            line-height: 1.65;
             font-weight: 800;
             margin: 0;
             color: white;
           }
 
           .dar-contact-cta-title span {
-            color: #D0B16A;
+            color: var(--contact-gold-light);
           }
 
           .dar-contact-cta-desc {
             color: rgba(255,255,255,.55);
             font-size: 13px;
             line-height: 2.2;
-            margin: 20px 0 35px;
-            max-width: 400px;
+            margin: 22px 0 38px;
+            max-width: 430px;
           }
 
           .dar-contact-cta-btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 14px;
+            gap: 16px;
             width: fit-content;
-            padding: 16px 28px;
+            padding: 17px 30px;
             background: linear-gradient(135deg,#C9A84C,#E8C96A);
             color: #10243D;
-            border: none;
+            border: 1px solid rgba(255,255,255,.12);
             font-family: inherit;
             font-size: 13px;
             font-weight: 800;
             cursor: pointer;
-            transition: all .35s;
+            transition:
+              transform 1s cubic-bezier(.22,.61,.36,1),
+              box-shadow 1s cubic-bezier(.22,.61,.36,1),
+              background 1s ease;
           }
 
           .dar-contact-cta-btn:hover {
             transform: translateY(-4px);
-            box-shadow: 0 15px 35px rgba(201,168,76,.2);
+            box-shadow: 0 18px 40px rgba(201,168,76,.18);
           }
 
           .dar-contact-cta-btn span {
             font-size: 18px;
-            transition: transform .3s;
+            transition: transform 1s cubic-bezier(.22,.61,.36,1);
           }
 
           .dar-contact-cta-btn:hover span {
-            transform: translateX(${ar ? "-5px" : "5px"});
+            transform: translateX(5px);
+          }
+
+          .dar-contact.is-ar .dar-contact-cta-btn:hover span {
+            transform: translateX(-5px);
           }
 
           .dar-contact-cta-note {
-            color: rgba(255,255,255,.3);
-            font-size: 10px;
-            margin-top: 22px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: rgba(255,255,255,.32);
+            font-family: "DM Sans",sans-serif;
+            font-size: 9px;
+            letter-spacing: 1.5px;
+            margin-top: 24px;
+          }
+
+          .dar-contact-cta-note::before {
+            content: "";
+            width: 5px;
+            height: 5px;
+            background: var(--contact-gold);
+            border-radius: 50%;
           }
 
           /* MODAL */
@@ -374,72 +490,79 @@ function Contact() {
             align-items: center;
             justify-content: center;
             padding: 20px;
-            background: rgba(5,13,25,.72);
-            backdrop-filter: blur(8px);
-            animation: darContactFade .25s ease both;
+            background: rgba(5,13,25,.75);
+            backdrop-filter: blur(10px);
+            animation: contactFadeUp .3s ease both;
           }
 
           .dar-contact-modal {
             width: 100%;
             max-width: 480px;
             background: #FFFFFF;
-            border: 1px solid rgba(201,168,76,.3);
+            border: 1px solid rgba(184,149,82,.3);
             box-shadow: 0 35px 100px rgba(0,0,0,.3);
-            padding: 40px;
+            padding: 42px;
             position: relative;
+            animation: contactFadeUp .45s cubic-bezier(.22,.61,.36,1) both;
           }
 
           .dar-contact-modal-top {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 25px;
+            margin-bottom: 28px;
           }
 
           .dar-contact-modal-brand {
-            color: #C9A84C;
-            font-size: 13px;
+            color: var(--contact-gold);
+            font-family: "DM Sans",sans-serif;
+            font-size: 12px;
             font-weight: 900;
             letter-spacing: 4px;
           }
 
           .dar-contact-modal-close {
-            width: 35px;
-            height: 35px;
-            background: #F4F7FA;
+            width: 38px;
+            height: 38px;
+            background: #FAF9F6;
             border: 1px solid rgba(16,36,61,.08);
-            color: #10243D;
+            color: var(--contact-navy);
             font-size: 23px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all .3s;
+            transition:
+              background 1s ease,
+              color 1s ease,
+              border-color 1s ease;
           }
 
           .dar-contact-modal-close:hover {
-            background: #10243D;
+            background: var(--contact-navy);
             color: white;
+            border-color: var(--contact-navy);
           }
 
           .dar-contact-modal-title {
             text-align: center;
-            color: #10243D;
-            font-size: 25px;
+            color: var(--contact-navy);
+            font-size: 26px;
             font-weight: 800;
-            margin: 0 0 10px;
+            line-height: 1.6;
+            margin: 0 0 12px;
           }
 
           .dar-contact-modal-desc {
             text-align: center;
-            color: #7B8797;
+            color: var(--contact-muted);
             font-size: 12px;
-            line-height: 2;
-            margin-bottom: 30px;
+            line-height: 2.1;
+            margin-bottom: 35px;
           }
 
           .dar-contact-field {
-            margin-bottom: 18px;
+            margin-bottom: 22px;
           }
 
           .dar-contact-field label {
@@ -447,140 +570,189 @@ function Contact() {
             color: #526174;
             font-size: 12px;
             font-weight: 700;
-            margin-bottom: 9px;
+            margin-bottom: 10px;
           }
 
           .dar-contact-input {
             width: 100%;
-            box-sizing: border-box;
-            padding: 14px;
-            background: #FAFCFE;
-            border: 1px solid rgba(16,36,61,.12);
-            color: #10243D;
+            padding: 15px;
+            background: #FAFAF8;
+            border: 1px solid rgba(16,36,61,.10);
+            color: var(--contact-navy);
             font-family: inherit;
             font-size: 13px;
             outline: none;
-            transition: border-color .3s, box-shadow .3s;
+            transition:
+              border-color .5s ease,
+              box-shadow .5s ease;
           }
 
           .dar-contact-input:focus {
-            border-color: #C9A84C;
-            box-shadow: 0 0 0 3px rgba(201,168,76,.08);
+            border-color: var(--contact-gold);
+            box-shadow: 0 0 0 4px rgba(184,149,82,.08);
           }
 
           .dar-contact-input::placeholder {
             color: #A0AAB7;
           }
 
+          .dar-contact-input option {
+            color: var(--contact-navy);
+          }
+
           .dar-contact-error {
             color: #DC2626;
             font-size: 11px;
-            margin-top: 8px;
+            margin-top: 9px;
           }
 
           .dar-contact-submit {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
             width: 100%;
-            margin-top: 8px;
-            padding: 15px;
-            background: #10243D;
+            margin-top: 10px;
+            padding: 17px;
+            background: var(--contact-navy);
             color: white;
             border: none;
             font-family: inherit;
             font-size: 13px;
             font-weight: 800;
             cursor: pointer;
-            transition: all .3s;
+            transition:
+              background 1s ease,
+              color 1s ease,
+              transform 1s cubic-bezier(.22,.61,.36,1);
           }
 
           .dar-contact-submit:hover {
-            background: #C9A84C;
-            color: #10243D;
+            background: var(--contact-gold);
+            color: var(--contact-navy);
+            transform: translateY(-2px);
           }
 
           /* FOOTER */
 
           .dar-footer {
-            background: #081321;
+            --footer-navy: #081321;
+            --footer-gold: #C9A84C;
+            --footer-gold-light: #E8C96A;
+
+            background: var(--footer-navy);
             color: white;
-            font-family: inherit;
-            direction: inherit;
             position: relative;
             overflow: hidden;
+            font-family: inherit;
           }
 
           .dar-footer-gold-line {
             height: 2px;
-            background: linear-gradient(90deg,transparent,#C9A84C,#E8C96A,#C9A84C,transparent);
+            background: linear-gradient(
+              90deg,
+              transparent,
+              #C9A84C,
+              #E8C96A,
+              #C9A84C,
+              transparent
+            );
           }
 
           .dar-footer-container {
-            max-width: 1350px;
+            max-width: 1380px;
             margin: auto;
-            padding: 75px 32px 30px;
+            padding: 85px 32px 30px;
+            position: relative;
+            z-index: 1;
           }
 
           .dar-footer-grid {
             display: grid;
-            grid-template-columns: 1.4fr 1fr 1fr 1.2fr;
-            gap: 45px;
-            margin-bottom: 60px;
+            grid-template-columns: 1.5fr 1fr 1.1fr 1.25fr;
+            gap: 50px;
+            margin-bottom: 75px;
           }
 
+          /* BRAND */
+
           .dar-footer-brand {
-            color: #C9A84C;
-            font-size: 38px;
+            display: inline-block;
+            color: var(--footer-gold);
+            font-family: "DM Sans",sans-serif;
+            font-size: 68px;
             font-weight: 900;
-            letter-spacing: 7px;
-            line-height: 1;
+            letter-spacing: 8px;
+            line-height: .9;
+            position: relative;
+          }
+
+          .dar-footer-brand::after {
+            content: "";
+            position: absolute;
+            bottom: -12px;
+            inset-inline-start: 0;
+            width: 42px;
+            height: 1px;
+            background: var(--footer-gold);
           }
 
           .dar-footer-brand-sub {
-            color: rgba(201,168,76,.55);
-            font-size: 10px;
+            color: rgba(215,188,131,.55);
+            font-family: "DM Sans",sans-serif;
+            font-size: 9px;
             letter-spacing: 3px;
-            margin-top: 10px;
+            margin-top: 24px;
           }
 
           .dar-footer-desc {
             color: rgba(255,255,255,.42);
             font-size: 12px;
-            line-height: 2.2;
-            max-width: 260px;
-            margin: 25px 0;
+            line-height: 2.3;
+            max-width: 300px;
+            margin: 27px 0;
           }
 
           .dar-footer-whatsapp {
             display: inline-flex;
             align-items: center;
-            gap: 10px;
-            padding: 13px 22px;
-            background: rgba(37,211,102,.08);
+            gap: 12px;
+            padding: 14px 21px;
             border: 1px solid rgba(37,211,102,.25);
+            background: rgba(37,211,102,.045);
             color: #25D366;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 700;
             text-decoration: none;
-            transition: all .3s;
+            transition:
+              background 1s ease,
+              color 1s ease,
+              border-color 1s ease,
+              transform 1s cubic-bezier(.22,.61,.36,1);
           }
 
           .dar-footer-whatsapp:hover {
             background: #25D366;
             color: white;
+            border-color: #25D366;
             transform: translateY(-3px);
           }
 
+          /* FOOTER COLUMNS */
+
           .dar-footer-col-title {
-            color: #C9A84C;
-            font-size: 11px;
+            color: var(--footer-gold);
+            font-family: "DM Sans",sans-serif;
+            font-size: 10px;
             font-weight: 800;
-            letter-spacing: 2px;
-            margin: 0 0 25px;
+            letter-spacing: 2.5px;
+            margin: 5px 0 30px;
           }
 
           .dar-footer-links {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 17px;
           }
 
           .dar-footer-link {
@@ -589,63 +761,73 @@ function Contact() {
             font-size: 12px;
             display: flex;
             align-items: center;
-            gap: 9px;
-            transition: color .3s, gap .3s;
+            gap: 10px;
+            transition:
+              color 1s ease,
+              gap 1s cubic-bezier(.22,.61,.36,1);
           }
 
           .dar-footer-link span {
-            color: #C9A84C;
+            color: var(--footer-gold);
             font-size: 10px;
           }
 
           .dar-footer-link:hover {
-            color: #E8C96A;
-            gap: 14px;
+            color: var(--footer-gold-light);
+            gap: 15px;
           }
+
+          /* CONTACT */
 
           .dar-footer-contact-label {
             color: rgba(255,255,255,.25);
+            font-family: "DM Sans",sans-serif;
             font-size: 9px;
             letter-spacing: 1.5px;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
           }
 
           .dar-footer-phone {
-            color: rgba(255,255,255,.75);
+            color: rgba(255,255,255,.78);
             text-decoration: none;
+            font-family: "DM Sans",sans-serif;
             font-size: 14px;
             font-weight: 700;
             direction: ltr;
             display: inline-block;
-            transition: color .3s;
+            transition: color 1s ease;
           }
 
           .dar-footer-phone:hover {
-            color: #C9A84C;
+            color: var(--footer-gold-light);
           }
 
           .dar-footer-address {
             color: rgba(255,255,255,.48);
             font-size: 12px;
-            line-height: 2;
+            line-height: 2.2;
             white-space: pre-line;
           }
 
           .dar-footer-socials {
             display: flex;
             gap: 10px;
-            margin-top: 22px;
+            margin-top: 24px;
           }
 
           .dar-footer-social {
-            width: 40px;
-            height: 40px;
+            width: 42px;
+            height: 42px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #C9A84C;
-            border: 1px solid rgba(255,255,255,.12);
-            transition: all .3s;
+            color: var(--footer-gold);
+            border: 1px solid rgba(255,255,255,.10);
+            text-decoration: none;
+            transition:
+              border-color 1s ease,
+              background 1s ease,
+              transform 1s cubic-bezier(.22,.61,.36,1);
           }
 
           .dar-footer-social svg {
@@ -654,15 +836,22 @@ function Contact() {
           }
 
           .dar-footer-social:hover {
-            border-color: #C9A84C;
-            background: rgba(201,168,76,.1);
+            border-color: rgba(201,168,76,.6);
+            background: rgba(201,168,76,.08);
             transform: translateY(-4px);
           }
 
+          /* FOOTER BOTTOM */
+
           .dar-footer-divider {
             height: 1px;
-            background: linear-gradient(90deg,transparent,rgba(201,168,76,.22),transparent);
-            margin-bottom: 28px;
+            background: linear-gradient(
+              90deg,
+              transparent,
+              rgba(201,168,76,.22),
+              transparent
+            );
+            margin-bottom: 30px;
           }
 
           .dar-footer-bottom {
@@ -670,73 +859,130 @@ function Contact() {
             align-items: center;
             justify-content: space-between;
             flex-wrap: wrap;
-            gap: 15px;
+            gap: 18px;
           }
 
           .dar-footer-copyright {
             color: rgba(255,255,255,.25);
-            font-size: 11px;
+            font-family: "DM Sans",sans-serif;
+            font-size: 10px;
             margin: 0;
           }
 
           .dar-footer-location {
             display: flex;
             align-items: center;
-            gap: 9px;
-            color: rgba(201,168,76,.55);
-            font-size: 10px;
-            letter-spacing: 1.5px;
+            gap: 10px;
+            color: rgba(215,188,131,.55);
+            font-family: "DM Sans",sans-serif;
+            font-size: 9px;
+            letter-spacing: 2px;
           }
 
           .dar-footer-location-dot {
             width: 5px;
             height: 5px;
-            background: #C9A84C;
+            background: var(--footer-gold);
             border-radius: 50%;
           }
 
-          @media (max-width: 900px) {
+          /* BACK TO TOP */
+
+          .dar-footer-top {
+            position: absolute;
+            top: 35px;
+            inset-inline-end: 35px;
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--footer-gold);
+            border: 1px solid rgba(201,168,76,.3);
+            text-decoration: none;
+            font-size: 18px;
+            transition:
+              background 1s ease,
+              color 1s ease,
+              transform 1s cubic-bezier(.22,.61,.36,1);
+          }
+
+          .dar-footer-top:hover {
+            background: var(--footer-gold);
+            color: var(--footer-navy);
+            transform: translateY(-4px);
+          }
+
+          /* RESPONSIVE */
+
+          @media (max-width: 1000px) {
             .dar-contact-panel {
               grid-template-columns: 1fr;
             }
 
             .dar-footer-grid {
               grid-template-columns: repeat(2,minmax(0,1fr));
-              gap: 40px;
+              gap: 50px 35px;
             }
           }
 
           @media (max-width: 600px) {
             .dar-contact {
-              padding: 80px 20px;
+              padding: 85px 18px;
             }
 
             .dar-contact-header {
-              margin-bottom: 40px;
+              margin-bottom: 45px;
+            }
+
+            .dar-contact-title {
+              font-size: 35px;
+            }
+
+            .dar-contact-subtitle {
+              font-size: 12px;
             }
 
             .dar-contact-info,
             .dar-contact-cta {
-              padding: 30px 24px;
+              padding: 35px 25px;
+            }
+
+            .dar-contact-info-intro {
+              margin-bottom: 35px;
+            }
+
+            .dar-contact-cta-title {
+              font-size: 32px;
             }
 
             .dar-contact-cta-btn {
               width: 100%;
-              box-sizing: border-box;
             }
 
             .dar-contact-modal {
-              padding: 28px 22px;
+              padding: 30px 22px;
             }
 
             .dar-footer-container {
-              padding: 55px 22px 25px;
+              padding: 70px 23px 25px;
             }
 
             .dar-footer-grid {
               grid-template-columns: 1fr;
-              gap: 38px;
-              margin-bottom: 40px;
+              gap: 42px;
+              margin-bottom: 50px;
+            }
+
+            .dar-footer-brand {
+              font-size: 60px;
+            }
+
+            .dar-footer-top {
+              top: 25px;
+              inset-inline-end: 23px;
+              width: 38px;
+              height: 38px;
             }
 
             .dar-footer-bottom {
@@ -758,7 +1004,7 @@ function Contact() {
 
           {/* HEADER */}
 
-          <div className="dar-contact-header">
+          <header className="dar-contact-header">
             <div className="dar-contact-eyebrow">
               <span className="dar-contact-dot" />
               {t("contact", "label") || (ar ? "تواصل معنا" : "GET IN TOUCH")}
@@ -775,15 +1021,19 @@ function Contact() {
             <p className="dar-contact-subtitle">
               {t("contact", "rightSub2")}
             </p>
-          </div>
+          </header>
 
           {/* CONTACT PANEL */}
 
           <div className="dar-contact-panel">
 
-            {/* INFO */}
+            {/* CONTACT INFORMATION */}
 
             <div className="dar-contact-info">
+              <div className="dar-contact-info-top">
+                {ar ? "نحن هنا من أجلك" : "WE ARE HERE FOR YOU"}
+              </div>
+
               <h3 className="dar-contact-info-title">
                 {ar ? "دعنا" : "Let's"}
                 <span> {ar ? "نتواصل" : "Connect"}</span>
@@ -856,6 +1106,7 @@ function Contact() {
                 </p>
 
                 <button
+                  type="button"
                   className="dar-contact-cta-btn"
                   onClick={() => setShowForm(true)}
                 >
@@ -874,7 +1125,7 @@ function Contact() {
           </div>
         </div>
 
-        {/* PREMIUM MODAL */}
+        {/* MODAL */}
 
         {showForm && (
           <div
@@ -892,6 +1143,7 @@ function Contact() {
                 </span>
 
                 <button
+                  type="button"
                   className="dar-contact-modal-close"
                   onClick={closeForm}
                   aria-label="Close"
@@ -960,31 +1212,38 @@ function Contact() {
               </div>
 
               <button
+                type="button"
                 className="dar-contact-submit"
                 onClick={handleWhatsApp}
               >
                 {t("contact", "sendWhatsapp")}
-                <span style={{ marginInlineStart: 10 }}>
-                  {ar ? "←" : "→"}
-                </span>
+                <span>{ar ? "←" : "→"}</span>
               </button>
             </div>
           </div>
         )}
       </section>
 
-      {/* SIGNATURE FOOTER */}
+      {/* FOOTER */}
 
       <footer
         className="dar-footer"
+        dir={ar ? "rtl" : "ltr"}
         style={{
-          direction: ar ? "rtl" : "ltr",
           fontFamily: ar
-            ? "'Noto Naskh Arabic', serif"
-            : "'Montserrat', sans-serif",
+            ? "'Alexandria', sans-serif"
+            : "'DM Sans', sans-serif",
         }}
       >
         <div className="dar-footer-gold-line" />
+
+        <a
+          href="#home"
+          className="dar-footer-top"
+          aria-label={ar ? "العودة للأعلى" : "Back to top"}
+        >
+          ↑
+        </a>
 
         <div className="dar-footer-container">
 

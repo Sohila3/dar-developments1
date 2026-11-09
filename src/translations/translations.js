@@ -18,7 +18,6 @@ const translations = {
     logoSub: { ar: "للاستثمار العقاري", en: "Real Estate Investment" },
   },
   about: {
-  label:  { ar: "من نحن",          en: "Who We Are" },
   title1: { ar: "عن ",             en: "About " },
   title2: { ar: "دار",             en: "DAR" },
   p1:     { ar: "دار للاستثمار العقاري شركة مصرية متخصصة في الاستثمار العقاري بخبرة في سوق العقارات داخل مصر.",
@@ -28,7 +27,7 @@ const translations = {
   link:   { ar: "اعرف المزيد عن دار", en: "Learn More About DAR" },
 },
 projects: {
-  currentTitle:   { ar: "مشاريعنا الحالية",        en: "Our Current Projects" },
+  currentTitle:   { ar: "تعرف على مشاريعنا الحالية",        en: "Our Current Projects" },
   completedTitle: { ar: "مشاريع تم الانتهاء منها", en: "Completed Projects" },
   viewBtn:        { ar: "عرض المشروع",              en: "View Project" },
   damacLocation:  { ar: "طنطا / الكورنيش البر التاني ", en: "Tanta / Corniche, Second Bank " },
