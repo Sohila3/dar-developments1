@@ -568,7 +568,109 @@ function ProjectPalm2Page() {
           border-radius: 50%;
           animation: palmPulse 2s infinite;
         }
+/* ═════════ LOCATION SECTION ═════════ */
+.palm-location-section {
+  padding: 30px 6% 55px;
+}
 
+.palm-location-card {
+  max-width: 1250px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr;
+  background: #fff;
+  border: 1px solid rgba(184,149,82,.2);
+  border-radius: 22px;
+  overflow: hidden;
+  box-shadow: 0 20px 55px rgba(16,36,61,.07);
+}
+
+.palm-location-content {
+  padding: 35px 25px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.palm-location-kicker {
+  color: var(--palm-gold);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  margin-bottom: 15px;
+}
+
+.palm-location-title {
+  color: var(--palm-navy);
+  font-size: clamp(24px, 4vw, 35px);
+  font-weight: 800;
+  line-height: 1.7;
+  margin: 0;
+}
+
+.palm-location-description {
+  color: rgba(16,36,61,.7);
+  font-size: 14px;
+  line-height: 2.2;
+  margin: 18px 0 25px;
+}
+
+.palm-location-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: fit-content;
+  padding: 13px 22px;
+  border-radius: 9px;
+  background: var(--palm-navy);
+  color: #fff;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 700;
+  transition: all .3s ease;
+}
+
+.palm-location-btn:hover {
+  background: linear-gradient(135deg, #B89552, #D7BC83);
+  color: var(--palm-navy);
+  transform: translateY(-3px);
+}
+
+.palm-location-map {
+  min-height: 300px;
+  background: #e9e2d6;
+}
+
+.palm-location-map iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 300px;
+  border: 0;
+}
+
+@media (min-width: 900px) {
+  .palm-location-section {
+    padding: 40px 8% 65px;
+  }
+
+  .palm-location-card {
+    grid-template-columns: .9fr 1.1fr;
+  }
+
+  .palm-location-content {
+    padding: 55px 45px;
+  }
+
+  .palm-location-map {
+    min-height: 430px;
+  }
+
+  .palm-location-map iframe {
+    min-height: 430px;
+  }
+}
         /* ═════════ TABS ═════════ */
         .palm-tabs-section { padding: 10px 6% 0; }
 
@@ -1440,7 +1542,48 @@ function ProjectPalm2Page() {
           </div>
         </div>
       </section>
+      {/* ═════════ LOCATION SECTION ═════════ */}
+<section className="palm-location-section">
+  <div className="palm-location-card">
 
+    <div className="palm-location-content" style={{ direction: dir, textAlign }}>
+      <span className="palm-location-kicker">
+        {ar ? "موقع المشروع" : "PROJECT LOCATION"}
+      </span>
+
+      <h2 className="palm-location-title">
+        {ar ? "في قلب كورنيش بلازا" : "In the Heart of Corniche Plaza"}
+      </h2>
+
+      <p className="palm-location-description">
+        {ar
+          ? "يقع مشروع بالم 2 في كورنيش بلازا، عند تقاطع شارع أحمد الخشاب بمدينة طنطا، في موقع استراتيجي بالقرب من أهم الطرق والخدمات."
+          : "Palm 2 is located in Corniche Plaza, at the intersection of Ahmed Al-Khashab Street in Tanta, offering a strategic location close to major roads and essential services."}
+      </p>
+
+      <a
+        href={MAP_LINK}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="palm-location-btn"
+      >
+        {ar ? "افتح الموقع على Google Maps" : "Open Location on Google Maps"}
+        <span>{ar ? "←" : "→"}</span>
+      </a>
+    </div>
+
+    <div className="palm-location-map">
+      <iframe
+        src="https://maps.google.com/maps?q=30.810883,31.010345&z=16&output=embed"
+        title="Palm 2 Project Location"
+        loading="lazy"
+        referrerPolicy="no-referrer-when-downgrade"
+        allowFullScreen
+      />
+    </div>
+
+  </div>
+</section>
       {/* ═════════ TABS ═════════ */}
       <section className="palm-tabs-section">
         <div className="palm-tabs" role="tablist">
@@ -1486,15 +1629,6 @@ function ProjectPalm2Page() {
                     </div>
                   </div>
 
-                  <a
-                    className="palm-map-link"
-                    href={MAP_LINK}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <span>{ar ? "←" : "→"}</span>
-                    {c.mapsLabel}
-                  </a>
 
                   <h3 className="palm-features-title">{c.featuresTitle}</h3>
 

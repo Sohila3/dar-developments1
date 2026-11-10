@@ -1278,6 +1278,103 @@ function ProjectLandmarkPage() {
             transition-duration: .01ms !important;
           }
         }
+/* ═════════ LOCATION SECTION ═════════ */
+
+.landmark-location-section {
+  padding: 35px 6% 60px;
+}
+
+.landmark-location-card {
+  max-width: 1250px;
+  margin: auto;
+  display: grid;
+  grid-template-columns: 1fr;
+  background: #fff;
+  border: 1px solid rgba(184,149,82,.2);
+  border-radius: 22px;
+  overflow: hidden;
+  box-shadow: 0 20px 55px rgba(16,36,61,.07);
+}
+
+.landmark-location-content {
+  padding: 35px 25px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.landmark-location-kicker {
+  color: var(--landmark-gold);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  margin-bottom: 14px;
+}
+
+.landmark-location-title {
+  color: var(--landmark-navy);
+  font-size: clamp(24px, 4vw, 35px);
+  font-weight: 800;
+  line-height: 1.7;
+  margin: 0;
+}
+
+.landmark-location-description {
+  color: rgba(16,36,61,.65);
+  font-size: 14px;
+  line-height: 2.2;
+  margin: 15px 0 25px;
+}
+
+.landmark-location-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  align-self: flex-start;
+  padding: 14px 20px;
+  background: var(--landmark-navy);
+  color: #fff;
+  border-radius: 10px;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 700;
+  transition: all .3s ease;
+}
+
+.landmark-location-btn:hover {
+  background: linear-gradient(135deg, #B89552, #D7BC83);
+  color: var(--landmark-navy);
+  transform: translateY(-3px);
+}
+
+.landmark-location-map {
+  width: 100%;
+  height: 320px;
+  background: #e9e2d6;
+}
+
+.landmark-location-map iframe {
+  width: 100%;
+  height: 100%;
+  display: block;
+  border: 0;
+}
+
+@media (min-width: 900px) {
+  .landmark-location-card {
+    grid-template-columns: .85fr 1.15fr;
+  }
+
+  .landmark-location-content {
+    padding: 50px;
+  }
+
+  .landmark-location-map {
+    height: 100%;
+    min-height: 400px;
+  }
+}
       `}</style>
 
       <Navbar />
@@ -1325,6 +1422,46 @@ function ProjectLandmarkPage() {
           {ar ? "مشروع متميز في قلب طنطا" : "Premium Living in Tanta"}
         </div>
       </section>
+{/* LOCATION SECTION */}
+<section className="landmark-location-section">
+  <div className="landmark-location-card" dir={dir}>
+    <div className="landmark-location-content" style={{ textAlign }}>
+      <span className="landmark-location-kicker">
+        {ar ? "موقع المشروع" : "PROJECT LOCATION"}
+      </span>
+
+      <h2 className="landmark-location-title">
+        {ar ? "موقع استراتيجي في طنطا" : "A Strategic Location in Tanta"}
+      </h2>
+
+      <p className="landmark-location-description">
+        {ar
+          ? "اكتشف موقع دار Landmark وسهولة الوصول إليه."
+          : "Discover Dar Landmark's location and easy accessibility."}
+      </p>
+
+      <a
+        href="https://www.google.com/maps/dir/30.790341,31.001756/30.810883,31.010345/data=!4m8!4m7!1m1!4e1!1m1!4e1!2m1!11b1!3e0?utm_source=mstt_0&g_ep=CAESBzI2LjM3LjUYACCRQSqzASw5NDI2NzcyNyw5NDI5MjE5NSw5NDI5OTUzMiwxMDA3OTY0OTgsMTAwNzk3NzYxLDEwMDc5NjUzNSw5NDI4MDU3Niw5NDIwNzM5NCw5NDIwNzUwNiw5NDIwODUwNiw5NDIxODY1Myw5NDIyOTgzOSw5NDI3NTE2OCw5NDI3OTYxOSwxMDA4MjUwMjUsMTAwODIwMjM3LDEwMDgyMjQ5NCwxMDA4MDQ5NzUsMTAwODI3OTc1QgJFRw%3D%3D&skid=3f86cca7-6be0-4906-86ea-434176fcfa55&g_st=ac"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="landmark-location-btn"
+      >
+        {ar ? "افتح الموقع على Google Maps" : "Open Location on Google Maps"}
+        <span>{ar ? "←" : "→"}</span>
+      </a>
+    </div>
+
+    <div className="landmark-location-map">
+      <iframe
+        title="Dar Landmark Location"
+        src="https://maps.google.com/maps?q=30.810883,31.010345&z=15&output=embed"
+        loading="lazy"
+        referrerPolicy="no-referrer-when-downgrade"
+        allowFullScreen
+      />
+    </div>
+  </div>
+</section>
 
       {/* ═════════ TABS ═════════ */}
       <section className="landmark-tabs-section">
@@ -1361,15 +1498,7 @@ function ProjectLandmarkPage() {
                     ))}
                   </div>
 
-                  <a
-                    className="landmark-map-link"
-                    href={MAP_LINK}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <span>{ar ? "←" : "→"}</span>
-                    {ar ? "عرض الموقع على الخريطة" : "View on Google Maps"}
-                  </a>
+                 
                 </div>
               )}
 
