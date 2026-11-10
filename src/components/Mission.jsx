@@ -136,6 +136,7 @@ function Mission() {
 
   return (
     <section
+      id="Mission"
       ref={sectionRef}
       className={`dar-mission ${ar ? "mission-ar" : "mission-en"}`}
       dir={ar ? "rtl" : "ltr"}

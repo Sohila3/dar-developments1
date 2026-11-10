@@ -20,6 +20,7 @@ function ScrollToSection() {
       }, 200);
     }
   }, [location]);
+   
 
   return null;
 }

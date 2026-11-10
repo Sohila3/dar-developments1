@@ -1,5 +1,7 @@
-
 import Navbar from "../components/Navbar";
+import { Link } from "react-router-dom";
+import { Component, useState, useEffect } from "react";
+import { useLanguage } from "../context/LanguageContext";
 
 import land1 from "../assets/land1.jpeg";
 import land2 from "../assets/land2.jpeg";
@@ -9,934 +11,1263 @@ import land5 from "../assets/land5.jpeg";
 import land6 from "../assets/land6.jpeg";
 import land7 from "../assets/land7.jpeg";
 import land8 from "../assets/land8.jpeg";
+import plan1 from "../assets/pl1.jpeg";
+import plan2 from "../assets/pl2.jpeg";
+import plan3 from "../assets/pl3.jpeg";
+import plan4 from "../assets/pl4.jpeg";
 import videoFile from "../assets/Landmark.mp4";
+import brochureFile from "../assets/brochure_landmark.pdf";
 
-import { useState, useRef, useEffect } from "react";
-import { useLanguage } from "../context/LanguageContext";
+const WHATSAPP_NUMBER = "201039207908";
+
+// الصورة اللي بتظهر فوق بعرض الشاشة
+const COVER_IMAGE = land1;
+
+// صور تبويب (3D) = باقي صور المشروع. ضيفي هنا أي صور تانية
+const GALLERY = [
+  { src: land2, alt: "Dar Landmark 2" },
+  { src: land3, alt: "Dar Landmark 3" },
+  { src: land4, alt: "Dar Landmark 4" },
+  { src: land5, alt: "Dar Landmark 5" },
+  { src: land6, alt: "Dar Landmark 6" },
+  { src: land7, alt: "Dar Landmark 7" },
+  { src: land8, alt: "Dar Landmark 8" },
+];
+
+// صور البلانات
+const PLANS = [plan1, plan2, plan3, plan4];
+
+const MAP_LINK =
+  "https://www.google.com/maps?q=30.809358596801758,31.007654190063477&z=17&hl=en";
+
+const PROJECT_OPTIONS = ["Dar Landmark", "Dar Damac", "Dar Elwrood", "Palm 2"];
+
+// المساحات (م²) لكل مشروع. لو المصفوفة فاضية اختيار المساحة بيختفي
+const AREAS = {
+  "Dar Landmark": [],
+  "Dar Damac": [],
+  "Dar Elwrood": [122, 155, 174, 203],
+  "Palm 2": [101, 105, 114, 115, 118, 130, 131, 134, 135, 136, 138, 141, 155],
+};
+
+/* حماية: لو تبويب حصله error الصفحة كلها متبيضش */
+class TabBoundary extends Component {
+  state = { error: null };
+
+  static getDerivedStateFromError(error) {
+    return { error };
+  }
+
+  componentDidCatch(error, info) {
+    console.error("Tab error:", error, info);
+  }
+
+  render() {
+    if (this.state.error) {
+      return (
+        <div className="landmark-tab-error" role="alert">
+          <p style={{ margin: 0 }}>
+            {this.props.ar
+              ? "حصل خطأ في عرض هذا التبويب"
+              : "Something went wrong showing this tab"}
+          </p>
+          <code>{String(this.state.error?.message || this.state.error)}</code>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+/* عارض الملفات: بيعرض PDF أو صورة حسب نوع الملف */
+function FileViewer({ src, title, ar }) {
+  const isPdf = /\.pdf($|[?#])/i.test(String(src));
+
+  const L = ar
+    ? {
+        open: "فتح في نافذة جديدة",
+        download: "تحميل الملف",
+        note: "لمشاهدة الملف كاملاً على الموبايل اضغط على «فتح في نافذة جديدة»",
+      }
+    : {
+        open: "Open in new tab",
+        download: "Download",
+        note: "To view the full file on mobile, tap “Open in new tab”",
+      };
+
+  return (
+    <div className="landmark-file">
+      <div className="landmark-file-bar">
+        <span className="landmark-file-title">{title}</span>
+
+        <div className="landmark-file-actions">
+          <a
+            className="landmark-file-btn"
+            href={src}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {L.open}
+          </a>
+          <a className="landmark-file-btn gold" href={src} download>
+            {L.download}
+          </a>
+        </div>
+      </div>
+
+      {isPdf ? (
+        <>
+          <iframe
+            className="landmark-file-frame"
+            src={`${src}#view=FitH`}
+            title={title}
+          />
+          <div className="landmark-file-mobile">
+            <span className="landmark-file-badge">PDF</span>
+            <p style={{ margin: 0 }}>{L.note}</p>
+          </div>
+        </>
+      ) : (
+        <a href={src} target="_blank" rel="noopener noreferrer">
+          <img className="landmark-file-img" src={src} alt={title} />
+        </a>
+      )}
+    </div>
+  );
+}
+
+/* عارض البلانات: شبكة صور، كل صورة بتفتح في نافذة جديدة */
+function PlansViewer({ plans, title, ar }) {
+  const L = ar
+    ? { open: "اضغط على أي بلان لفتحه بحجم كامل", plan: "بلان" }
+    : { open: "Tap any plan to open it full size", plan: "Plan" };
+
+  return (
+    <div className="landmark-file">
+      <div className="landmark-file-bar">
+        <span className="landmark-file-title">{title}</span>
+        <span className="landmark-file-hint">{L.open}</span>
+      </div>
+
+      <div className="landmark-plans-grid">
+        {plans.map((plan, index) => (
+          <a
+            key={index}
+            className="landmark-plan-card"
+            href={plan}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img
+              src={plan}
+              alt={`Dar Landmark ${L.plan} ${index + 1}`}
+              loading="lazy"
+            />
+            <span className="landmark-plan-label">
+              {L.plan} {index + 1}
+            </span>
+          </a>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 function ProjectLandmarkPage() {
   const { lang, t } = useLanguage();
+
   const ar = lang === "ar";
   const dir = ar ? "rtl" : "ltr";
   const textAlign = ar ? "right" : "left";
 
-  const galleryImages = [
-    land1, land2, land3, land4,
-    land5, land6, land7, land8,
-  ];
-
+  const [activeTab, setActiveTab] = useState("details");
+  const [galleryIndex, setGalleryIndex] = useState(0);
+  const [videoError, setVideoError] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     project: "Dar Landmark",
+    area: "",
   });
-
   const [error, setError] = useState("");
-  const [activeImage, setActiveImage] = useState(0);
-  const [isGalleryHovered, setIsGalleryHovered] = useState(false);
 
-  const videoRef = useRef(null);
-  const galleryRef = useRef(null);
+  const tabs = [
+    { id: "details", label: ar ? "التفاصيل العامة والموقع" : "General Details & Location" },
+    { id: "real", label: ar ? "صور من الواقع" : "Real Photos" },
+    { id: "three", label: ar ? "صور (3D)" : "3D Images" },
+    { id: "plans", label: ar ? "البلانات" : "Floor Plans" },
+    { id: "brochure", label: ar ? "البروشور" : "Brochure" },
+  ];
 
-  // ================= GALLERY AUTOPLAY =================
+  const detailItems = [
+    { icon: "⌖", key: "location" },
+    { icon: "⌂", key: "towers" },
+    { icon: "▦", key: "spaces" },
+    { icon: "◇", key: "downPayment" },
+    { icon: "◷", key: "installment" },
+  ];
 
-  useEffect(() => {
-    if (isGalleryHovered) return;
+  const areaOptions = AREAS[formData.project] || [];
 
-    const interval = setInterval(() => {
-      setActiveImage((prev) => (prev + 1) % galleryImages.length);
-    }, 4000);
-
-    return () => clearInterval(interval);
-  }, [isGalleryHovered, galleryImages.length]);
-
-  const changeImage = (index) => {
-    setActiveImage(index);
-  };
-
-  const nextImage = () => {
-    setActiveImage((prev) => (prev + 1) % galleryImages.length);
-  };
-
-  const prevImage = () => {
-    setActiveImage((prev) =>
-      prev === 0 ? galleryImages.length - 1 : prev - 1
-    );
-  };
-
-  // ================= FORM =================
+  const homeLabel = t("navbar", "home") || (ar ? "الرئيسية" : "Home");
+  const currentProjectsLabel =
+    t("projects", "currentTitle") || (ar ? "مشاريعنا الحالية" : "Current Projects");
 
   const handleChange = (e) => {
+    const { name, value } = e.target;
+
     setFormData((prev) => ({
       ...prev,
-      [e.target.name]: e.target.value,
+      [name]: value,
+      ...(name === "project" ? { area: "" } : {}),
     }));
+
+    if (name === "name") setError("");
+  };
+
+  const selectTab = (id, e) => {
+    setActiveTab(id);
+    e.currentTarget.scrollIntoView({
+      behavior: "smooth",
+      inline: "center",
+      block: "nearest",
+    });
   };
 
   const openWhatsApp = () => {
     if (!formData.name.trim()) {
-      setError(
-        ar
-          ? "من فضلك اكتب الاسم أولاً"
-          : "Please enter your name"
-      );
+      setError(ar ? "من فضلك اكتب الاسم أولاً" : "Please enter your name");
       return;
     }
 
     setError("");
 
-    const message = `${t("landmark", "whatsappMsg")} ${
-      formData.name
-    } ${t("landmark", "whatsappMsg2")} ${formData.project}`;
+    const areaText = formData.area
+      ? ar
+        ? ` (مساحة ${formData.area} م²)`
+        : ` (${formData.area} m²)`
+      : "";
+
+    const message = ar
+      ? `مرحباً، أنا ${formData.name.trim()}، أود الاستفسار عن ${formData.project}${areaText}. برجاء التواصل معي.`
+      : `Hello, I'm ${formData.name.trim()}. I'd like to inquire about ${formData.project}${areaText}. Please contact me.`;
 
     window.open(
-      `https://wa.me/201039207908?text=${encodeURIComponent(message)}`,
+      `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`,
       "_blank",
       "noopener,noreferrer"
     );
   };
 
-  // ================= VIDEO AUTOPLAY =================
-
+  /* سلايدر صور 3D: بيتحرك لوحده وهو في تبويبه بس */
   useEffect(() => {
-    const vid = videoRef.current;
-    if (!vid) return;
+    if (activeTab !== "three" || GALLERY.length < 2) return;
 
-    vid.muted = true;
-    vid.playsInline = true;
+    const timer = setTimeout(() => {
+      setGalleryIndex((i) => (i + 1) % GALLERY.length);
+    }, 5000);
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          vid.play().catch(() => {});
-        } else {
-          vid.pause();
-        }
-      },
-      { threshold: 0.5 }
-    );
-
-    observer.observe(vid);
-
-    return () => observer.disconnect();
-  }, []);
+    return () => clearTimeout(timer);
+  }, [activeTab, galleryIndex]);
 
   return (
-    <div
-      className="landmark-page"
-      dir={dir}
-      style={{
-        background: "#F8F6F1",
-        fontFamily: ar
-          ? "'Alexandria', sans-serif"
-          : "'DM Sans', sans-serif",
-      }}
-    >
-      <Navbar />
-
+    <div className="landmark-page" style={{ direction: dir }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;600;700;800&family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap');
 
         .landmark-page {
-          --navy: #10243D;
-          --gold: #B89552;
-          --light-gold: #D7BC83;
-          --ivory: #F8F6F1;
-          --paper: #F2EEE6;
-          --muted: #777B80;
-
-          color: var(--navy);
-          position: relative;
-          isolation: isolate;
+          --landmark-bg: #F8F6F1;
+          --landmark-navy: #10243D;
+          --landmark-gold: #B89552;
+          --landmark-light-gold: #D7BC83;
+          background: var(--landmark-bg);
+          color: var(--landmark-navy);
+          font-family: ${ar ? "'Alexandria'" : "'DM Sans'"}, sans-serif;
           overflow: hidden;
         }
 
-        .landmark-page *,
-        .landmark-page *::before,
-        .landmark-page *::after {
-          box-sizing: border-box;
+        .landmark-page * { box-sizing: border-box; }
+        .landmark-page a { -webkit-tap-highlight-color: transparent; }
+        .landmark-page button,
+        .landmark-page input,
+        .landmark-page select { font: inherit; }
+
+        .landmark-page .gold-text {
+          background: linear-gradient(135deg, #9B773D, #D7BC83, #B89552);
+          -webkit-background-clip: text;
+          background-clip: text;
+          -webkit-text-fill-color: transparent;
         }
 
-        .landmark-page::before {
-          content: "";
-          position: fixed;
-          inset: 0;
-          z-index: -2;
-          pointer-events: none;
-          background:
-            radial-gradient(circle at 90% 5%,rgba(184,149,82,.13),transparent 32%),
-            radial-gradient(circle at 5% 80%,rgba(16,36,61,.055),transparent 35%),
-            linear-gradient(135deg,#F8F6F1,#F4F0E8);
+        @keyframes landmarkFadeUp {
+          from { opacity: 0; transform: translateY(26px); }
+          to   { opacity: 1; transform: translateY(0); }
         }
-
-        .landmark-page::after {
-          content: "";
-          position: fixed;
-          inset: 0;
-          z-index: -1;
-          pointer-events: none;
-          opacity: .025;
-          background-image:
-            linear-gradient(var(--navy) 1px,transparent 1px),
-            linear-gradient(90deg,var(--navy) 1px,transparent 1px);
-          background-size: 50px 50px;
-        }
-
-        @keyframes landmarkFade {
-          from { opacity: 0; transform: translateY(25px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes landmarkZoom {
-          from { transform: scale(1.04); }
-          to { transform: scale(1); }
-        }
-
         @keyframes landmarkPulse {
-          0%,100% { opacity: 1; }
-          50% { opacity: .35; }
+          0%, 100% { opacity: 1; }
+          50%      { opacity: .35; }
+        }
+        @keyframes landmarkCoverZoom {
+          from { transform: scale(1.08); }
+          to   { transform: scale(1); }
+        }
+        @keyframes landmarkGalleryReveal {
+          from { opacity: 0; transform: scale(1.045); filter: blur(5px); }
+          to   { opacity: 1; transform: scale(1); filter: blur(0); }
         }
 
-        /* ================= HERO ================= */
-
-        .project-hero {
-          min-height: 100vh;
+        /* ═════════ BREADCRUMB ═════════ */
+        .landmark-breadcrumb {
           display: flex;
-          flex-direction: column;
           align-items: center;
-          justify-content: center;
-          position: relative;
-          overflow: hidden;
-          padding: 120px 20px 70px;
-          gap: 35px;
+          flex-wrap: wrap;
+          gap: 10px;
+          padding: 94px 6% 16px;
+          font-size: 13px;
+          font-weight: 500;
+        }
+        .landmark-breadcrumb a {
+          color: rgba(16,36,61,.6);
+          text-decoration: none;
+          transition: color .25s ease;
+        }
+        .landmark-breadcrumb a:hover { color: var(--landmark-gold); }
+        .landmark-bc-sep {
+          color: var(--landmark-gold);
+          font-size: 16px;
+          line-height: 1;
+        }
+        .landmark-breadcrumb [aria-current="page"] {
+          color: var(--landmark-navy);
+          font-weight: 700;
         }
 
-        .project-gallery {
-          width: 100%;
-          min-width: 0;
+        /* ═════════ COVER (full width) ═════════ */
+        .landmark-cover {
           position: relative;
-          z-index: 2;
-          animation: landmarkFade 1s ease both;
-        }
-
-        .project-hero-image {
           width: 100%;
-          height: 300px;
-          border-radius: 18px;
+          height: clamp(280px, 60vh, 640px);
           overflow: hidden;
-          position: relative;
-          background: rgba(16,36,61,.035);
-          border: 1px solid rgba(184,149,82,.2);
-          box-shadow:
-            0 25px 65px rgba(16,36,61,.13),
-            0 4px 15px rgba(184,149,82,.08);
+          background: #e9e2d6;
           isolation: isolate;
         }
-
-        .project-gallery-main {
+        .landmark-cover img {
+          position: absolute;
+          inset: 0;
           width: 100%;
           height: 100%;
-          object-fit: contain;
-          object-position: center;
+          object-fit: cover;
           display: block;
-          animation: landmarkZoom .9s ease both;
-          transition: transform 1.2s ease;
+          animation: landmarkCoverZoom 12s ease-out both;
         }
-
-        .project-hero-image:hover .project-gallery-main {
-          transform: scale(1.025);
-        }
-
-        .project-gallery-overlay {
+        .landmark-cover::after {
+          content: "";
           position: absolute;
           inset: 0;
+          z-index: 1;
           pointer-events: none;
-          background: linear-gradient(
-            180deg,
-            rgba(16,36,61,.02) 45%,
-            rgba(16,36,61,.3) 100%
-          );
-          transition: opacity .6s ease;
+          background: linear-gradient(180deg, rgba(16,36,61,.08), transparent 35%, rgba(16,36,61,.45));
         }
-
-        .project-gallery-label {
+        .landmark-cover-frame {
           position: absolute;
-          bottom: 20px;
-          ${ar ? "right: 22px;" : "left: 22px;"}
+          inset: 16px;
+          z-index: 2;
+          border: 1px solid rgba(255,255,255,.4);
+          border-radius: 6px;
+          pointer-events: none;
+        }
+        .landmark-cover-tag {
+          position: absolute;
+          z-index: 3;
+          bottom: 34px;
+          inset-inline-start: 36px;
           display: flex;
           align-items: center;
-          gap: 10px;
-          color: white;
+          gap: 12px;
+          color: #fff;
           font-size: 12px;
-          letter-spacing: 1.5px;
-          z-index: 3;
-          text-shadow: 0 2px 8px rgba(0,0,0,.3);
+          font-weight: 600;
+          letter-spacing: 3px;
         }
-
-        .project-gallery-label::before {
+        .landmark-cover-tag::before {
           content: "";
-          width: 26px;
+          width: 30px;
           height: 1px;
-          background: var(--light-gold);
-          transition: width .5s ease;
+          background: var(--landmark-light-gold);
         }
-
-        .project-hero-image:hover .project-gallery-label::before {
-          width: 42px;
-        }
-
-        .project-gallery-count {
+        .landmark-cover-line {
           position: absolute;
-          top: 20px;
-          ${ar ? "left: 20px;" : "right: 20px;"}
-          padding: 9px 15px;
-          border-radius: 30px;
-          background: rgba(16,36,61,.55);
-          border: 1px solid rgba(215,188,131,.4);
-          backdrop-filter: blur(12px);
-          color: white;
-          font-family: 'DM Sans', sans-serif;
-          font-size: 11px;
-          letter-spacing: 2px;
           z-index: 3;
-          transition: all .4s ease;
-        }
-
-        .project-hero-image:hover .project-gallery-count {
-          background: rgba(184,149,82,.9);
-          color: var(--navy);
-        }
-
-        .project-gallery-arrows {
-          position: absolute;
-          top: 50%;
+          bottom: 0;
           left: 0;
           right: 0;
-          transform: translateY(-50%);
-          display: flex;
-          justify-content: space-between;
-          padding: 0 15px;
-          z-index: 4;
-          pointer-events: none;
+          height: 3px;
+          background: linear-gradient(90deg, transparent, var(--landmark-gold), var(--landmark-light-gold), var(--landmark-gold), transparent);
         }
 
-        .project-gallery-arrow {
-          width: 42px;
-          height: 42px;
-          border-radius: 50%;
-          background: rgba(255,255,255,.2);
-          border: 1px solid rgba(255,255,255,.55);
-          color: white;
-          backdrop-filter: blur(12px);
-          display: grid;
-          place-items: center;
-          cursor: pointer;
-          pointer-events: auto;
-          transition: .3s ease;
+        /* ═════════ OVERVIEW ═════════ */
+        .landmark-overview {
+          max-width: 980px;
+          margin: 0 auto;
+          padding: 56px 6% 36px;
+          animation: landmarkFadeUp .9s ease both;
         }
-
-        .project-gallery-arrow:hover {
-          background: var(--gold);
-          border-color: var(--gold);
-          color: var(--navy);
-        }
-
-        /* THUMBNAILS */
-
-        .project-gallery-thumbnails {
-          display: grid;
-          grid-template-columns: repeat(4,minmax(0,1fr));
-          gap: 9px;
-          margin-top: 15px;
-          width: 100%;
-        }
-
-        .project-gallery-thumb {
-          height: 58px;
-          min-width: 0;
-          padding: 0;
-          border-radius: 9px;
-          overflow: hidden;
-          position: relative;
-          background: var(--navy);
-          border: 1px solid rgba(184,149,82,.12);
-          opacity: .6;
-          cursor: pointer;
-          transition: opacity .35s ease,transform .35s ease,border-color .35s ease;
-        }
-
-        .project-gallery-thumb img {
-          width: 100%;
-          height: 100%;
-          display: block;
-          object-fit: cover;
-          transition: transform .6s ease;
-        }
-
-        .project-gallery-thumb:hover {
-          opacity: 1;
-          transform: translateY(-4px);
-          box-shadow: 0 10px 25px rgba(16,36,61,.12);
-        }
-
-        .project-gallery-thumb:hover img {
-          transform: scale(1.1);
-        }
-
-        .project-gallery-thumb.active {
-          opacity: 1;
-          border: 1.5px solid var(--gold);
-          box-shadow: 0 5px 20px rgba(184,149,82,.2);
-        }
-
-        /* HERO TEXT */
-
-        .project-hero-text {
-          width: 100%;
-          box-sizing: border-box;
-          position: relative;
-          z-index: 2;
-          animation: landmarkFade 1s .15s ease both;
-        }
-
-        .project-hero-title {
-          font-size: clamp(30px,7vw,46px);
+        .landmark-eyebrow {
+          display: inline-flex;
+          align-items: center;
+          gap: 12px;
+          font-size: 11px;
           font-weight: 700;
-          line-height: 1.5;
-          color: var(--navy);
-          overflow-wrap: anywhere;
-          margin: 0;
+          letter-spacing: 3px;
+          text-transform: uppercase;
+          color: var(--landmark-gold);
+          margin-bottom: 18px;
         }
-
-        .project-hero-description {
+        .landmark-eyebrow::before {
+          content: "";
+          width: 30px;
+          height: 1px;
+          background: var(--landmark-gold);
+        }
+        .landmark-hero-title {
+          font-size: clamp(34px, 8vw, 58px);
+          line-height: 1.45;
+          font-weight: 800;
+          letter-spacing: -.8px;
+          margin: 0;
+          color: var(--landmark-navy);
+          overflow-wrap: anywhere;
+        }
+        .landmark-title-line {
+          width: 70px;
+          height: 3px;
+          border-radius: 10px;
+          background: linear-gradient(90deg, var(--landmark-gold), var(--landmark-light-gold));
+          margin: 24px 0;
+        }
+        .landmark-hero-description {
           font-size: 15px;
-          font-weight: 400;
           line-height: 2.3;
-          color: rgba(16,36,61,.68);
-          overflow-wrap: anywhere;
+          color: rgba(16,36,61,.72);
+          text-align: justify;
           margin: 0;
         }
-
-        .landmark-heading-line {
-          height: 2px;
-          width: 65px;
-          border-radius: 5px;
-          background: linear-gradient(90deg,var(--gold),var(--light-gold));
-          margin-top: 18px;
-          margin-bottom: 25px;
+        .landmark-hero-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 9px;
+          padding: 11px 18px;
+          border: 1px solid rgba(184,149,82,.25);
+          background: rgba(255,255,255,.8);
+          border-radius: 50px;
+          margin-top: 28px;
+          color: var(--landmark-navy);
+          font-size: 12px;
+          font-weight: 600;
+          transition: all .3s ease;
         }
-
-        .landmark-gold-text {
-          color: var(--gold);
-          text-shadow: 0 0 18px rgba(184,149,82,.15);
+        .landmark-hero-badge:hover {
+          background: #fff;
+          box-shadow: 0 8px 25px rgba(184,149,82,.12);
+          transform: translateY(-3px);
         }
-
-        @media (min-width: 768px) {
-          .project-hero {
-            flex-direction: row;
-            min-height: 100vh;
-            padding: 150px 6vw 80px;
-            gap: 5vw;
-          }
-
-          .project-hero.hero-en {
-            flex-direction: row-reverse;
-          }
-
-          .project-gallery {
-            width: 50%;
-            flex-shrink: 0;
-          }
-
-          .project-hero-image {
-            width: 100%;
-            height: 80vh;
-            min-height: 450px;
-            max-height: 850px;
-          }
-
-          .project-gallery-thumbnails {
-            grid-template-columns: repeat(8,minmax(0,1fr));
-            gap: 9px;
-            margin-top: 16px;
-          }
-
-          .project-gallery-thumb {
-            height: 65px;
-          }
-
-          .project-hero-text {
-            width: 50%;
-          }
-
-          .project-hero-title {
-            font-size: clamp(40px,4.2vw,70px);
-            line-height: 1.35;
-          }
-
-          .project-hero-description {
-            font-size: 16px;
-            line-height: 2.5;
-          }
-        }
-
-        @media (max-width: 480px) {
-          .project-hero {
-            padding: 100px 16px 55px;
-            gap: 25px;
-          }
-
-          .project-hero-image {
-            height: 260px;
-            border-radius: 13px;
-          }
-
-          .project-gallery-thumbnails {
-            gap: 6px;
-            margin-top: 10px;
-          }
-
-          .project-gallery-thumb {
-            height: 43px;
-            border-radius: 6px;
-          }
-
-          .project-gallery-count {
-            top: 12px;
-            ${ar ? "left: 12px;" : "right: 12px;"}
-            padding: 7px 11px;
-            font-size: 10px;
-          }
-
-          .project-gallery-label {
-            bottom: 13px;
-            ${ar ? "right: 13px;" : "left: 13px;"}
-            font-size: 10px;
-          }
-
-          .project-hero-title {
-            font-size: 28px;
-          }
-
-          .project-hero-description {
-            font-size: 14px;
-            line-height: 2.1;
-          }
-        }
-
-        /* VIDEO */
-
-        .landmark-video-section {
-          position: relative;
-          padding: 55px 0 90px;
-          display: flex;
-          justify-content: center;
-          overflow: hidden;
-        }
-
-        .landmark-video-glow {
-          position: absolute;
-          width: 70%;
-          height: 280px;
-          background: rgba(184,149,82,.14);
-          filter: blur(100px);
+        .landmark-badge-dot {
+          width: 7px;
+          height: 7px;
+          background: var(--landmark-gold);
           border-radius: 50%;
-          pointer-events: none;
+          animation: landmarkPulse 2s infinite;
         }
 
-        .landmark-video-wrap {
-          width: 94%;
-          max-width: 1100px;
+        /* ═════════ TABS ═════════ */
+        .landmark-tabs-section { padding: 10px 6% 0; }
+
+        .landmark-tabs {
+          display: flex;
+          max-width: 1250px;
+          margin: 0 auto;
+          overflow-x: auto;
+          border-bottom: 1px solid rgba(184,149,82,.28);
+          scrollbar-width: none;
+          -webkit-overflow-scrolling: touch;
+        }
+        .landmark-tabs::-webkit-scrollbar { display: none; }
+
+        .landmark-tab {
           position: relative;
-          z-index: 1;
-          padding: 8px;
-          border-radius: 22px;
-          background: rgba(255,255,255,.55);
-          border: 1px solid rgba(184,149,82,.22);
-          box-shadow: 0 25px 70px rgba(16,36,61,.12);
-          transition: transform .6s ease,box-shadow .6s ease;
+          flex: 0 0 auto;
+          padding: 16px 24px;
+          background: none;
+          border: 0;
+          cursor: pointer;
+          white-space: nowrap;
+          font-size: 14px;
+          font-weight: 700;
+          color: rgba(16,36,61,.55);
+          transition: color .3s ease;
         }
-
-        .landmark-video-wrap:hover {
-          transform: translateY(-5px);
-          box-shadow: 0 35px 80px rgba(16,36,61,.16);
+        .landmark-tab:first-child { margin-inline-start: auto; }
+        .landmark-tab:last-child  { margin-inline-end: auto; }
+        .landmark-tab::after {
+          content: "";
+          position: absolute;
+          left: 18px;
+          right: 18px;
+          bottom: -1px;
+          height: 3px;
+          border-radius: 3px 3px 0 0;
+          background: linear-gradient(90deg, var(--landmark-gold), var(--landmark-light-gold));
+          transform: scaleX(0);
+          transition: transform .35s ease;
         }
+        .landmark-tab:hover { color: var(--landmark-gold); }
+        .landmark-tab.active { color: var(--landmark-navy); }
+        .landmark-tab.active::after { transform: scaleX(1); }
 
-        .landmark-video {
-          width: 100%;
+        .landmark-panel {
+          max-width: 1250px;
+          margin: 40px auto 0;
+        }
+        .landmark-panel-inner {
+          animation: landmarkFadeUp .6s ease both;
+        }
+        .landmark-tab-error {
+          padding: 40px 20px;
+          text-align: center;
+          color: #c0392b;
+          font-size: 14px;
+          line-height: 2;
+          word-break: break-word;
+        }
+        .landmark-tab-error code {
           display: block;
-          border-radius: 16px;
-          background: var(--navy);
+          margin-top: 8px;
+          font-size: 12px;
+          color: rgba(16,36,61,.6);
+          direction: ltr;
+        }
+        .landmark-empty {
+          padding: 40px 0;
+          text-align: center;
+          color: rgba(16,36,61,.6);
         }
 
-        @media (min-width: 768px) {
-          .landmark-video-section {
-            padding: 80px 0 130px;
-          }
-
-          .landmark-video-wrap {
-            width: 75%;
-          }
-        }
-
-        /* INFO + FORM */
-
-        .landmark-info-section {
-          padding: 55px 16px 80px;
-          display: grid;
-          grid-template-columns: 1fr;
-          gap: 25px;
-          position: relative;
-        }
-
+        /* ═════════ CARD ═════════ */
         .landmark-card {
-          background: rgba(255,255,255,.78);
-          backdrop-filter: blur(18px);
-          border: 1px solid rgba(184,149,82,.16);
+          background: rgba(255,255,255,.9);
+          border: 1px solid rgba(184,149,82,.18);
           border-radius: 20px;
           padding: 28px 22px;
-          box-shadow:
-            0 15px 45px rgba(16,36,61,.055),
-            0 2px 8px rgba(184,149,82,.035);
-          position: relative;
-          overflow: hidden;
-          transition: transform .5s ease,box-shadow .5s ease;
+          box-shadow: 0 15px 45px rgba(16,36,61,.055), 0 2px 8px rgba(184,149,82,.03);
+          transition: transform .4s ease, box-shadow .4s ease, border-color .4s ease;
+          min-width: 0;
         }
-
         .landmark-card:hover {
-          transform: translateY(-5px);
+          transform: translateY(-4px);
           box-shadow: 0 25px 60px rgba(16,36,61,.09);
+          border-color: rgba(184,149,82,.35);
         }
-
         .landmark-card-title {
-          font-size: 23px;
-          font-weight: 700;
-          color: var(--navy);
-          margin: 0 0 8px;
+          font-size: 24px;
+          font-weight: 800;
+          color: var(--landmark-navy);
+          margin: 0;
           line-height: 1.6;
         }
-
         .landmark-card-line {
-          width: 42px;
-          height: 2px;
-          border-radius: 3px;
-          background: linear-gradient(90deg,var(--gold),var(--light-gold));
-          margin-bottom: 25px;
+          width: 45px;
+          height: 3px;
+          background: linear-gradient(90deg, var(--landmark-gold), var(--landmark-light-gold));
+          border-radius: 10px;
+          margin: 18px 0 28px;
         }
 
+        /* DETAILS */
+        .landmark-detail-grid {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 16px;
+        }
+        .landmark-detail-grid .landmark-detail-item:last-child:nth-child(odd) {
+          grid-column: 1 / -1;
+        }
+        .landmark-detail-item {
+          display: flex;
+          align-items: flex-start;
+          gap: 14px;
+          padding: 15px;
+          background: rgba(248,246,241,.7);
+          border: 1px solid rgba(184,149,82,.08);
+          border-radius: 12px;
+          transition: background .3s ease, transform .3s ease, border-color .3s ease;
+        }
+        .landmark-detail-item:hover {
+          background: #fff;
+          transform: translateX(${ar ? "-4px" : "4px"});
+          border-color: rgba(184,149,82,.25);
+        }
+        .landmark-detail-icon {
+          width: 38px;
+          height: 38px;
+          min-width: 38px;
+          border-radius: 10px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: linear-gradient(135deg, rgba(184,149,82,.15), rgba(215,188,131,.08));
+          color: var(--landmark-gold);
+          font-size: 16px;
+        }
         .landmark-detail-text {
+          color: rgba(16,36,61,.75);
           font-size: 14px;
-          line-height: 2.2;
-          color: rgba(16,36,61,.7);
-          margin: 0 0 16px;
+          line-height: 2;
+          text-align: justify;
+          white-space: pre-line;
         }
-
         .landmark-map-link {
           display: inline-flex;
           align-items: center;
           gap: 8px;
-          color: var(--gold);
-          font-size: 13px;
-          font-weight: 600;
+          margin-top: 22px;
+          padding: 12px 20px;
+          border: 1px solid rgba(184,149,82,.35);
+          border-radius: 50px;
+          background: #fff;
+          color: var(--landmark-navy);
           text-decoration: none;
-          margin: 0 0 18px;
-          transition: color .3s ease,gap .3s ease;
+          font-size: 13px;
+          font-weight: 700;
+          transition: all .3s ease;
         }
-
         .landmark-map-link:hover {
-          color: var(--navy);
+          border-color: var(--landmark-gold);
+          color: var(--landmark-gold);
+          transform: translateY(-2px);
+        }
+
+        /* VIDEO */
+        .landmark-video-wrap {
+          max-width: 1050px;
+          margin: 0 auto;
+        }
+        .landmark-video-frame {
+          padding: 10px;
+          background: #fff;
+          border: 1px solid rgba(184,149,82,.25);
+          border-radius: 20px;
+          box-shadow: 0 30px 70px rgba(16,36,61,.12);
+        }
+        .landmark-video-frame video {
+          display: block;
+          width: 100%;
+          max-height: 650px;
+          border-radius: 13px;
+          background: #10243D;
+        }
+        .landmark-video-fallback {
+          padding: 70px 20px;
+          text-align: center;
+          color: rgba(16,36,61,.65);
+          font-size: 14px;
+          line-height: 2;
+        }
+
+        /* GALLERY (3D) */
+        .landmark-gallery {
+          max-width: 1000px;
+          margin: 0 auto;
+        }
+        .landmark-gallery-main {
+          position: relative;
+          width: 100%;
+          height: 300px;
+          overflow: hidden;
+          border-radius: 20px;
+          background: #e9e2d6;
+          box-shadow: 0 25px 65px rgba(16,36,61,.14), 0 0 0 1px rgba(184,149,82,.2);
+          isolation: isolate;
+        }
+        .landmark-gallery-main img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          display: block;
+          animation: landmarkGalleryReveal .85s cubic-bezier(.2,.8,.2,1) both;
+        }
+        .landmark-gallery-main::after {
+          content: "";
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(180deg, transparent 55%, rgba(16,36,61,.35));
+          pointer-events: none;
+        }
+        .landmark-gallery-main-frame {
+          position: absolute;
+          inset: 12px;
+          border: 1px solid rgba(255,255,255,.45);
+          border-radius: 13px;
+          z-index: 2;
+          pointer-events: none;
+          transition: inset .4s ease;
+        }
+        .landmark-gallery-main:hover .landmark-gallery-main-frame { inset: 18px; }
+        .landmark-gallery-counter {
+          position: absolute;
+          z-index: 3;
+          bottom: 25px;
+          inset-inline-start: 30px;
+          display: flex;
+          align-items: center;
           gap: 12px;
+          color: #fff;
+          font-size: 12px;
+          letter-spacing: 3px;
+          font-weight: 600;
+          direction: ltr;
+        }
+        .landmark-gallery-counter::before {
+          content: "";
+          width: 30px;
+          height: 1px;
+          background: var(--landmark-light-gold);
+        }
+        .landmark-gallery-thumbnails {
+          display: flex;
+          justify-content: center;
+          flex-wrap: wrap;
+          gap: 12px;
+          margin-top: 17px;
+        }
+        .landmark-gallery-thumb {
+          position: relative;
+          width: 110px;
+          height: 80px;
+          border-radius: 10px;
+          overflow: hidden;
+          padding: 0;
+          border: 2px solid transparent;
+          background: #e9e2d6;
+          cursor: pointer;
+          opacity: .65;
+          transition: all .35s ease;
+        }
+        .landmark-gallery-thumb img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          display: block;
+          transition: transform .5s ease;
+        }
+        .landmark-gallery-thumb:hover {
+          opacity: 1;
+          transform: translateY(-4px);
+          box-shadow: 0 10px 25px rgba(16,36,61,.15);
+        }
+        .landmark-gallery-thumb:hover img { transform: scale(1.08); }
+        .landmark-gallery-thumb.active {
+          opacity: 1;
+          border-color: var(--landmark-gold);
+          box-shadow: 0 8px 25px rgba(184,149,82,.2);
+          transform: translateY(-3px);
         }
 
-        .landmark-form-card {
-          background: rgba(255,255,255,.82);
+        /* FILE VIEWER (plans / brochure) */
+        .landmark-file {
+          background: rgba(255,255,255,.9);
+          border: 1px solid rgba(184,149,82,.22);
+          border-radius: 20px;
+          padding: 14px;
+          box-shadow: 0 25px 60px rgba(16,36,61,.1);
+        }
+        .landmark-file-bar {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          flex-wrap: wrap;
+          gap: 12px;
+          padding: 6px 8px 16px;
+        }
+        .landmark-file-title {
+          font-size: 16px;
+          font-weight: 800;
+          color: var(--landmark-navy);
+        }
+        .landmark-file-hint {
+          font-size: 12px;
+          color: rgba(16,36,61,.55);
+        }
+        .landmark-file-actions {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 10px;
+        }
+        .landmark-file-btn {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          padding: 10px 18px;
+          border-radius: 9px;
+          border: 1px solid rgba(184,149,82,.35);
+          background: #fff;
+          color: var(--landmark-navy);
+          text-decoration: none;
+          font-size: 12px;
+          font-weight: 700;
+          transition: all .3s ease;
+        }
+        .landmark-file-btn:hover {
+          border-color: var(--landmark-gold);
+          color: var(--landmark-gold);
+          transform: translateY(-2px);
+        }
+        .landmark-file-btn.gold {
+          background: var(--landmark-navy);
+          border-color: var(--landmark-navy);
+          color: #fff;
+        }
+        .landmark-file-btn.gold:hover {
+          background: linear-gradient(135deg, #B89552, #D7BC83);
+          border-color: transparent;
+          color: var(--landmark-navy);
+        }
+        .landmark-file-frame {
+          display: block;
+          width: 100%;
+          height: clamp(520px, 78vh, 900px);
+          border: 0;
+          border-radius: 12px;
+          background: #fff;
+        }
+        .landmark-file-img {
+          display: block;
+          width: 100%;
+          height: auto;
+          border-radius: 12px;
+        }
+        .landmark-file-mobile {
+          display: none;
+          text-align: center;
+          padding: 24px 12px 16px;
+          color: rgba(16,36,61,.65);
+          font-size: 13px;
+          line-height: 2;
+        }
+        .landmark-file-badge {
+          display: inline-block;
+          padding: 6px 14px;
+          margin-bottom: 8px;
+          border-radius: 8px;
+          background: rgba(184,149,82,.14);
+          color: var(--landmark-gold);
+          font-size: 12px;
+          font-weight: 800;
+          letter-spacing: 2px;
         }
 
-        .landmark-form-title {
+        /* PLANS GRID */
+        .landmark-plans-grid {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 14px;
+        }
+        .landmark-plan-card {
+          display: block;
+          padding: 10px;
+          background: #fff;
+          border: 1px solid rgba(184,149,82,.2);
+          border-radius: 14px;
+          text-decoration: none;
+          overflow: hidden;
+          transition: transform .35s ease, box-shadow .35s ease, border-color .35s ease;
+        }
+        .landmark-plan-card:hover {
+          transform: translateY(-4px);
+          border-color: rgba(184,149,82,.45);
+          box-shadow: 0 18px 40px rgba(16,36,61,.12);
+        }
+        .landmark-plan-card img {
+          display: block;
+          width: 100%;
+          height: 170px;
+          object-fit: contain;
+          background: #faf9f6;
+          border-radius: 8px;
+        }
+        .landmark-plan-label {
+          display: block;
+          padding: 12px 4px 4px;
+          color: var(--landmark-navy);
+          font-size: 13px;
+          font-weight: 700;
           text-align: center;
         }
 
-        .landmark-form-line {
-          width: 42px;
-          height: 2px;
-          border-radius: 3px;
-          background: linear-gradient(90deg,var(--gold),var(--light-gold));
-          margin: 0 auto 28px;
+        /* ═════════ BOOKING ═════════ */
+        .landmark-booking { padding: 70px 6% 90px; }
+        .landmark-section-header {
+          text-align: center;
+          margin-bottom: 40px;
         }
-
-        .custom-input {
-          width: 100%;
-          box-sizing: border-box;
-          border: 1px solid rgba(184,149,82,.28);
-          border-radius: 10px;
-          padding: 15px 16px;
-          font-size: 14px;
-          color: var(--navy);
-          outline: none;
-          transition: border-color .3s ease,box-shadow .3s ease;
-          font-family: inherit;
-          margin-bottom: 12px;
-          direction: ${dir};
+        .landmark-section-kicker {
           display: block;
-          background: rgba(248,246,241,.7);
+          font-size: 11px;
+          font-weight: 700;
+          letter-spacing: 3px;
+          text-transform: uppercase;
+          color: var(--landmark-gold);
+          margin-bottom: 14px;
         }
-
-        .custom-input:focus {
-          border-color: var(--gold);
-          box-shadow: 0 0 0 4px rgba(184,149,82,.1);
-          background: white;
+        .landmark-section-title {
+          font-size: clamp(25px, 4vw, 40px);
+          font-weight: 800;
+          line-height: 1.5;
+          color: var(--landmark-navy);
+          margin: 0;
         }
-
-        .custom-input::placeholder {
-          color: rgba(16,36,61,.38);
+        .landmark-section-line {
+          width: 55px;
+          height: 3px;
+          margin: 20px auto 0;
+          border-radius: 10px;
+          background: linear-gradient(90deg, var(--landmark-gold), var(--landmark-light-gold));
         }
+        .landmark-booking-card {
+          max-width: 680px;
+          margin: 0 auto;
+        }
+        .landmark-booking-card:hover { transform: none; }
 
-        .custom-select-wrapper {
+        .landmark-input {
+          display: block;
+          width: 100%;
+          padding: 15px 17px;
+          margin-bottom: 17px;
+          border-radius: 11px;
+          border: 1px solid rgba(184,149,82,.22);
+          background: rgba(248,246,241,.6);
+          color: var(--landmark-navy);
+          outline: none;
+          transition: background .3s ease, border-color .3s ease, box-shadow .3s ease;
+        }
+        .landmark-input:focus {
+          background: #fff;
+          border-color: var(--landmark-gold);
+          box-shadow: 0 0 0 4px rgba(184,149,82,.09);
+        }
+        .landmark-input::placeholder { color: rgba(16,36,61,.4); }
+
+        .landmark-select-wrap {
           position: relative;
-          width: 100%;
-          margin-bottom: 18px;
+          margin-bottom: 17px;
         }
-
-        .custom-select {
+        .landmark-select {
           width: 100%;
-          box-sizing: border-box;
           appearance: none;
           -webkit-appearance: none;
-          background: rgba(248,246,241,.7);
-          border: 1px solid rgba(184,149,82,.28);
-          border-radius: 10px;
-          padding: 15px 44px 15px 16px;
-          font-size: 14px;
-          color: var(--navy);
+          background: rgba(248,246,241,.6);
+          border: 1px solid rgba(184,149,82,.22);
+          border-radius: 11px;
+          padding: 15px 17px;
+          padding-inline-end: 44px;
+          color: var(--landmark-navy);
           cursor: pointer;
           outline: none;
-          transition: border-color .3s ease,box-shadow .3s ease;
-          font-family: inherit;
-          direction: ${dir};
+          transition: all .3s ease;
         }
-
-        .custom-select:focus {
-          border-color: var(--gold);
-          box-shadow: 0 0 0 4px rgba(184,149,82,.1);
-          background: white;
+        .landmark-select:focus {
+          background: #fff;
+          border-color: var(--landmark-gold);
+          box-shadow: 0 0 0 4px rgba(184,149,82,.09);
         }
-
-        .custom-select-arrow {
+        .landmark-select-arrow {
           position: absolute;
           top: 50%;
-          ${ar ? "left: 16px;" : "right: 16px;"}
+          ${ar ? "left: 18px;" : "right: 18px;"}
           transform: translateY(-50%);
+          color: var(--landmark-gold);
           pointer-events: none;
-          color: var(--gold);
-          font-size: 11px;
-        }
-
-        .landmark-error {
-          color: #b42318;
           font-size: 12px;
-          margin: 0 0 13px;
+        }
+        .landmark-error {
           display: flex;
           align-items: center;
-          gap: 7px;
+          gap: 6px;
+          margin: -8px 0 15px;
+          color: #c0392b;
+          font-size: 12px;
         }
-
-        .wa-btn {
+        .landmark-wa-btn {
+          position: relative;
+          overflow: hidden;
           width: 100%;
-          box-sizing: border-box;
-          background: var(--navy);
-          color: white;
-          border: 1px solid var(--navy);
-          border-radius: 10px;
-          padding: 15px;
-          font-size: 14px;
-          font-weight: 600;
-          font-family: inherit;
-          cursor: pointer;
-          transition: all .4s ease;
           display: flex;
           align-items: center;
           justify-content: center;
-          gap: 10px;
+          gap: 12px;
+          margin-top: 6px;
+          padding: 16px;
+          background: var(--landmark-navy);
+          color: #fff;
+          border: 1px solid transparent;
+          border-radius: 11px;
+          cursor: pointer;
+          font-weight: 700;
+          font-size: 14px;
+          transition: all .35s ease;
         }
-
-        .wa-btn:hover {
-          background: var(--gold);
-          border-color: var(--gold);
-          color: var(--navy);
+        .landmark-wa-btn::before {
+          content: "";
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(90deg, transparent, rgba(255,255,255,.12), transparent);
+          transition: left .6s ease;
+        }
+        .landmark-wa-btn:hover::before { left: 100%; }
+        .landmark-wa-btn:hover {
+          background: linear-gradient(135deg, #B89552, #D7BC83);
+          color: var(--landmark-navy);
           transform: translateY(-3px);
-          box-shadow: 0 12px 30px rgba(184,149,82,.22);
+          box-shadow: 0 12px 30px rgba(184,149,82,.25);
         }
 
-        /* TRUST */
-
-        .landmark-trust-section {
-          padding: 20px 16px 80px;
-        }
-
-        .trust-grid {
+        /* ═════════ TRUST ═════════ */
+        .landmark-trust-section { padding: 20px 6% 100px; }
+        .landmark-trust-grid {
+          max-width: 1250px;
+          margin: auto;
           display: grid;
           grid-template-columns: 1fr;
-          overflow: hidden;
           border-radius: 22px;
-          box-shadow: 0 30px 80px rgba(16,36,61,.13);
-          border: 1px solid rgba(184,149,82,.18);
-          max-width: 1200px;
-          margin: auto;
+          overflow: hidden;
+          box-shadow: 0 25px 70px rgba(16,36,61,.12);
         }
-
-        .trust-left {
-          background:
-            radial-gradient(circle at 100% 0%,rgba(184,149,82,.12),transparent 35%),
-            radial-gradient(circle at 0% 100%,rgba(215,188,131,.06),transparent 35%),
-            #10243D;
-          padding: 38px 25px;
+        .landmark-trust-left {
           position: relative;
           overflow: hidden;
+          padding: 40px 25px;
+          background: var(--landmark-navy);
+          color: #F8F6F1;
           display: flex;
           flex-direction: column;
-          min-width: 0;
+          justify-content: center;
         }
-
-        .trust-right {
-          background: rgba(255,255,255,.92);
+        .landmark-trust-left::before {
+          content: "";
+          position: absolute;
+          width: 350px;
+          height: 350px;
+          border-radius: 50%;
+          background: radial-gradient(circle, rgba(184,149,82,.15), transparent 70%);
+          top: -150px;
+          right: -120px;
+          pointer-events: none;
+        }
+        .landmark-trust-left::after {
+          content: "";
+          position: absolute;
+          width: 250px;
+          height: 250px;
+          border-radius: 50%;
+          background: radial-gradient(circle, rgba(215,188,131,.08), transparent 70%);
+          bottom: -100px;
+          left: -100px;
+          pointer-events: none;
+        }
+        .landmark-trust-content { position: relative; z-index: 1; }
+        .landmark-trust-kicker {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          margin-bottom: 20px;
+          color: var(--landmark-light-gold);
+          font-size: 11px;
+          font-weight: 600;
+          letter-spacing: 2px;
+        }
+        .landmark-trust-dot {
+          width: 7px;
+          height: 7px;
+          background: var(--landmark-light-gold);
+          border-radius: 50%;
+          animation: landmarkPulse 2s infinite;
+        }
+        .landmark-trust-title {
+          font-size: clamp(25px, 4vw, 39px);
+          font-weight: 800;
+          line-height: 1.6;
+          margin: 0;
+          color: #F8F6F1;
+        }
+        .landmark-trust-title span { color: var(--landmark-light-gold); }
+        .landmark-trust-description {
+          max-width: 500px;
+          margin-top: 20px;
+          font-size: 14px;
+          line-height: 2.3;
+          color: rgba(248,246,241,.65);
+          text-align: justify;
+        }
+        .landmark-trust-location {
+          margin-top: 25px;
+          padding-top: 25px;
+          border-top: 1px solid rgba(215,188,131,.15);
+          color: rgba(248,246,241,.75);
+          font-size: 13px;
+          line-height: 2;
+        }
+        .landmark-trust-location a {
+          display: inline-block;
+          margin-top: 8px;
+          color: var(--landmark-light-gold);
+          text-decoration: none;
+          transition: color .3s ease;
+        }
+        .landmark-trust-location a:hover { color: #fff; }
+        .landmark-socials {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 12px;
+          margin-top: 25px;
+        }
+        .landmark-social-link {
+          display: inline-flex;
+          align-items: center;
+          gap: 9px;
+          padding: 11px 16px;
+          border: 1px solid rgba(215,188,131,.2);
+          border-radius: 50px;
+          color: var(--landmark-light-gold);
+          text-decoration: none;
+          font-size: 12px;
+          transition: all .3s ease;
+        }
+        .landmark-social-link:hover {
+          background: rgba(215,188,131,.12);
+          border-color: var(--landmark-light-gold);
+          transform: translateY(-3px);
+        }
+        .landmark-trust-right {
+          background: #fff;
           padding: 35px 25px;
           display: flex;
           flex-direction: column;
           justify-content: center;
-          min-width: 0;
         }
-
-        .trust-stat {
+        .landmark-stat {
           display: flex;
           flex-direction: column;
           padding: 22px 0;
-          border-bottom: 1px solid rgba(184,149,82,.16);
-          animation: landmarkFade .7s ease both;
+          border-bottom: 1px solid rgba(184,149,82,.13);
+          transition: padding .3s ease;
         }
-
-        .trust-stat:last-child {
-          border-bottom: none;
+        .landmark-stat:last-child { border-bottom: none; }
+        .landmark-stat:hover { padding-inline: 10px; }
+        .landmark-stat-number {
+          font-size: clamp(34px, 5vw, 47px);
+          font-weight: 800;
+          line-height: 1.3;
+          background: linear-gradient(135deg, #9B773D, #D7BC83, #B89552);
+          -webkit-background-clip: text;
+          background-clip: text;
+          -webkit-text-fill-color: transparent;
         }
-
-        .trust-stat-num {
-          font-family: 'DM Sans',sans-serif;
-          font-size: clamp(30px,4vw,44px);
-          font-weight: 700;
-          color: var(--gold);
-          line-height: 1.2;
-          margin-bottom: 7px;
-        }
-
-        .trust-stat-lbl {
+        .landmark-stat-label {
+          margin-top: 5px;
+          color: rgba(16,36,61,.58);
           font-size: 13px;
-          color: rgba(16,36,61,.55);
-          line-height: 1.8;
+          line-height: 2;
         }
 
-        .trust-cta-btn {
-          background: var(--gold);
-          color: var(--navy);
-          border: 1px solid var(--gold);
-          border-radius: 9px;
-          padding: 14px 28px;
-          font-size: 14px;
-          font-weight: 700;
-          font-family: inherit;
-          cursor: pointer;
-          transition: all .4s ease;
-          text-decoration: none;
-          display: inline-block;
-          margin-top: 25px;
-          width: fit-content;
+        /* BACK */
+        .landmark-back-section {
+          padding: 0 6% 100px;
+          text-align: center;
         }
-
-        .trust-cta-btn:hover {
-          background: var(--light-gold);
-          transform: translateY(-3px);
-          box-shadow: 0 12px 28px rgba(184,149,82,.2);
-        }
-
-        .back-btn {
+        .landmark-back-btn {
           display: inline-flex;
           align-items: center;
           justify-content: center;
-          gap: 10px;
-          background: var(--navy);
-          color: white;
-          padding: 14px 38px;
-          border-radius: 9px;
-          font-family: inherit;
-          font-size: 14px;
-          font-weight: 600;
+          gap: 12px;
+          padding: 16px 35px;
+          background: var(--landmark-navy);
+          color: #fff;
           text-decoration: none;
-          transition: all .4s ease;
-          border: 1px solid var(--navy);
-        }
-
-        .back-btn:hover {
-          background: var(--gold);
-          color: var(--navy);
-          border-color: var(--gold);
-          transform: translateY(-3px);
-          box-shadow: 0 12px 28px rgba(184,149,82,.2);
-        }
-
-        .landmark-social-link {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          color: var(--light-gold);
-          text-decoration: none;
+          border-radius: 10px;
           font-size: 13px;
-          transition: color .3s ease,transform .3s ease;
+          font-weight: 700;
+          border: 1px solid transparent;
+          transition: all .35s ease;
+        }
+        .landmark-back-btn:hover {
+          background: linear-gradient(135deg, #B89552, #D7BC83);
+          color: var(--landmark-navy);
+          transform: translateY(-4px);
+          box-shadow: 0 15px 35px rgba(184,149,82,.22);
         }
 
-        .landmark-social-link:hover {
-          color: white;
-          transform: translateY(-3px);
+        /* ═════════ TABLET ═════════ */
+        @media (min-width: 600px) {
+          .landmark-card { padding: 35px; }
+          .landmark-gallery-main { height: 420px; }
+          .landmark-plan-card img { height: 220px; }
+          .landmark-trust-left,
+          .landmark-trust-right { padding: 45px 35px; }
         }
 
-        @media (min-width: 768px) {
-          .landmark-info-section {
-            grid-template-columns: repeat(2,minmax(0,1fr));
-            gap: 35px;
-            padding: 80px 7vw 120px;
-          }
+        /* ═════════ DESKTOP ═════════ */
+        @media (min-width: 900px) {
+          .landmark-overview { padding: 70px 6% 44px; }
+          .landmark-hero-description { font-size: 16px; }
 
-          .landmark-card {
-            padding: 45px 38px;
-          }
+          .landmark-detail-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 
-          .landmark-card-title {
-            font-size: 27px;
-          }
+          .landmark-gallery-main { height: 560px; }
+          .landmark-gallery-thumb { width: 120px; height: 85px; }
 
-          .landmark-detail-text {
-            font-size: 15px;
+          .landmark-plans-grid {
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 18px;
           }
+          .landmark-plan-card img { height: 300px; }
 
-          .trust-grid {
-            grid-template-columns: repeat(2,minmax(0,1fr));
-          }
+          .landmark-booking { padding: 90px 8% 120px; }
 
-          .trust-left,
-          .trust-right {
-            padding: 60px 50px;
-          }
+          .landmark-trust-section { padding: 20px 8% 130px; }
+          .landmark-trust-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+          .landmark-trust-left,
+          .landmark-trust-right { padding: 60px 50px; }
 
-          .landmark-trust-section {
-            padding: 30px 7vw 110px;
-          }
+          .landmark-back-section { padding-bottom: 130px; }
+        }
+
+        /* ═════════ MOBILE ═════════ */
+        @media (max-width: 767px) {
+          .landmark-file-frame { display: none; }
+          .landmark-file-mobile { display: block; }
+          .landmark-file-actions { width: 100%; }
+          .landmark-file-btn { flex: 1; }
+        }
+
+        @media (max-width: 600px) {
+          .landmark-breadcrumb { padding-top: 80px; font-size: 12px; }
+          .landmark-cover-frame { inset: 10px; }
+          .landmark-cover-tag { bottom: 24px; inset-inline-start: 24px; }
+          .landmark-tab { padding: 14px 16px; font-size: 13px; }
         }
 
         @media (max-width: 380px) {
-          .landmark-card {
-            padding: 24px 18px;
-          }
-
-          .trust-left,
-          .trust-right {
-            padding: 30px 20px;
-          }
+          .landmark-hero-title { font-size: 29px; }
+          .landmark-hero-description { font-size: 13px; }
+          .landmark-card { padding: 22px 17px; }
+          .landmark-card-title { font-size: 21px; }
+          .landmark-gallery-main { height: 240px; }
+          .landmark-gallery-thumb { width: 64px; height: 48px; }
+          .landmark-plan-card img { height: 130px; }
+          .landmark-trust-left,
+          .landmark-trust-right { padding: 30px 20px; }
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -949,434 +1280,322 @@ function ProjectLandmarkPage() {
         }
       `}</style>
 
-      {/* ================= HERO ================= */}
+      <Navbar />
 
-      <section className={`project-hero ${ar ? "hero-ar" : "hero-en"}`}>
-        <div
-          style={{
-            position: "absolute",
-            width: 500,
-            height: 500,
-            background: "rgba(184,149,82,.09)",
-            filter: "blur(140px)",
-            borderRadius: "50%",
-            top: -180,
-            right: -150,
-            pointerEvents: "none",
-          }}
-        />
+      {/* ═════════ BREADCRUMB ═════════ */}
+      <nav className="landmark-breadcrumb" aria-label="breadcrumb">
+        <Link to="/">{homeLabel}</Link>
+        <span className="landmark-bc-sep" aria-hidden="true">
+          {ar ? "‹" : "›"}
+        </span>
+        <a href="/#projects">{currentProjectsLabel}</a>
+        <span className="landmark-bc-sep" aria-hidden="true">
+          {ar ? "‹" : "›"}
+        </span>
+        <span aria-current="page">
+          {t("landmark", "title1")} {t("landmark", "title2")}
+        </span>
+      </nav>
 
-        <div
-          style={{
-            position: "absolute",
-            width: 450,
-            height: 450,
-            background: "rgba(16,36,61,.045)",
-            filter: "blur(140px)",
-            borderRadius: "50%",
-            bottom: -180,
-            left: -150,
-            pointerEvents: "none",
-          }}
-        />
+      {/* ═════════ COVER ═════════ */}
+      <section className="landmark-cover">
+        <img src={COVER_IMAGE} alt="Dar Landmark" />
+        <div className="landmark-cover-frame" />
+        <span className="landmark-cover-tag">DAR DEVELOPMENTS</span>
+        <div className="landmark-cover-line" />
+      </section>
 
-        {/* GALLERY */}
+      {/* ═════════ OVERVIEW ═════════ */}
+      <section className="landmark-overview" style={{ textAlign }}>
+        <span className="landmark-eyebrow">
+          {ar ? "مشروعات دار" : "DAR PROJECTS"}
+        </span>
 
-        <div
-          className="project-gallery"
-          ref={galleryRef}
-          onMouseEnter={() => setIsGalleryHovered(true)}
-          onMouseLeave={() => setIsGalleryHovered(false)}
-        >
-          <div className="project-hero-image">
-            <img
-              key={activeImage}
-              src={galleryImages[activeImage]}
-              alt={`Dar Landmark ${activeImage + 1}`}
-              className="project-gallery-main"
-            />
+        <h1 className="landmark-hero-title">
+          <span className="gold-text">{t("landmark", "title1")}</span>{" "}
+          {t("landmark", "title2")}
+        </h1>
 
-            <div className="project-gallery-overlay" />
+        <div className="landmark-title-line" />
 
-            <div className="project-gallery-count">
-              {String(activeImage + 1).padStart(2, "0")} / 08
-            </div>
+        <p className="landmark-hero-description">{t("landmark", "desc")}</p>
 
-            <div className="project-gallery-label">
-              {ar ? t("landmark", "title2") : "DAR LANDMARK"}
-            </div>
-
-            <div className="project-gallery-arrows">
-              <button
-                type="button"
-                className="project-gallery-arrow"
-                onClick={prevImage}
-                aria-label="Previous image"
-              >
-                {ar ? "→" : "←"}
-              </button>
-
-              <button
-                type="button"
-                className="project-gallery-arrow"
-                onClick={nextImage}
-                aria-label="Next image"
-              >
-                {ar ? "←" : "→"}
-              </button>
-            </div>
-          </div>
-
-          {/* THUMBNAILS */}
-
-          <div className="project-gallery-thumbnails">
-            {galleryImages.map((image, index) => (
-              <button
-                key={index}
-                type="button"
-                className={`project-gallery-thumb ${
-                  activeImage === index ? "active" : ""
-                }`}
-                onClick={() => changeImage(index)}
-                aria-label={`View image ${index + 1}`}
-                aria-pressed={activeImage === index}
-              >
-                <img
-                  src={image}
-                  alt={`Landmark thumbnail ${index + 1}`}
-                />
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* HERO TEXT */}
-
-        <div
-          className="project-hero-text"
-          style={{ textAlign }}
-          dir={dir}
-        >
-          <h1 className="project-hero-title">
-            <span className="landmark-gold-text">
-              {t("landmark", "title1")}
-            </span>{" "}
-            {t("landmark", "title2")}
-          </h1>
-
-          <div
-            className="landmark-heading-line"
-            style={{
-              margin: ar
-                ? "18px 0 25px auto"
-                : "18px auto 25px 0",
-            }}
-          />
-
-          <p className="project-hero-description">
-            {t("landmark", "desc")}
-          </p>
+        <div className="landmark-hero-badge">
+          <span className="landmark-badge-dot" />
+          {ar ? "مشروع متميز في قلب طنطا" : "Premium Living in Tanta"}
         </div>
       </section>
 
-      {/* ================= VIDEO ================= */}
+      {/* ═════════ TABS ═════════ */}
+      <section className="landmark-tabs-section">
+        <div className="landmark-tabs" role="tablist">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              role="tab"
+              aria-selected={activeTab === tab.id}
+              className={`landmark-tab ${activeTab === tab.id ? "active" : ""}`}
+              onClick={(e) => selectTab(tab.id, e)}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
 
-      <section className="landmark-video-section">
-        <div className="landmark-video-glow" />
+        <div className="landmark-panel" role="tabpanel">
+          <TabBoundary key={activeTab} ar={ar}>
+            <div className="landmark-panel-inner">
+              {/* التفاصيل العامة والموقع */}
+              {activeTab === "details" && (
+                <div className="landmark-card" style={{ textAlign, direction: dir }}>
+                  <h2 className="landmark-card-title">{t("landmark", "detailsTitle")}</h2>
+                  <div className="landmark-card-line" />
 
-        <div className="landmark-video-wrap">
-          <video
-            ref={videoRef}
-            src={videoFile}
-            controls
-            muted
-            playsInline
-            preload="metadata"
-            className="landmark-video"
-          />
+                  <div className="landmark-detail-grid">
+                    {detailItems.map((item) => (
+                      <div className="landmark-detail-item" key={item.key}>
+                        <div className="landmark-detail-icon">{item.icon}</div>
+                        <div className="landmark-detail-text">{t("landmark", item.key)}</div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <a
+                    className="landmark-map-link"
+                    href={MAP_LINK}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <span>{ar ? "←" : "→"}</span>
+                    {ar ? "عرض الموقع على الخريطة" : "View on Google Maps"}
+                  </a>
+                </div>
+              )}
+
+              {/* صور من الواقع = الفيديو */}
+              {activeTab === "real" && (
+                <div className="landmark-video-wrap">
+                  <div className="landmark-video-frame">
+                    {videoFile && !videoError ? (
+                      <video
+                        src={videoFile}
+                        controls
+                        muted
+                        playsInline
+                        autoPlay
+                        preload="metadata"
+                        onError={() => setVideoError(true)}
+                      />
+                    ) : (
+                      <div className="landmark-video-fallback">
+                        {ar
+                          ? "تعذر تشغيل الفيديو حالياً"
+                          : "The video can't be played right now"}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* صور 3D = باقي صور المشروع */}
+              {activeTab === "three" && (
+                <div className="landmark-gallery">
+                  <div className="landmark-gallery-main">
+                    <img
+                      key={galleryIndex}
+                      src={GALLERY[galleryIndex].src}
+                      alt={GALLERY[galleryIndex].alt}
+                    />
+                    <div className="landmark-gallery-main-frame" />
+                    <div className="landmark-gallery-counter">
+                      {String(galleryIndex + 1).padStart(2, "0")} /{" "}
+                      {String(GALLERY.length).padStart(2, "0")}
+                    </div>
+                  </div>
+
+                  {GALLERY.length > 1 && (
+                    <div className="landmark-gallery-thumbnails">
+                      {GALLERY.map((image, index) => (
+                        <button
+                          type="button"
+                          key={image.alt}
+                          className={`landmark-gallery-thumb ${
+                            galleryIndex === index ? "active" : ""
+                          }`}
+                          onClick={() => setGalleryIndex(index)}
+                          aria-label={`Show image ${index + 1}`}
+                          aria-pressed={galleryIndex === index}
+                        >
+                          <img src={image.src} alt={image.alt} />
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* البلانات */}
+              {activeTab === "plans" &&
+                (PLANS.length > 0 ? (
+                  <PlansViewer
+                    plans={PLANS}
+                    title={ar ? "البلانات" : "Floor Plans"}
+                    ar={ar}
+                  />
+                ) : (
+                  <p className="landmark-empty">
+                    {ar ? "الملف غير متاح حالياً" : "File not available yet"}
+                  </p>
+                ))}
+
+              {/* البروشور */}
+              {activeTab === "brochure" &&
+                (brochureFile ? (
+                  <FileViewer
+                    src={brochureFile}
+                    title={ar ? "البروشور" : "Brochure"}
+                    ar={ar}
+                  />
+                ) : (
+                  <p className="landmark-empty">
+                    {ar ? "الملف غير متاح حالياً" : "File not available yet"}
+                  </p>
+                ))}
+            </div>
+          </TabBoundary>
         </div>
       </section>
 
-      {/* ================= DETAILS + FORM ================= */}
-
-      <section
-        className="landmark-info-section"
-        style={{ direction: dir }}
-      >
-        {/* DETAILS CARD */}
-
-        <div
-          className="landmark-card"
-          style={{
-            textAlign,
-            order: ar ? 1 : 2,
-          }}
-        >
-          <h2 className="landmark-card-title">
-            {t("landmark", "detailsTitle")}
-          </h2>
-
-          <div
-            className="landmark-card-line"
-            style={{
-              marginRight: ar ? 0 : "auto",
-              marginLeft: ar ? "auto" : 0,
-            }}
-          />
-
-          <p className="landmark-detail-text">
-            {t("landmark", "location")}
-          </p>
-
-          <a
-            href="https://www.google.com/maps?q=30.809358596801758,31.007654190063477&z=17&hl=en"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="landmark-map-link"
-          >
-            <span>{ar ? "←" : "→"}</span>
-            {ar ? "عرض الموقع على الخريطة" : "View on Google Maps"}
-          </a>
-
-          <p className="landmark-detail-text">
-            {t("landmark", "towers")}
-          </p>
-
-          <p
-            className="landmark-detail-text"
-            style={{ whiteSpace: "pre-line" }}
-          >
-            {t("landmark", "spaces")}
-          </p>
-
-          <p className="landmark-detail-text">
-            {t("landmark", "downPayment")}
-          </p>
-
-          <p className="landmark-detail-text" style={{ marginBottom: 0 }}>
-            {t("landmark", "installment")}
-          </p>
+      {/* ═════════ BOOKING FORM ═════════ */}
+      <section className="landmark-booking" id="booking">
+        <div className="landmark-section-header">
+          <span className="landmark-section-kicker">
+            {ar ? "احجز وحدتك" : "RESERVE YOUR UNIT"}
+          </span>
+          <h2 className="landmark-section-title">{t("landmark", "formTitle")}</h2>
+          <div className="landmark-section-line" />
         </div>
 
-        {/* FORM CARD */}
-
-        <div
-          className="landmark-card landmark-form-card"
-          style={{
-            direction: dir,
-            order: ar ? 2 : 1,
-          }}
-        >
-          <h2 className="landmark-card-title landmark-form-title">
-            {t("landmark", "formTitle")}
-          </h2>
-
-          <div className="landmark-form-line" />
-
+        <div className="landmark-card landmark-booking-card" style={{ direction: dir }}>
           <input
             name="name"
+            type="text"
+            autoComplete="name"
             placeholder={t("landmark", "namePlaceholder")}
-            className="custom-input"
+            className="landmark-input"
             value={formData.name}
-            onChange={(e) => {
-              handleChange(e);
-              if (error) setError("");
-            }}
+            onChange={handleChange}
+            style={{ direction: dir }}
           />
 
           {error && (
             <div className="landmark-error">
-              <span>⚠️</span>
+              <span>⚠</span>
               {error}
             </div>
           )}
 
-          <div className="custom-select-wrapper">
+          <div className="landmark-select-wrap">
             <select
               name="project"
-              className="custom-select"
+              className="landmark-select"
               value={formData.project}
               onChange={handleChange}
+              style={{ direction: dir }}
             >
-              <option value="Dar Landmark">Dar Landmark</option>
-              <option value="Dar Damac">Dar Damac</option>
-              <option value="Dar Elwrood">Dar Elwrood</option>
+              {PROJECT_OPTIONS.map((p) => (
+                <option key={p} value={p}>
+                  {p}
+                </option>
+              ))}
             </select>
-
-            <span className="custom-select-arrow">▼</span>
+            <span className="landmark-select-arrow">▼</span>
           </div>
 
-          <button className="wa-btn" onClick={openWhatsApp}>
-            <svg
-              width="19"
-              height="19"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-            >
-              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-            </svg>
+          {areaOptions.length > 0 && (
+            <div className="landmark-select-wrap">
+              <select
+                name="area"
+                className="landmark-select"
+                value={formData.area}
+                onChange={handleChange}
+                style={{ direction: dir }}
+              >
+                <option value="">{ar ? "اختر المساحة" : "Select area"}</option>
+                {areaOptions.map((a) => (
+                  <option key={a} value={a}>
+                    {ar ? `${a} م²` : `${a} m²`}
+                  </option>
+                ))}
+              </select>
+              <span className="landmark-select-arrow">▼</span>
+            </div>
+          )}
 
+          <button type="button" className="landmark-wa-btn" onClick={openWhatsApp}>
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+            </svg>
             {t("landmark", "whatsappBtn")}
           </button>
         </div>
       </section>
 
-      {/* ================= TRUST SECTION ================= */}
-
-      <section
-        className="landmark-trust-section"
-        style={{ direction: dir }}
-      >
-        <div className="trust-grid">
-
-          {/* LEFT SIDE */}
-
+      {/* ═════════ TRUST ═════════ */}
+      <section className="landmark-trust-section">
+        <div className="landmark-trust-grid">
+          {/* LEFT */}
           <div
-            className="trust-left"
-            style={{ order: ar ? 1 : 2 }}
+            className="landmark-trust-left"
+            style={{ order: ar ? 1 : 2, textAlign, direction: dir }}
           >
-            <div
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 9,
-                marginBottom: 20,
-                alignSelf: ar ? "flex-end" : "flex-start",
-              }}
-            >
-              <span
-                style={{
-                  width: 6,
-                  height: 6,
-                  borderRadius: "50%",
-                  background: "#D7BC83",
-                  display: "inline-block",
-                  animation: "landmarkPulse 2s infinite",
-                }}
-              />
-
-              <span
-                style={{
-                  fontFamily: "'DM Sans',sans-serif",
-                  fontSize: 11,
-                  color: "#D7BC83",
-                  letterSpacing: 1.5,
-                }}
-              >
+            <div className="landmark-trust-content">
+              <div className="landmark-trust-kicker">
+                <span className="landmark-trust-dot" />
                 {ar ? "ثقة ممتدة" : "TRUSTED SINCE"}
-              </span>
-            </div>
-
-            <h2
-              style={{
-                fontSize: "clamp(26px,3.5vw,42px)",
-                fontWeight: 700,
-                color: "#F8F6F1",
-                lineHeight: 1.6,
-                marginBottom: 12,
-                textAlign,
-              }}
-            >
-              {ar ? "خبرة ممتدة لأكثر من" : "Over"}{" "}
-              <span style={{ color: "#D7BC83" }}>
-                {ar ? "8 أعوام" : "8 Years"}
-              </span>
-              {ar ? "" : " of Excellence"}
-            </h2>
-
-            <div
-              style={{
-                width: 42,
-                height: 2,
-                background: "linear-gradient(90deg,#B89552,#D7BC83)",
-                borderRadius: 2,
-                marginBottom: 22,
-                alignSelf: ar ? "flex-end" : "flex-start",
-              }}
-            />
-
-            <p
-              style={{
-                color: "rgba(248,246,241,.65)",
-                fontSize: 14,
-                lineHeight: 2.3,
-                maxWidth: 430,
-                textAlign,
-                alignSelf: ar ? "flex-end" : "flex-start",
-              }}
-            >
-              {ar
-                ? "نحن لا نبني وحدات سكنية فحسب — نبني علاقات تدوم. دعمنا لعملائنا لا يتوقف عند التسليم، بل يمتد معهم في كل خطوة."
-                : "We don't just build units — we build lasting relationships. Our commitment to clients extends well beyond handover, every step of the way."}
-            </p>
-
-            {/* COMPANY LOCATION */}
-
-            <div
-              style={{
-                marginTop: 25,
-                color: "rgba(248,246,241,.75)",
-                fontSize: 13,
-                lineHeight: 2,
-                textAlign,
-                maxWidth: 430,
-                alignSelf: ar ? "flex-end" : "flex-start",
-              }}
-            >
-              <div style={{ fontWeight: 600, marginBottom: 5 }}>
-                {ar ? "مقر الشركة:" : "Company Location:"}
               </div>
 
-              <div>
-                {t("contact", "officeAddr")}
+              <h2 className="landmark-trust-title">
+                {ar ? "خبرة ممتدة لأكثر من" : "Over"}{" "}
+                <span>{ar ? "8 أعوام" : "8 Years"}</span>
+                {ar ? "" : " of Excellence"}
+              </h2>
+
+              <div className="landmark-card-line" />
+
+              <p className="landmark-trust-description">
+                {ar
+                  ? "نحن لا نبني وحدات سكنية فحسب — نبني علاقات تدوم. دعمنا لعملائنا لا يتوقف عند التسليم، بل يمتد معهم في كل خطوة."
+                  : "We don't just build units — we build lasting relationships. Our commitment to clients extends well beyond handover, every step of the way."}
+              </p>
+
+              <div className="landmark-trust-location">
+                <strong>{ar ? "مقر الشركة:" : "Company Location:"}</strong>
+
+                <div>
+                  {ar
+                    ? "طنطا - شارع توت عنخ آمون من محمد فريد فوق مخبز الزهراء"
+                    : "Tanta - Tutankhamun Street, Mohamed Farid, above Al Zahraa Bakery"}
+                </div>
+
+                <a
+                  href="https://maps.app.goo.gl/CjGnSencAK6vsoh19?g_st=aw"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {ar ? "← افتح على الخريطة" : "→ Open in Maps"}
+                </a>
               </div>
 
-              <a
-                href="https://maps.app.goo.gl/CjGnSencAK6vsoh19?g_st=aw"
-                target="_blank"
-                rel="noreferrer"
-                style={{
-                  color: "#D7BC83",
-                  textDecoration: "none",
-                  display: "inline-block",
-                  marginTop: 8,
-                  fontWeight: 600,
-                }}
-              >
-                {t("contact", "mapLink")}
-              </a>
-            </div>
-
-            {/* SOCIAL */}
-
-            <div
-              style={{
-                marginTop: 30,
-                display: "flex",
-                flexDirection: "column",
-                alignItems: ar ? "flex-end" : "flex-start",
-                color: "rgba(248,246,241,.75)",
-                fontSize: 13,
-              }}
-            >
-              <div style={{ fontWeight: 600, marginBottom: 14 }}>
-                {t("contact", "socialLabel")}:
-              </div>
-
-              <div
-                style={{
-                  display: "flex",
-                  gap: 22,
-                  alignItems: "center",
-                  flexWrap: "wrap",
-                }}
-              >
+              <div className="landmark-socials">
                 <a
                   href="https://www.facebook.com/share/1XgDRDMitV/"
                   target="_blank"
                   rel="noreferrer"
                   className="landmark-social-link"
                 >
+                  <span>f</span>
                   Facebook
                 </a>
 
@@ -1386,77 +1605,40 @@ function ProjectLandmarkPage() {
                   rel="noreferrer"
                   className="landmark-social-link"
                 >
+                  <span>◎</span>
                   Instagram
                 </a>
               </div>
             </div>
           </div>
 
-          {/* RIGHT SIDE */}
-
+          {/* RIGHT */}
           <div
-            className="trust-right"
-            style={{
-              order: ar ? 2 : 1,
-              textAlign,
-            }}
+            className="landmark-trust-right"
+            style={{ order: ar ? 2 : 1, direction: dir, textAlign }}
           >
             {[
-              {
-                num: "8+",
-                key: "trustYears",
-                ar: "سنوات خبرة في السوق العقاري",
-                en: "Years in Real Estate",
-              },
-              {
-                num: "+150",
-                ar: "وحدة سكنية تم تسليمها بنجاح",
-                en: "Units Successfully Delivered",
-              },
-              {
-                num: "3",
-                ar: "مشاريع نشطة حالياً في طنطا",
-                en: "Active Projects in Tanta",
-              },
-              {
-                num: "98%",
-                ar: "نسبة رضا العملاء عن خدماتنا",
-                en: "Client Satisfaction Rate",
-              },
-            ].map((s, i) => (
-              <div
-                key={i}
-                className="trust-stat"
-                style={{
-                  textAlign,
-                  animationDelay: `${i * 0.12}s`,
-                }}
-              >
-                <span className="trust-stat-num">{s.num}</span>
-
-                <span className="trust-stat-lbl">
-                  {ar ? s.ar : s.en}
-                </span>
+              { num: "8+", ar: "سنوات خبرة في السوق العقاري", en: "Years in Real Estate" },
+              { num: "+150", ar: "وحدة سكنية تم تسليمها بنجاح", en: "Units Successfully Delivered" },
+              { num: "3", ar: "مشاريع نشطة حالياً في طنطا", en: "Active Projects in Tanta" },
+              { num: "98%", ar: "نسبة رضا العملاء عن خدماتنا", en: "Client Satisfaction Rate" },
+            ].map((stat, index) => (
+              <div className="landmark-stat" key={index}>
+                <span className="landmark-stat-number">{stat.num}</span>
+                <span className="landmark-stat-label">{ar ? stat.ar : stat.en}</span>
               </div>
             ))}
           </div>
-
         </div>
       </section>
 
-      {/* ================= BACK TO PROJECTS ================= */}
-
-      <div
-        style={{
-          textAlign: "center",
-          padding: "10px 20px 70px",
-        }}
-      >
-        <a href="/#projects" className="back-btn">
-          {t("landmark", "backBtn")}
+      {/* ═════════ BACK ═════════ */}
+      <section className="landmark-back-section">
+        <a href="/#projects" className="landmark-back-btn">
+          <span>{t("landmark", "backBtn")}</span>
+          <span>{ar ? "←" : "→"}</span>
         </a>
-      </div>
-
+      </section>
     </div>
   );
 }

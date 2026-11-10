@@ -1,5 +1,5 @@
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import aboutVideo from "../assets/Dar.mp4";
 import { Link } from "react-router-dom";
 import { useLanguage } from "../context/LanguageContext";
@@ -7,9 +7,13 @@ import { useLanguage } from "../context/LanguageContext";
 function About() {
   const { lang, t } = useLanguage();
   const ar = lang === "ar";
-  const sectionRef = useRef(null);
 
-  // Reveal animation - safe fallback
+  const sectionRef = useRef(null);
+  const videoRef = useRef(null);
+
+  const [soundEnabled, setSoundEnabled] = useState(false);
+
+  // Reveal animation
   useEffect(() => {
     const section = sectionRef.current;
     if (!section) return;
@@ -35,6 +39,74 @@ function About() {
 
     return () => observer.disconnect();
   }, []);
+
+  // Video play / pause depending on section visibility
+  useEffect(() => {
+    const section = sectionRef.current;
+    const video = videoRef.current;
+
+    if (!section || !video) return;
+
+    let isInside = false;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          isInside = entry.isIntersecting;
+
+          if (entry.isIntersecting) {
+            video.muted = !soundEnabled;
+
+            video.play().catch(() => {
+              video.muted = true;
+              video.play().catch(() => {});
+            });
+          } else {
+            video.pause();
+          }
+        });
+      },
+      {
+        threshold: 0.3,
+      }
+    );
+
+    observer.observe(section);
+
+    // Keep video muted initially
+    video.muted = !soundEnabled;
+
+    return () => {
+      observer.disconnect();
+      video.pause();
+    };
+  }, [soundEnabled]);
+
+  // Enable / disable video sound
+  const toggleSound = () => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    if (soundEnabled) {
+      video.muted = true;
+      setSoundEnabled(false);
+      return;
+    }
+
+    // User interaction allows the browser to play audio
+    video.muted = false;
+    video.volume = 1;
+
+    video
+      .play()
+      .then(() => {
+        setSoundEnabled(true);
+      })
+      .catch(() => {
+        video.muted = true;
+        setSoundEnabled(false);
+      });
+  };
 
   // Video parallax
   useEffect(() => {
@@ -81,7 +153,7 @@ function About() {
     };
   }, []);
 
-  // Features and inspirational messages
+  // Features
   const features = [
     {
       id: "service",
@@ -240,8 +312,6 @@ function About() {
           flex-direction: column;
           justify-content: center;
         }
-
-        /* TEXT */
 
         .dar-about-label {
           display: inline-flex;
@@ -421,6 +491,46 @@ function About() {
           transition: opacity 1s ease;
         }
 
+        /* SOUND BUTTON */
+
+        .dar-about-sound-btn {
+          position: absolute;
+          bottom: 22px;
+          ${ar ? "right:22px;" : "left:22px;"}
+          z-index: 5;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 9px;
+          padding: 11px 16px;
+          background: rgba(16,36,61,.78);
+          color: #E8C96A;
+          border: 1px solid rgba(201,168,76,.65);
+          border-radius: 3px;
+          font-family: inherit;
+          font-size: 11px;
+          font-weight: 600;
+          cursor: pointer;
+          backdrop-filter: blur(8px);
+          transition: background .3s ease, color .3s ease, transform .3s ease;
+        }
+
+        .dar-about-sound-btn:hover {
+          background: #10243D;
+          color: #fff;
+          transform: translateY(-2px);
+        }
+
+        .dar-about-sound-btn svg {
+          width: 16px;
+          height: 16px;
+          fill: none;
+          stroke: currentColor;
+          stroke-width: 1.7;
+          stroke-linecap: round;
+          stroke-linejoin: round;
+        }
+
         .dar-about-image-border {
           position: absolute;
           top: 15px;
@@ -447,6 +557,7 @@ function About() {
           opacity: 1;
           transform: none;
           transition: opacity .7s ease,transform .7s ease;
+          pointer-events: none;
         }
 
         .dar-about-image-caption span {
@@ -588,7 +699,6 @@ function About() {
           margin-inline-start: 12px;
         }
 
-        /* Seamless ticker */
         @keyframes darFeaturesLTR {
           from { transform: translateX(0); }
           to { transform: translateX(-50%); }
@@ -672,6 +782,13 @@ function About() {
             transform: scale(1) translateY(var(--about-parallax,0px));
           }
 
+          .dar-about-sound-btn {
+            bottom: 18px;
+            ${ar ? "right:15px;" : "left:15px;"}
+            padding: 10px 13px;
+            font-size: 10px;
+          }
+
           .dar-about-features {
             margin-top: 45px;
             padding: 16px 0;
@@ -720,8 +837,6 @@ function About() {
           }
         }
 
-        /* REDUCED MOTION */
-
         @media (prefers-reduced-motion:reduce) {
           .dar-about *,
           .dar-about *::before,
@@ -763,7 +878,6 @@ function About() {
       {/* MAIN ABOUT CONTENT */}
 
       <div className="dar-about-container">
-
         <div
           className="dar-about-content"
           style={{
@@ -828,14 +942,53 @@ function About() {
 
           <div className="dar-about-image-frame">
             <video
+              ref={videoRef}
               className="dar-about-video"
               src={aboutVideo}
               autoPlay
               muted
               loop
               playsInline
-              preload="metadata"
+              preload="auto"
+              controls={false}
             />
+
+            {/* SOUND BUTTON */}
+
+            <button
+              type="button"
+              className="dar-about-sound-btn"
+              onClick={toggleSound}
+              aria-label={
+                soundEnabled
+                  ? ar
+                    ? "إيقاف الصوت"
+                    : "Mute video"
+                  : ar
+                    ? "تشغيل الصوت"
+                    : "Enable sound"
+              }
+            >
+              {soundEnabled ? (
+                <>
+                  <svg viewBox="0 0 24 24">
+                    <path d="M11 5 6 9H3v6h3l5 4V5Z" />
+                    <path d="M15 9a5 5 0 0 1 0 6" />
+                    <path d="M18 6a9 9 0 0 1 0 12" />
+                  </svg>
+                  {ar ? "إيقاف الصوت" : "Mute"}
+                </>
+              ) : (
+                <>
+                  <svg viewBox="0 0 24 24">
+                    <path d="M11 5 6 9H3v6h3l5 4V5Z" />
+                    <path d="m16 9 5 6" />
+                    <path d="m21 9-5 6" />
+                  </svg>
+                  {ar ? "تشغيل الصوت" : "Enable Sound"}
+                </>
+              )}
+            </button>
 
             <div className="dar-about-image-caption">
               DAR <span>—</span> DEVELOPMENTS
@@ -844,14 +997,12 @@ function About() {
 
           <div className="dar-about-image-border" />
         </div>
-
       </div>
 
       {/* CONTINUOUS INFINITE TICKER */}
 
       <div className="dar-about-features">
         <div className="dar-about-features-track">
-
           {[0, 1].map((group) => (
             <div
               className="dar-about-features-group"
@@ -876,10 +1027,8 @@ function About() {
               ))}
             </div>
           ))}
-
         </div>
       </div>
-
     </section>
   );
 }

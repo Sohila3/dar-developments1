@@ -2,8 +2,10 @@ const translations = {
   navbar: {
     home:     { ar: "الرئيسية",    en: "Home" },
     about:    { ar: "عن دار",      en: "About DAR" },
-    projects: { ar: "مشاريعنا",   en: "Projects" },
+    Mission:    { ar: "رسالتنا ورؤيتنا",      en: "Our Mission & Vision" },
     partners: { ar: "شركاء النجاح", en: "Partners" },
+    FAQSection: { ar: "الأسئلة الشائعة", en: "Frequently Asked Questions" },
+    projects: { ar: "مشاريعنا",   en: "Projects" },
     contact:  { ar: "تواصل معنا", en: "Contact" },
   },
   hero: {
@@ -69,8 +71,8 @@ faq: {
   },
 
   a3: {
-    ar: "يمكنك الدفع نقدًا، أو عبر أقساط شهرية، أو عن طريق تحويل بنكي.",
-    en: "You can pay in cash, through monthly installments, or via bank transfer.",
+    ar: "يمكنك الدفع نقدًا،أو عن طريق تحويل بنكي.",
+    en: "You can pay in cash, or via bank transfer.",
   },
 
   footerText: {

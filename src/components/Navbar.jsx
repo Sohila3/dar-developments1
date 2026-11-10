@@ -743,6 +743,24 @@ function Navbar() {
           </a>
 
           <a
+            href="/#Mission"
+            className="dar-sidebar-link"
+            onClick={() => setOpen(false)}
+            tabIndex={open ? 0 : -1}
+          >
+            {t("navbar", "Mission")}
+          </a>
+
+          <a
+            href="/#faq"
+            className="dar-sidebar-link"
+            onClick={() => setOpen(false)}
+            tabIndex={open ? 0 : -1}
+          >
+            {t("navbar", "FAQSection")}
+          </a>
+
+          <a
             href="/#projects"
             className="dar-sidebar-link"
             onClick={() => setOpen(false)}

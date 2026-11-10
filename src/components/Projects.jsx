@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { useLanguage } from "../context/LanguageContext";
 
@@ -20,6 +19,15 @@ function Projects() {
   const ar = lang === "ar";
 
   const [currentIndex, setCurrentIndex] = useState(0);
+
+  // سلايدر المشاريع المنتهية
+  const trackRef = useRef(null);
+  const [scrollState, setScrollState] = useState({
+    canPrev: false,
+    canNext: true,
+    thumb: 100,
+    offset: 0,
+  });
 
   const currentProjects = [
     {
@@ -73,6 +81,61 @@ function Projects() {
     currentProjects[currentIndex],
     currentProjects[(currentIndex + 1) % currentProjects.length],
   ];
+
+  /* ============ COMPLETED SLIDER LOGIC ============ */
+
+  const updateScrollState = useCallback(() => {
+    const el = trackRef.current;
+    if (!el) return;
+
+    const max = el.scrollWidth - el.clientWidth;
+    const pos = Math.abs(el.scrollLeft);
+
+    const thumb =
+      el.scrollWidth > 0 ? (el.clientWidth / el.scrollWidth) * 100 : 100;
+    const progress = max > 0 ? pos / max : 0;
+
+    setScrollState({
+      canPrev: pos > 2,
+      canNext: max > 2 && pos < max - 2,
+      thumb: Math.min(100, thumb),
+      offset: progress * (100 - Math.min(100, thumb)),
+    });
+  }, []);
+
+  useEffect(() => {
+    updateScrollState();
+
+    const el = trackRef.current;
+    if (!el) return;
+
+    el.addEventListener("scroll", updateScrollState, { passive: true });
+    window.addEventListener("resize", updateScrollState);
+
+    return () => {
+      el.removeEventListener("scroll", updateScrollState);
+      window.removeEventListener("resize", updateScrollState);
+    };
+  }, [updateScrollState, ar]);
+
+  const scrollCompleted = (direction) => {
+    const el = trackRef.current;
+    if (!el) return;
+
+    const slide = el.querySelector(".dp-completed-slide");
+    if (!slide) return;
+
+    const gap = parseFloat(getComputedStyle(el).columnGap) || 0;
+    const step = slide.getBoundingClientRect().width + gap;
+
+    // في العربي (RTL) اتجاه السكرول معكوس
+    const rtlFactor = ar ? -1 : 1;
+
+    el.scrollBy({
+      left: direction * step * rtlFactor,
+      behavior: "smooth",
+    });
+  };
 
   return (
     <section
@@ -424,13 +487,19 @@ function Projects() {
           transition:
             background .8s ease,
             border-color .8s ease,
-            color .8s ease;
+            color .8s ease,
+            opacity .4s ease;
         }
 
-        .dp-arrow-btn:hover {
+        .dp-arrow-btn:hover:not(:disabled) {
           background: var(--dp-navy);
           border-color: var(--dp-navy);
           color: var(--dp-gold-light);
+        }
+
+        .dp-arrow-btn:disabled {
+          opacity: .3;
+          cursor: default;
         }
 
         /* ARCHITECTURAL SHOWCASE */
@@ -476,7 +545,7 @@ function Projects() {
           filter: brightness(.96);
         }
 
-        /* COMPLETED PROJECTS */
+        /* COMPLETED PROJECTS (IMAGE SLIDER) */
 
         .dp-completed-section {
           margin-top: 0;
@@ -486,168 +555,87 @@ function Projects() {
           margin-bottom: 48px;
         }
 
-        .dp-completed-grid {
-          display: grid;
-          grid-template-columns: repeat(3, minmax(0, 1fr));
+        .dp-completed-slider {
+          position: relative;
+        }
+
+        .dp-completed-track {
+          display: flex;
           gap: 24px;
+          overflow-x: auto;
+          scroll-snap-type: x mandatory;
+          scrollbar-width: none;
+          -ms-overflow-style: none;
+          -webkit-overflow-scrolling: touch;
         }
 
-        .dp-completed-card {
-          display: block;
+        .dp-completed-track::-webkit-scrollbar {
+          display: none;
+        }
+
+        .dp-completed-slide {
           position: relative;
+          flex: 0 0 calc((100% - 48px) / 3);
+          aspect-ratio: 4 / 3;
           overflow: hidden;
-          min-width: 0;
-          background: #fff;
-          border: 1px solid rgba(16,36,61,.08);
-          text-decoration: none;
-          color: inherit;
-
-          transition:
-            transform 1s cubic-bezier(.22,.61,.36,1),
-            box-shadow 1s cubic-bezier(.22,.61,.36,1),
-            border-color 1s ease;
-        }
-
-        .dp-completed-card:hover {
-          transform: translateY(-4px);
-          border-color: rgba(184,149,82,.4);
-          box-shadow: 0 20px 50px rgba(16,36,61,.08);
-        }
-
-        .dp-completed-image {
-          position: relative;
-          height: 245px;
-          overflow: hidden;
+          scroll-snap-align: start;
           background: #E8E5DE;
+          border: 1px solid rgba(184,149,82,.25);
         }
 
-        .dp-completed-image img {
+        .dp-completed-slide img {
           width: 100%;
           height: 100%;
           object-fit: cover;
           display: block;
+          user-select: none;
 
           transition:
             transform 1.6s cubic-bezier(.22,.61,.36,1),
             filter 1.4s ease;
         }
 
-        .dp-completed-card:hover .dp-completed-image img {
-          transform: scale(1.035);
+        .dp-completed-slide:hover img {
+          transform: scale(1.04);
           filter: brightness(.96);
         }
 
-        .dp-completed-image::after {
+        .dp-completed-slide::after {
           content: "";
           position: absolute;
           inset: 0;
           background: linear-gradient(
             to top,
-            rgba(10,24,39,.50),
-            transparent 55%
+            rgba(10,24,39,.55),
+            transparent 45%
           );
           pointer-events: none;
         }
 
-        .dp-completed-number {
-          position: absolute;
-          top: 18px;
-          inset-inline-start: 18px;
-          z-index: 2;
-          color: #fff;
-          background: rgba(16,36,61,.72);
-          border: 1px solid rgba(215,188,131,.35);
-          backdrop-filter: blur(10px);
-          padding: 8px 11px;
-          font-family: 'DM Sans', sans-serif;
-          font-size: 9px;
-          letter-spacing: 1.5px;
-        }
-
-        .dp-completed-image-label {
+        .dp-completed-name {
           position: absolute;
           bottom: 20px;
-          inset-inline-start: 20px;
+          inset-inline-start: 22px;
+          inset-inline-end: 22px;
           z-index: 2;
-          color: rgba(255,255,255,.85);
+          color: #fff;
           font-family: 'DM Sans', sans-serif;
-          font-size: 9px;
-          letter-spacing: 1.5px;
-        }
-
-        .dp-completed-content {
-          padding: 23px 22px 22px;
-        }
-
-        .dp-completed-tag {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          color: #96743E;
-          font-size: 9px;
+          font-size: 12px;
           font-weight: 600;
-          letter-spacing: 1.5px;
-          margin-bottom: 14px;
+          letter-spacing: 2px;
+          direction: ltr;
+          text-align: ${ar ? "right" : "left"};
+          text-shadow: 0 2px 10px rgba(0,0,0,.35);
         }
 
-        .dp-completed-tag i {
-          width: 5px;
-          height: 5px;
-          background: var(--dp-gold);
-          border-radius: 50%;
-        }
-
-        .dp-completed-name {
-          color: var(--dp-navy);
-          font-family: 'Playfair Display', serif;
-          font-size: 20px;
-          font-weight: 500;
-          line-height: 1.4;
-          margin: 0;
-
-          transition: color 1s ease;
-        }
-
-        .dp-completed-card:hover .dp-completed-name {
-          color: var(--dp-gold);
-        }
-
-        .dp-completed-footer {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: 10px;
-          border-top: 1px solid rgba(16,36,61,.10);
-          margin-top: 18px;
-          padding-top: 16px;
-        }
-
-        .dp-completed-status {
-          display: flex;
-          align-items: center;
-          gap: 7px;
-          color: #85888B;
-          font-size: 10px;
-        }
-
-        .dp-completed-status i {
-          width: 5px;
-          height: 5px;
-          background: var(--dp-gold);
-          border-radius: 50%;
-        }
-
-        .dp-completed-arrow {
-          color: var(--dp-gold);
-          font-size: 17px;
-          transition:
-            color 1s ease,
-            transform 1s cubic-bezier(.22,.61,.36,1);
-        }
-
-        .dp-completed-card:hover .dp-completed-arrow {
-          color: var(--dp-navy);
-          transform: translateX(${ar ? "-3px" : "3px"});
+        .dp-completed-name::before {
+          content: "";
+          display: block;
+          width: 26px;
+          height: 1px;
+          background: var(--dp-gold-light);
+          margin-bottom: 10px;
+          ${ar ? "margin-left: auto;" : ""}
         }
 
         /* RESPONSIVE */
@@ -665,12 +653,8 @@ function Projects() {
             margin: 90px auto;
           }
 
-          .dp-completed-image {
-            height: 210px;
-          }
-
-          .dp-completed-content {
-            padding: 20px 18px;
+          .dp-completed-slide {
+            flex: 0 0 calc((100% - 24px) / 2);
           }
         }
 
@@ -741,30 +725,17 @@ function Projects() {
             margin-inline-start: auto;
           }
 
-          .dp-completed-grid {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 15px;
+          .dp-completed-track {
+            gap: 14px;
           }
 
-          .dp-completed-image {
-            height: 175px;
-          }
-
-          .dp-completed-content {
-            padding: 17px 14px;
+          .dp-completed-slide {
+            flex: 0 0 100%;
           }
 
           .dp-completed-name {
-            font-size: 17px;
-          }
-
-          .dp-completed-footer {
-            margin-top: 14px;
-            padding-top: 13px;
-          }
-
-          .dp-completed-status {
-            font-size: 9px;
+            font-size: 11px;
+            bottom: 16px;
           }
         }
 
@@ -788,18 +759,6 @@ function Projects() {
           .dp-progress {
             width: 55px;
           }
-
-          .dp-completed-grid {
-            grid-template-columns: 1fr;
-          }
-
-          .dp-completed-image {
-            height: 230px;
-          }
-
-          .dp-completed-name {
-            font-size: 20px;
-          }
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -808,6 +767,10 @@ function Projects() {
           .dar-projects *::after {
             animation: none !important;
             transition: none !important;
+          }
+
+          .dp-completed-track {
+            scroll-behavior: auto;
           }
         }
       `}</style>
@@ -979,54 +942,64 @@ function Projects() {
           </p>
         </div>
 
-        {/* COMPLETED PROJECTS GRID */}
+        {/* COMPLETED PROJECTS (IMAGE SLIDER) */}
 
         <div className="dp-completed-section">
-          <div className="dp-completed-grid">
-            {completedProjects.map((project, i) => (
-              <div
-                className="dp-completed-card"
-                key={project.name}
-              >
-                <div className="dp-completed-image">
+          <div className="dp-completed-slider">
+            <div className="dp-completed-track" ref={trackRef}>
+              {completedProjects.map((project) => (
+                <div className="dp-completed-slide" key={project.name}>
                   <img
                     src={project.image}
                     alt={project.name}
                     loading="lazy"
+                    draggable="false"
                   />
 
-                  <span className="dp-completed-number">
-                    0{i + 1} / 05
-                  </span>
-
-                  <span className="dp-completed-image-label">
-                    DAR DEVELOPMENTS
+                  <span className="dp-completed-name">
+                    {project.name}
                   </span>
                 </div>
+              ))}
+            </div>
 
-                <div className="dp-completed-content">
-                  <div className="dp-completed-tag">
-                    <i />
-                    {ar ? "مشروع مكتمل" : "COMPLETED PROJECT"}
-                  </div>
+            {/* SLIDER NAVIGATION */}
 
-                  <h3 className="dp-completed-name">
-                    {project.name}
-                  </h3>
-
-                  <div className="dp-completed-footer">
-                    <span className="dp-completed-status">
-                      <i />
-                      {ar ? "تم التنفيذ" : "Successfully Delivered"}
-                    </span>
-
-                    <span className="dp-completed-arrow">
-                      {ar ? "←" : "→"}
-                    </span>
-                  </div>
+            <div className="dp-controls">
+              <div className="dp-controls-info">
+                <div className="dp-progress">
+                  <div
+                    className="dp-progress-fill"
+                    style={{
+                      width: `${scrollState.thumb}%`,
+                      insetInlineStart: `${scrollState.offset}%`,
+                    }}
+                  />
                 </div>
               </div>
-            ))}
+
+              <div className="dp-arrows">
+                <button
+                  type="button"
+                  className="dp-arrow-btn"
+                  onClick={() => scrollCompleted(-1)}
+                  disabled={!scrollState.canPrev}
+                  aria-label={ar ? "السابق" : "Previous"}
+                >
+                  {ar ? "→" : "←"}
+                </button>
+
+                <button
+                  type="button"
+                  className="dp-arrow-btn"
+                  onClick={() => scrollCompleted(1)}
+                  disabled={!scrollState.canNext}
+                  aria-label={ar ? "التالي" : "Next"}
+                >
+                  {ar ? "←" : "→"}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 
