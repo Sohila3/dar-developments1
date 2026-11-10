@@ -173,24 +173,27 @@ function Hero() {
           animation: heroZoom 7s ease-out both;
         }
 
-        .dar-hero-overlay {
-          position: absolute;
-          inset: 0;
-          z-index: 1;
-          background:
-            linear-gradient(
-              90deg,
-              rgba(8,18,27,.80) 0%,
-              rgba(8,18,27,.57) 40%,
-              rgba(8,18,27,.15) 75%,
-              rgba(8,18,27,.18) 100%
-            ),
-            linear-gradient(
-              0deg,
-              rgba(8,18,27,.65) 0%,
-              transparent 40%
-            );
-        }
+    
+.dar-hero-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(5, 14, 23, 0.96) 0%,
+      rgba(5, 14, 23, 0.82) 32%,
+      rgba(5, 14, 23, 0.52) 58%,
+      rgba(5, 14, 23, 0.16) 100%
+    ),
+    linear-gradient(
+      0deg,
+      rgba(5, 14, 23, 0.82) 0%,
+      rgba(5, 14, 23, 0.08) 55%,
+      rgba(5, 14, 23, 0.20) 100%
+    );
+}
+
 
         /* HERO CONTENT */
 
