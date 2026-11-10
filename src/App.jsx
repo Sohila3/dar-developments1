@@ -1,11 +1,9 @@
-
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { LanguageProvider } from "./context/LanguageContext";
 
 import Home from "./pages/Home";
 import AboutMore from "./pages/AboutMore";
 import ScrollToTop from "./components/ScrollToTop";
-import ScrollToSection from "./components/ScrollToSection";
 import SocialSidebar from "./components/SocialSidebar";
 
 import ProjectElwroodPage from "./pages/ProjectElwroodPage";
@@ -17,7 +15,6 @@ function App() {
   return (
     <LanguageProvider>
       <ScrollToTop />
-      <ScrollToSection />
 
       {/* Fixed Social Media Icons */}
       <SocialSidebar />
@@ -29,7 +26,9 @@ function App() {
         <Route path="/projects/landmark" element={<ProjectLandmarkPage />} />
         <Route path="/projects/damac" element={<ProjectDamacPage />} />
         <Route path="/projects/palm2" element={<ProjectPalm2Page />} />
-        <Route path="*" element={<Home />} />
+
+        {/* أي رابط غلط يرجع للرئيسية ويصلّح الرابط في المتصفح */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </LanguageProvider>
   );
