@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { useLanguage } from "../context/LanguageContext";
 
@@ -36,22 +37,26 @@ function AboutMore() {
     return () => clearInterval(interval);
   }, [visible]);
 
-  const dir = lang === "ar" ? "rtl" : "ltr";
-  const textAlign = lang === "ar" ? "right" : "left";
+  const ar = lang === "ar";
+  const dir = ar ? "rtl" : "ltr";
+  const textAlign = ar ? "right" : "left";
+
+  const homeLabel = t("navbar", "home") || (ar ? "الرئيسية" : "Home");
+  const aboutLabel = ar ? "عن دار" : "About Dar";
 
   return (
     <div
       className="w-full overflow-x-hidden"
       style={{
         background: "linear-gradient(180deg,#ffffff 0%,#f5f9ff 50%)",
-        fontFamily: lang === "ar" ? "'IBM Plex Sans Arabic', sans-serif" : "'Montserrat', sans-serif",
+        fontFamily: ar ? "'IBM Plex Sans Arabic', sans-serif" : "'Montserrat', sans-serif",
         direction: dir,
       }}
     >
       <Navbar />
       <div className="h-20" />
       <style>{`
-      
+
 @keyframes floating {
   0% { transform: translateY(0px); }
   25% { transform: translateY(-12px); }
@@ -66,7 +71,51 @@ function AboutMore() {
   .floating-img.delay {
   animation-delay: 2.5s;
 }
+
+/* ═════════ BREADCRUMB ═════════ */
+.about-breadcrumb {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 28px 24px 0;
+  font-size: 13px;
+  font-weight: 500;
+}
+.about-breadcrumb a {
+  color: rgba(11,26,46,.6);
+  text-decoration: none;
+  transition: color .25s ease;
+}
+.about-breadcrumb a:hover { color: #C9A84C; }
+.about-bc-sep {
+  color: #C9A84C;
+  font-size: 16px;
+  line-height: 1;
+}
+.about-breadcrumb [aria-current="page"] {
+  color: #0B1A2E;
+  font-weight: 700;
+}
+
+@media (min-width: 768px) {
+  .about-breadcrumb { padding: 34px 64px 0; }
+}
+@media (max-width: 600px) {
+  .about-breadcrumb { font-size: 12px; padding-top: 20px; }
+}
 `}</style>
+
+      {/* BREADCRUMB */}
+      <nav className="about-breadcrumb" aria-label="breadcrumb" dir={dir}>
+        <Link to="/">{homeLabel}</Link>
+        <span className="about-bc-sep" aria-hidden="true">
+          {ar ? "‹" : "›"}
+        </span>
+        <span aria-current="page">{aboutLabel}</span>
+      </nav>
 
       {/* HERO */}
       <section className="py-32 px-6 md:px-16 relative overflow-hidden">
@@ -118,7 +167,7 @@ function AboutMore() {
       <section className="flex flex-col md:flex-row gap-2 md:gap-4">
         <div className="w-full md:w-1/2 h-[600px] overflow-hidden">
           <img
-             src={lang === "ar" ? contactImg : contactImgEn}
+             src={ar ? contactImg : contactImgEn}
              className="w-full h-full object-cover hover:scale-105 transition duration-700 floating-img delay"
           />
         </div>
@@ -184,7 +233,7 @@ function AboutMore() {
         </div>
       </section>
 
-<Contact />
+      <Contact />
     </div>
   );
 }

@@ -1758,25 +1758,7 @@ function ProjectPalm2Page() {
             <span className="palm-select-arrow">▼</span>
           </div>
 
-          {areaOptions.length > 0 && (
-            <div className="palm-select-wrap">
-              <select
-                name="area"
-                className="palm-select"
-                value={formData.area}
-                onChange={handleChange}
-                style={{ direction: dir }}
-              >
-                <option value="">{ar ? "اختر المساحة" : "Select area"}</option>
-                {areaOptions.map((a) => (
-                  <option key={a} value={a}>
-                    {ar ? `${a} م²` : `${a} m²`}
-                  </option>
-                ))}
-              </select>
-              <span className="palm-select-arrow">▼</span>
-            </div>
-          )}
+
 
           <button type="button" className="palm-wa-btn" onClick={openWhatsApp}>
             <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor">
