@@ -1,3 +1,4 @@
+
 import { Routes, Route, Navigate } from "react-router-dom";
 import { LanguageProvider } from "./context/LanguageContext";
 
@@ -19,17 +20,40 @@ function App() {
       {/* Fixed Social Media Icons */}
       <SocialSidebar />
 
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/about-more" element={<AboutMore />} />
-        <Route path="/projects/elwrood" element={<ProjectElwroodPage />} />
-        <Route path="/projects/landmark" element={<ProjectLandmarkPage />} />
-        <Route path="/projects/damac" element={<ProjectDamacPage />} />
-        <Route path="/projects/palm2" element={<ProjectPalm2Page />} />
+      {/* Main Content */}
+      <main id="main-content" tabIndex="-1">
+        <Routes>
+          <Route path="/" element={<Home />} />
 
-        {/* أي رابط غلط يرجع للرئيسية ويصلّح الرابط في المتصفح */}
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+          <Route path="/about-more" element={<AboutMore />} />
+
+          <Route
+            path="/projects/elwrood"
+            element={<ProjectElwroodPage />}
+          />
+
+          <Route
+            path="/projects/landmark"
+            element={<ProjectLandmarkPage />}
+          />
+
+          <Route
+            path="/projects/damac"
+            element={<ProjectDamacPage />}
+          />
+
+          <Route
+            path="/projects/palm2"
+            element={<ProjectPalm2Page />}
+          />
+
+          {/* Invalid routes redirect to homepage */}
+          <Route
+            path="*"
+            element={<Navigate to="/" replace />}
+          />
+        </Routes>
+      </main>
     </LanguageProvider>
   );
 }

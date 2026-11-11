@@ -13,17 +13,17 @@ const SLIDES = [palm5, palm1, palm3, palm6, palm8];
 const SLIDE_MS = 5500;
 
 const TICKER = [
-  { label: "DAR DAMAC", to: "/projects/damac" },
-  { label: "DAR LANDMARK", to: "/projects/landmark" },
-  { label: "DAR ELWROOD", to: "/projects/elwrood" },
-  { label: "PALM 2", to: "/projects/palm2" },
+  { labelAr: "دار داماك", labelEn: "DAR DAMAC", to: "/projects/damac" },
+  { labelAr: "دار لاند مارك", labelEn: "DAR LANDMARK", to: "/projects/landmark" },
+  { labelAr: "دار الورود", labelEn: "DAR ELWROOD", to: "/projects/elwrood" },
+  { labelAr: "بالم 2", labelEn: "PALM 2", to: "/projects/palm2" },
 ];
 
 function Hero() {
   const { lang } = useLanguage();
   const ar = lang === "ar";
-  const slidesRef = useRef(null);
 
+  const slidesRef = useRef(null);
   const [{ active }, setSlide] = useState({ active: 0, prev: -1 });
 
   const goTo = (i) => {
@@ -55,10 +55,14 @@ function Hero() {
         return;
       }
 
-      el.style.transform = `translateY(${Math.min(window.scrollY, 400) * 0.04}px) scale(1.08)`;
+      el.style.transform = `translateY(${Math.min(
+        window.scrollY,
+        400
+      ) * 0.04}px) scale(1.08)`;
     };
 
     onScroll();
+
     window.addEventListener("scroll", onScroll, { passive: true });
 
     return () => window.removeEventListener("scroll", onScroll);
@@ -113,7 +117,7 @@ function Hero() {
           --dar-ivory: #F8F6F1;
           --dar-navy: #10243D;
           --dar-gold: #B89552;
-          --dar-gold-light: #D7BC83;
+          --dar-gold-light: #F0D69A;
         }
 
         @keyframes heroFadeUp {
@@ -173,39 +177,54 @@ function Hero() {
           animation: heroZoom 7s ease-out both;
         }
 
-    
-.dar-hero-overlay {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  background:
-    linear-gradient(
-      90deg,
-      rgba(5, 14, 23, 0.96) 0%,
-      rgba(5, 14, 23, 0.82) 32%,
-      rgba(5, 14, 23, 0.52) 58%,
-      rgba(5, 14, 23, 0.16) 100%
-    ),
-    linear-gradient(
-      0deg,
-      rgba(5, 14, 23, 0.82) 0%,
-      rgba(5, 14, 23, 0.08) 55%,
-      rgba(5, 14, 23, 0.20) 100%
-    );
-}
+        /* OVERLAY */
 
+        .dar-hero-overlay {
+          position: absolute;
+          inset: 0;
+          z-index: 1;
+          background:
+            linear-gradient(
+              90deg,
+              rgba(5, 14, 23, 0.96) 0%,
+              rgba(5, 14, 23, 0.82) 32%,
+              rgba(5, 14, 23, 0.52) 58%,
+              rgba(5, 14, 23, 0.16) 100%
+            ),
+            linear-gradient(
+              0deg,
+              rgba(5, 14, 23, 0.82) 0%,
+              rgba(5, 14, 23, 0.08) 55%,
+              rgba(5, 14, 23, 0.20) 100%
+            );
+        }
 
         /* HERO CONTENT */
 
         .dar-hero-content {
           position: absolute;
           z-index: 2;
-          top: 46%;;
+          top: 46%;
           left: 7%;
           transform: translateY(-50%);
           width: min(570px, 48%);
           text-align: left;
           animation: heroFadeUp 1s .2s both;
+          text-shadow: 0 2px 18px rgba(0, 0, 0, .18);
+        }
+
+        .dar-hero-content::before {
+          content: "";
+          position: absolute;
+          z-index: -1;
+          inset: -42px -56px -38px;
+          pointer-events: none;
+          background: radial-gradient(
+            ellipse at center,
+            rgba(5, 13, 22, .30) 0%,
+            rgba(5, 13, 22, .16) 48%,
+            rgba(5, 13, 22, 0) 76%
+          );
         }
 
         .dar-hero[dir="rtl"] .dar-hero-content {
@@ -413,41 +432,66 @@ function Hero() {
           font-size: 18px;
         }
 
-        /* SLIDER */
+        /* SLIDER CONTROLS */
 
         .dar-hero-slider {
           position: absolute;
           z-index: 4;
           bottom: 32px;
-          left: 7%;
+
+          /* English: RIGHT */
+          left: auto;
+          right: 7%;
+
           display: flex;
+          flex-direction: row;
           align-items: center;
           gap: 16px;
+
           direction: ltr;
+          text-align: left;
+          unicode-bidi: isolate;
+        }
+
+        /* Arabic: LEFT */
+        .dar-hero[dir="rtl"] .dar-hero-slider {
+          left: 7%;
+          right: auto;
         }
 
         .dar-hero-number {
+          direction: ltr;
+          unicode-bidi: isolate;
           font-family: 'DM Sans', sans-serif;
           font-size: 10px;
           letter-spacing: 2px;
           color: white;
           white-space: nowrap;
+          flex-shrink: 0;
         }
 
         .dar-hero-segments {
           display: flex;
+          flex-direction: row;
+          direction: ltr;
           gap: 5px;
+          flex-shrink: 0;
         }
 
         .dar-hero-segment {
+          position: relative;
           width: 30px;
           height: 18px;
           padding: 0;
+
           display: flex;
+          flex-direction: row;
           align-items: center;
+
           background: transparent;
           border: 0;
           cursor: pointer;
+          flex-shrink: 0;
         }
 
         .dar-hero-segment::before {
@@ -460,6 +504,7 @@ function Hero() {
 
         .dar-hero-segment span {
           position: relative;
+          display: block;
           height: 1px;
           width: 0;
           background: var(--dar-gold-light);
@@ -475,13 +520,17 @@ function Hero() {
 
         .dar-hero-arrows {
           display: flex;
+          flex-direction: row;
+          direction: ltr;
           gap: 8px;
+          flex-shrink: 0;
         }
 
         .dar-hero-arrow {
           width: 38px;
           height: 38px;
           display: flex;
+          flex-direction: row;
           align-items: center;
           justify-content: center;
           color: white;
@@ -491,6 +540,7 @@ function Hero() {
           font-size: 16px;
           cursor: pointer;
           transition: all .3s;
+          flex-shrink: 0;
         }
 
         .dar-hero-arrow:hover {
@@ -513,21 +563,25 @@ function Hero() {
 
         .dar-hero-ticker-track {
           display: flex;
+          flex-direction: row;
           width: max-content;
           animation: heroTicker 42s linear infinite;
         }
 
-        .dar-hero-ticker:hover .dar-hero-ticker-track {
+        .dar-hero-ticker:hover .dar-hero-ticker-track,
+        .dar-hero-ticker:focus-within .dar-hero-ticker-track {
           animation-play-state: paused;
         }
 
         .dar-hero-ticker-group {
           display: flex;
+          flex-direction: row;
           flex-shrink: 0;
         }
 
         .dar-hero-ticker-item {
           display: inline-flex;
+          flex-direction: row;
           align-items: center;
           gap: 22px;
           padding: 0 22px;
@@ -567,10 +621,20 @@ function Hero() {
             background:
               linear-gradient(
                 0deg,
-                rgba(8,18,27,.88) 0%,
-                rgba(8,18,27,.55) 50%,
-                rgba(8,18,27,.2) 100%
+                rgba(7, 17, 28, .78) 0%,
+                rgba(7, 17, 28, .46) 52%,
+                rgba(7, 17, 28, .22) 100%
               );
+          }
+
+          .dar-hero-content::before {
+            inset: -28px -24px;
+            background: radial-gradient(
+              ellipse at center,
+              rgba(5, 13, 22, .42) 0%,
+              rgba(5, 13, 22, .20) 58%,
+              rgba(5, 13, 22, 0) 82%
+            );
           }
 
           .dar-hero-content {
@@ -620,22 +684,38 @@ function Hero() {
             display: none;
           }
 
+          /* English Mobile: RIGHT */
           .dar-hero-slider {
-            left: 24px;
+            left: auto;
+            right: 24px;
             bottom: 25px;
             gap: 10px;
+            max-width: calc(100% - 48px);
+            direction: ltr;
           }
 
-          .dar-hero-arrows {
-            display: none;
+          /* Arabic Mobile: LEFT */
+          .dar-hero[dir="rtl"] .dar-hero-slider {
+            left: 24px;
+            right: auto;
+          }
+
+          .dar-hero-segments {
+            gap: 5px;
+            flex-shrink: 0;
           }
 
           .dar-hero-segment {
             width: 22px;
+            flex-shrink: 0;
           }
 
           .dar-hero-segment::before {
             width: 22px;
+          }
+
+          .dar-hero-arrows {
+            display: none;
           }
 
           .dar-hero-ticker {
@@ -672,13 +752,22 @@ function Hero() {
           }
         }
 
+        /* REDUCED MOTION */
+
         @media (prefers-reduced-motion: reduce) {
           .dar-hero *,
           .dar-hero-ticker *,
           .dar-hero-ticker *::before {
-            animation-duration: .01ms !important;
-            animation-iteration-count: 1 !important;
-            transition-duration: .01ms !important;
+            animation: none !important;
+            transition: none !important;
+          }
+
+          .dar-hero-ticker-track {
+            transform: none !important;
+          }
+
+          .dar-hero-slides {
+            transform: none !important;
           }
         }
       `}</style>
@@ -693,6 +782,7 @@ function Hero() {
               key={i}
               src={src}
               alt=""
+              aria-hidden="true"
               className={`dar-hero-slide ${
                 i === active ? "active" : ""
               }`}
@@ -720,7 +810,7 @@ function Hero() {
 
           <div className="dar-hero-actions">
             <a href="#projects" className="dar-hero-primary">
-              <span className="dar-hero-round">
+              <span className="dar-hero-round" aria-hidden="true">
                 {ar ? "←" : "→"}
               </span>
               {copy.btn1}
@@ -732,10 +822,10 @@ function Hero() {
           </div>
         </div>
 
-        {/* Slider Controls */}
-        <div className="dar-hero-slider">
+        {/* Slider Controls - Always LTR */}
+        <div className="dar-hero-slider" dir="ltr">
 
-          <span className="dar-hero-number">
+          <span className="dar-hero-number" aria-live="off">
             0{active + 1} / 0{SLIDES.length}
           </span>
 
@@ -743,9 +833,11 @@ function Hero() {
             {SLIDES.map((_, i) => (
               <button
                 key={i}
+                type="button"
                 className="dar-hero-segment"
                 onClick={() => goTo(i)}
                 aria-label={`Slide ${i + 1}`}
+                aria-current={i === active ? "true" : undefined}
               >
                 <span
                   className={
@@ -762,6 +854,7 @@ function Hero() {
 
           <div className="dar-hero-arrows">
             <button
+              type="button"
               className="dar-hero-arrow"
               onClick={() =>
                 goTo((active - 1 + SLIDES.length) % SLIDES.length)
@@ -772,6 +865,7 @@ function Hero() {
             </button>
 
             <button
+              type="button"
               className="dar-hero-arrow"
               onClick={() =>
                 goTo((active + 1) % SLIDES.length)
@@ -785,7 +879,10 @@ function Hero() {
       </section>
 
       {/* PROJECT TICKER */}
-      <div className="dar-hero-ticker">
+      <div
+        className="dar-hero-ticker"
+        aria-label={ar ? "مشاريع دار" : "DAR projects"}
+      >
         <div className="dar-hero-ticker-track">
           {[0, 1].map((g) => (
             <div
@@ -799,9 +896,9 @@ function Hero() {
                     to={p.to}
                     tabIndex={g === 1 ? -1 : 0}
                   >
-                    {p.label}
+                    {ar ? p.labelAr : p.labelEn}
                   </Link>
-                  <i>◆</i>
+                  <i aria-hidden="true">◆</i>
                 </span>
               ))}
             </div>

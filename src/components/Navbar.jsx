@@ -1,15 +1,25 @@
-
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import logo from "../assets/logodar.jpeg";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useLanguage } from "../context/LanguageContext";
 
 function Navbar() {
   const [open, setOpen] = useState(false);
   const { lang, toggleLang, t } = useLanguage();
+  const { pathname, hash } = useLocation();
+
+  const menuBtnRef = useRef(null);
+  const closeBtnRef = useRef(null);
+  const wasOpen = useRef(false);
 
   const ar = lang === "ar";
 
+  /* اللغة على مستوى الصفحة (قارئات الشاشة + نطق الخطوط) */
+  useEffect(() => {
+    document.documentElement.lang = lang;
+  }, [lang]);
+
+  /* قفل السكرول + زرار Escape */
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
 
@@ -25,10 +35,87 @@ function Navbar() {
     };
   }, [open]);
 
+  /* الفوكس: يروح لزرار الإغلاق وقت الفتح، ويرجع لزرار القائمة وقت الإغلاق */
+  useEffect(() => {
+    if (open) {
+      closeBtnRef.current?.focus({ preventScroll: true });
+      wasOpen.current = true;
+    } else if (wasOpen.current) {
+      menuBtnRef.current?.focus({ preventScroll: true });
+      wasOpen.current = false;
+    }
+  }, [open]);
+
+  /* ================= الروابط ================= */
+
+  const mainLinks = [
+    {
+      key: "home",
+      to: "/",
+      hash: "",
+      label: t("navbar", "home") || (ar ? "الرئيسية" : "Home"),
+    },
+    {
+      key: "projects",
+      to: "/#projects",
+      hash: "#projects",
+      label: t("navbar", "projects") || (ar ? "مشاريعنا" : "Projects"),
+    },
+    {
+      key: "about",
+      to: "/#about",
+      hash: "#about",
+      label: t("navbar", "about") || (ar ? "من نحن" : "About Us"),
+    },
+    {
+      key: "contact",
+      to: "/#contact",
+      hash: "#contact",
+      label: t("navbar", "contact") || (ar ? "تواصل معنا" : "Contact"),
+    },
+  ];
+
+  const moreLinks = [
+    { key: "Mission", to: "/#Mission", hash: "#Mission", label: t("navbar", "Mission") },
+    { key: "faq", to: "/#faq", hash: "#faq", label: t("navbar", "FAQSection") },
+    { key: "partners", to: "/#partners", hash: "#partners", label: t("navbar", "partners") },
+  ];
+
+  const isActive = (link) => {
+    if (link.key === "home") return pathname === "/" && !hash;
+    if (link.key === "projects" && pathname.startsWith("/projects/")) return true;
+    return pathname === "/" && hash === link.hash;
+  };
+
+  /* لو المستخدم على نفس الرابط بالفعل، الراوتر مش بيعمل حاجة، فنسكرول بإيدينا */
+  const handleLinkClick = (link) => (e) => {
+    setOpen(false);
+
+    if (pathname !== "/") return;
+
+    if (link.key === "home" && !hash) {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+
+    if (link.hash && hash === link.hash) {
+      e.preventDefault();
+      document.querySelector(link.hash)?.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
     <>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&family=Alexandria:wght@300;400;500;600;700&display=swap');
+
+        .dar-navbar {
+          --dar-nav-bg: rgba(11, 26, 46, .78);
+          --dar-gold: #C9A84C;
+          --dar-gold-light: #D7BC83;
+          --dar-ivory: #F8F5EF;
+        }
 
         /* ================= NAVBAR GLASS ================= */
 
@@ -40,11 +127,11 @@ function Navbar() {
           height: 78px;
           z-index: 1000;
 
-          background: rgba(11, 26, 46, 0.10);
+          background: var(--dar-nav-bg);
           backdrop-filter: blur(18px) saturate(150%);
           -webkit-backdrop-filter: blur(18px) saturate(150%);
 
-          border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+          border-bottom: 1px solid rgba(255, 255, 255, 0.10);
 
           transition: background .35s ease, height .35s ease;
         }
@@ -58,11 +145,27 @@ function Navbar() {
           display: flex;
           align-items: center;
           justify-content: space-between;
+          gap: 16px;
 
           direction: ltr;
         }
 
-        /* ================= LOGO LEFT ================= */
+        /* ================= FOCUS (موحد) ================= */
+
+        .dar-navbar a:focus-visible,
+        .dar-navbar button:focus-visible,
+        .dar-sidebar a:focus-visible,
+        .dar-sidebar button:focus-visible {
+          outline: 2px solid var(--dar-gold-light);
+          outline-offset: 3px;
+        }
+
+        .dar-sidebar a:focus-visible,
+        .dar-sidebar button:focus-visible {
+          outline-color: #8F6B32;
+        }
+
+        /* ================= LOGO ================= */
 
         .dar-nav-logo {
           display: flex;
@@ -90,12 +193,99 @@ function Navbar() {
         }
 
         .dar-nav-logo span {
-          color: #F8F5EF;
+          color: var(--dar-ivory);
 
           font-family: 'DM Sans', sans-serif;
           font-size: 16px;
           font-weight: 600;
           letter-spacing: 6px;
+        }
+
+        /* ================= DESKTOP LINKS ================= */
+
+        .dar-nav-links {
+          display: none;
+          flex: 1;
+          justify-content: center;
+          min-width: 0;
+        }
+
+        .dar-nav-links ul {
+          display: flex;
+          align-items: center;
+          gap: 30px;
+
+          list-style: none;
+          margin: 0;
+          padding: 0;
+        }
+
+        .dar-nav-link {
+          position: relative;
+          display: inline-block;
+
+          padding: 8px 2px;
+
+          color: rgba(248, 245, 239, .9);
+          text-decoration: none;
+          white-space: nowrap;
+
+          font-family: ${ar ? "'Alexandria', sans-serif" : "'DM Sans', sans-serif"};
+          font-size: ${ar ? "13.5px" : "13px"};
+          font-weight: 500;
+          letter-spacing: ${ar ? "0" : "1.2px"};
+
+          transition: color .3s ease;
+        }
+
+        .dar-nav-link::after {
+          content: "";
+          position: absolute;
+          left: 2px;
+          right: 2px;
+          bottom: 1px;
+
+          height: 1.5px;
+          background: var(--dar-gold-light);
+
+          transform: scaleX(0);
+          transform-origin: center;
+
+          transition: transform .35s ease;
+        }
+
+        .dar-nav-link:hover {
+          color: var(--dar-gold-light);
+        }
+
+        .dar-nav-link:hover::after,
+        .dar-nav-link.is-active::after {
+          transform: scaleX(1);
+        }
+
+        .dar-nav-link.is-active {
+          color: var(--dar-gold-light);
+        }
+
+        @media (min-width: 1024px) {
+          .dar-nav-links {
+            display: flex;
+          }
+        }
+
+        @media (min-width: 1024px) and (max-width: 1199px) {
+          .dar-nav-inner {
+            padding: 0 3.5%;
+          }
+
+          .dar-nav-links ul {
+            gap: 20px;
+          }
+
+          .dar-nav-link {
+            font-size: ${ar ? "12.5px" : "12px"};
+            letter-spacing: ${ar ? "0" : ".8px"};
+          }
         }
 
         /* ================= RIGHT CONTROLS ================= */
@@ -115,8 +305,8 @@ function Navbar() {
           align-items: center;
           gap: 10px;
 
-          background: rgba(255, 255, 255, .025);
-          border: 1px solid rgba(255, 255, 255, .28);
+          background: rgba(255, 255, 255, .04);
+          border: 1px solid rgba(255, 255, 255, .34);
 
           padding: 9px 14px;
 
@@ -129,8 +319,15 @@ function Navbar() {
         }
 
         .dar-lang-btn:hover {
-          border-color: #C9A84C;
-          background: rgba(255, 255, 255, .06);
+          border-color: var(--dar-gold-light);
+          background: rgba(255, 255, 255, .08);
+        }
+
+        .dar-lang-ar,
+        .dar-lang-en {
+          position: relative;
+          color: rgba(255, 255, 255, .78);
+          transition: color .3s ease;
         }
 
         .dar-lang-ar {
@@ -144,11 +341,28 @@ function Navbar() {
           font-weight: 600;
         }
 
+        .dar-lang-ar.is-active,
+        .dar-lang-en.is-active {
+          color: var(--dar-gold-light);
+        }
+
+        .dar-lang-ar.is-active::after,
+        .dar-lang-en.is-active::after {
+          content: "";
+          position: absolute;
+          left: 0;
+          right: 0;
+          bottom: -5px;
+
+          height: 1.5px;
+          background: var(--dar-gold-light);
+        }
+
         .dar-lang-divider {
           width: 1px;
           height: 13px;
 
-          background: rgba(255, 255, 255, .3);
+          background: rgba(255, 255, 255, .34);
         }
 
         /* ================= MENU BUTTON ================= */
@@ -157,8 +371,8 @@ function Navbar() {
           width: 43px;
           height: 43px;
 
-          background: rgba(255, 255, 255, .025);
-          border: 1px solid rgba(255, 255, 255, .28);
+          background: rgba(255, 255, 255, .04);
+          border: 1px solid rgba(255, 255, 255, .34);
 
           display: flex;
           flex-direction: column;
@@ -174,15 +388,15 @@ function Navbar() {
         }
 
         .dar-menu-btn:hover {
-          border-color: #C9A84C;
-          background: rgba(255, 255, 255, .06);
+          border-color: var(--dar-gold-light);
+          background: rgba(255, 255, 255, .08);
         }
 
         .dar-menu-btn span {
           width: 19px;
           height: 1.5px;
 
-          background: #F8F5EF;
+          background: var(--dar-ivory);
 
           transition: width .3s ease, background .3s ease;
         }
@@ -194,7 +408,7 @@ function Navbar() {
 
         .dar-menu-btn:hover span {
           width: 19px;
-          background: #C9A84C;
+          background: var(--dar-gold-light);
         }
 
         /* ================= OVERLAY ================= */
@@ -294,7 +508,7 @@ function Navbar() {
           align-items: center;
 
           background: transparent;
-          border: 1px solid rgba(11, 26, 46, .15);
+          border: 1px solid rgba(11, 26, 46, .25);
 
           color: #0B1A2E;
           font-size: 25px;
@@ -307,7 +521,7 @@ function Navbar() {
 
         .dar-sidebar-close:hover {
           background: #0B1A2E;
-          color: #C9A84C;
+          color: var(--dar-gold-light);
           border-color: #0B1A2E;
         }
 
@@ -326,7 +540,7 @@ function Navbar() {
         }
 
         .dar-sidebar-label {
-          color: #9B8350;
+          color: #7A6232;
 
           font-family: 'DM Sans', sans-serif;
           font-size: 10px;
@@ -360,7 +574,7 @@ function Navbar() {
         .dar-sidebar-link::after {
           content: '↗';
 
-          color: #C9A84C;
+          color: #B89552;
           font-size: 15px;
 
           opacity: 0;
@@ -369,12 +583,14 @@ function Navbar() {
           transition: all .3s ease;
         }
 
-        .dar-sidebar-link:hover {
-          color: #9B8350;
-          padding-left: 8px;
+        .dar-sidebar-link:hover,
+        .dar-sidebar-link.is-active {
+          color: #7A6232;
+          padding-inline-start: 8px;
         }
 
-        .dar-sidebar-link:hover::after {
+        .dar-sidebar-link:hover::after,
+        .dar-sidebar-link.is-active::after {
           opacity: 1;
           transform: translate(0, 0);
         }
@@ -421,7 +637,7 @@ function Navbar() {
         .dar-sidebar-footer span {
           font-family: 'DM Sans', sans-serif;
 
-          color: #8A8A82;
+          color: #6F6F68;
           font-size: 10px;
           letter-spacing: 2px;
         }
@@ -446,10 +662,6 @@ function Navbar() {
         @media (max-width: 600px) {
           .dar-navbar {
             height: 65px;
-
-            background: rgba(11, 26, 46, .10);
-            backdrop-filter: blur(16px) saturate(150%);
-            -webkit-backdrop-filter: blur(16px) saturate(150%);
           }
 
           .dar-nav-inner {
@@ -608,53 +820,87 @@ function Navbar() {
             height: 30px;
           }
         }
+
+        /* ================= REDUCED MOTION ================= */
+
+        @media (prefers-reduced-motion: reduce) {
+          .dar-navbar *,
+          .dar-navbar *::after,
+          .dar-sidebar,
+          .dar-sidebar *,
+          .dar-sidebar *::after,
+          .dar-menu-overlay {
+            transition-duration: .01ms !important;
+          }
+        }
       `}</style>
 
       {/* ================= NAVBAR ================= */}
 
-      <nav className="dar-navbar">
+      <nav className="dar-navbar" aria-label={ar ? "التنقل الرئيسي" : "Main navigation"}>
         <div className="dar-nav-inner">
 
-          {/* LEFT - LOGO */}
+          {/* LOGO */}
 
-          <Link to="/" className="dar-nav-logo">
-            <img src={logo} alt="DAR Developments" />
+          <Link
+            to="/"
+            className="dar-nav-logo"
+            aria-label={ar ? "دار للتطوير العقاري — الرئيسية" : "DAR Developments — Home"}
+            onClick={handleLinkClick(mainLinks[0])}
+          >
+            <img src={logo} alt="" />
             <span>DAR</span>
           </Link>
 
-          {/* RIGHT - LANGUAGE + MENU */}
+          {/* DESKTOP LINKS */}
+
+          <div className="dar-nav-links">
+            <ul dir={ar ? "rtl" : "ltr"}>
+              {mainLinks.map((link) => {
+                const active = isActive(link);
+
+                return (
+                  <li key={link.key}>
+                    <Link
+                      to={link.to}
+                      className={`dar-nav-link ${active ? "is-active" : ""}`}
+                      aria-current={active ? "page" : undefined}
+                      onClick={handleLinkClick(link)}
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+
+          {/* LANGUAGE + MENU */}
 
           <div className="dar-nav-right">
 
             {/* LANGUAGE */}
 
             <button
+              type="button"
               className="dar-lang-btn"
               onClick={toggleLang}
-              aria-label="Switch language"
+              lang={ar ? "en" : "ar"}
+              aria-label={ar ? "Switch to English" : "التبديل إلى العربية"}
+              title={ar ? "Switch to English" : "التبديل إلى العربية"}
             >
               <span
-                className="dar-lang-ar"
-                style={{
-                  color:
-                    lang === "ar"
-                      ? "#C9A84C"
-                      : "rgba(255,255,255,.6)",
-                }}
+                className={`dar-lang-ar ${ar ? "is-active" : ""}`}
+                lang="ar"
               >
                 عربي
               </span>
 
-              <span className="dar-lang-divider" />
+              <span className="dar-lang-divider" aria-hidden="true" />
 
               <span
-                className="dar-lang-en"
-                style={{
-                  color:
-                    lang === "en"
-                      ? "#C9A84C"
-                      : "rgba(255,255,255,.6)",
-                }}
+                className={`dar-lang-en ${!ar ? "is-active" : ""}`}
+                lang="en"
               >
                 EN
               </span>
@@ -663,9 +909,11 @@ function Navbar() {
             {/* MENU */}
 
             <button
+              type="button"
+              ref={menuBtnRef}
               className="dar-menu-btn"
               onClick={() => setOpen(true)}
-              aria-label="Open menu"
+              aria-label={ar ? "فتح القائمة" : "Open menu"}
               aria-expanded={open}
               aria-controls="dar-sidebar"
             >
@@ -692,6 +940,7 @@ function Navbar() {
         id="dar-sidebar"
         className={`dar-sidebar ${open ? "active" : ""}`}
         dir={ar ? "rtl" : "ltr"}
+        aria-label={ar ? "القائمة" : "Menu"}
         aria-hidden={!open}
         inert={!open}
       >
@@ -701,17 +950,19 @@ function Navbar() {
         <div className="dar-sidebar-header">
 
           <div className="dar-sidebar-brand">
-            <img src={logo} alt="DAR Logo" />
+            <img src={logo} alt="" />
             <span>DAR</span>
           </div>
 
           <button
+            type="button"
+            ref={closeBtnRef}
             className="dar-sidebar-close"
             onClick={() => setOpen(false)}
-            aria-label="Close menu"
+            aria-label={ar ? "إغلاق القائمة" : "Close menu"}
             tabIndex={open ? 0 : -1}
           >
-            ×
+            <span aria-hidden="true">×</span>
           </button>
 
         </div>
@@ -724,77 +975,31 @@ function Navbar() {
             {ar ? "اكتشف دار" : "Discover DAR"}
           </span>
 
+          {[...mainLinks.slice(0, 3), ...moreLinks, mainLinks[3]].map((link) => {
+            const active = isActive(link);
+
+            return (
+              <Link
+                key={link.key}
+                to={link.to}
+                className={`dar-sidebar-link ${active ? "is-active" : ""}`}
+                aria-current={active ? "page" : undefined}
+                onClick={handleLinkClick(link)}
+                tabIndex={open ? 0 : -1}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
+
           <Link
-            to="/"
-            className="dar-sidebar-link"
-            onClick={() => setOpen(false)}
-            tabIndex={open ? 0 : -1}
-          >
-            {t("navbar", "home")}
-          </Link>
-
-          <a
-            href="/#about"
-            className="dar-sidebar-link"
-            onClick={() => setOpen(false)}
-            tabIndex={open ? 0 : -1}
-          >
-            {t("navbar", "about")}
-          </a>
-
-          <a
-            href="/#Mission"
-            className="dar-sidebar-link"
-            onClick={() => setOpen(false)}
-            tabIndex={open ? 0 : -1}
-          >
-            {t("navbar", "Mission")}
-          </a>
-
-          <a
-            href="/#faq"
-            className="dar-sidebar-link"
-            onClick={() => setOpen(false)}
-            tabIndex={open ? 0 : -1}
-          >
-            {t("navbar", "FAQSection")}
-          </a>
-
-          <a
-            href="/#projects"
-            className="dar-sidebar-link"
-            onClick={() => setOpen(false)}
-            tabIndex={open ? 0 : -1}
-          >
-            {t("navbar", "projects")}
-          </a>
-
-          <a
-            href="/#partners"
-            className="dar-sidebar-link"
-            onClick={() => setOpen(false)}
-            tabIndex={open ? 0 : -1}
-          >
-            {t("navbar", "partners")}
-          </a>
-
-          <a
-            href="/#contact"
-            className="dar-sidebar-link"
-            onClick={() => setOpen(false)}
-            tabIndex={open ? 0 : -1}
-          >
-            {t("navbar", "contact")}
-          </a>
-
-          <a
-            href="/#contact"
+            to="/#contact"
             className="dar-sidebar-contact"
-            onClick={() => setOpen(false)}
+            onClick={handleLinkClick(mainLinks[3])}
             tabIndex={open ? 0 : -1}
           >
             {ar ? "تواصل معنا" : "Contact Us"}
-          </a>
+          </Link>
 
         </div>
 
@@ -802,7 +1007,7 @@ function Navbar() {
 
         <div className="dar-sidebar-footer">
           <span>DAR DEVELOPMENTS</span>
-          <div className="dar-sidebar-footer-line" />
+          <div className="dar-sidebar-footer-line" aria-hidden="true" />
         </div>
 
       </aside>
