@@ -193,6 +193,10 @@ function Hero() {
     height: auto;
     min-height: 0;
     max-height: none;
+
+    /* مساحة للـ Navbar */
+    margin-top: 75px;
+
     aspect-ratio: 1600 / 900;
     background: #10243D;
     overflow: hidden;
@@ -205,39 +209,8 @@ function Hero() {
     object-fit: contain;
     object-position: center;
   }
-
-  .dar-hero-actions {
-    left: 5%;
-    right: 5%;
-    bottom: 12px;
-    gap: 8px;
-    flex-wrap: wrap;
-  }
-
-  .dar-hero[dir="rtl"] .dar-hero-actions {
-    left: 5%;
-    right: 5%;
-  }
-
-  .dar-hero-btn {
-    min-height: 36px;
-    padding: 0 12px;
-    font-size: 10px;
-  }
-
-  .dar-hero-ticker {
-    height: 40px;
-  }
-
-  .dar-hero-ticker-item {
-    padding: 0 15px;
-    gap: 15px;
-  }
-
-  .dar-hero-ticker-item a {
-    font-size: 9px;
-  }
 }
+
 
 
         @media (max-width: 380px) {
