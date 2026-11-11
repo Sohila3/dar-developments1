@@ -184,55 +184,61 @@ function Hero() {
           font-style: normal;
         }
 
-        /* MOBILE */
+    
+/* MOBILE */
 
-        @media (max-width: 767px) {
-          .dar-hero {
-            height: auto;
-            min-height: 0;
-            max-height: none;
-            aspect-ratio: 4 / 5;
-          }
+@media (max-width: 767px) {
+  .dar-hero {
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    max-height: none;
+    aspect-ratio: 1600 / 900;
+    background: #10243D;
+    overflow: hidden;
+  }
 
-          .dar-hero-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            object-position: center;
-          }
+  .dar-hero-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+  }
 
-          .dar-hero-actions {
-            left: 8%;
-            right: 8%;
-            bottom: 18px;
-            gap: 8px;
-            flex-wrap: wrap;
-          }
+  .dar-hero-actions {
+    left: 5%;
+    right: 5%;
+    bottom: 12px;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
 
-          .dar-hero[dir="rtl"] .dar-hero-actions {
-            left: 8%;
-            right: 8%;
-          }
+  .dar-hero[dir="rtl"] .dar-hero-actions {
+    left: 5%;
+    right: 5%;
+  }
 
-          .dar-hero-btn {
-            min-height: 42px;
-            padding: 0 13px;
-            font-size: 10px;
-          }
+  .dar-hero-btn {
+    min-height: 36px;
+    padding: 0 12px;
+    font-size: 10px;
+  }
 
-          .dar-hero-ticker {
-            height: 40px;
-          }
+  .dar-hero-ticker {
+    height: 40px;
+  }
 
-          .dar-hero-ticker-item {
-            padding: 0 15px;
-            gap: 15px;
-          }
+  .dar-hero-ticker-item {
+    padding: 0 15px;
+    gap: 15px;
+  }
 
-          .dar-hero-ticker-item a {
-            font-size: 9px;
-          }
-        }
+  .dar-hero-ticker-item a {
+    font-size: 9px;
+  }
+}
+
 
         @media (max-width: 380px) {
           .dar-hero-actions {
