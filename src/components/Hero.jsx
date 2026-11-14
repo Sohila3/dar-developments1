@@ -1,16 +1,14 @@
-
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useLanguage } from "../context/LanguageContext";
 
-import palm1 from "../assets/palm1.jpeg";
-import palm3 from "../assets/palm3.jpeg";
-import palm5 from "../assets/palm5.jpeg";
-import palm6 from "../assets/palm6.jpeg";
-import palm8 from "../assets/palm8.jpeg";
+import heroVideo from "../assets/Hero.mp4";
 
-const SLIDES = [palm5, palm1, palm3, palm6, palm8];
-const SLIDE_MS = 5500;
+// بلور على الفيديو كله. 0 = فيديو واضح تماماً (زوديها مثلاً 3 لو عايزة لمسة بلور)
+const VIDEO_BLUR_PX = 0;
+
+// قوة البلور (الزجاج) اللي ورا الكلام بس
+const FROST_BLUR_PX = 12;
 
 const TICKER = [
   { labelAr: "دار داماك", labelEn: "DAR DAMAC", to: "/projects/damac" },
@@ -23,49 +21,50 @@ function Hero() {
   const { lang } = useLanguage();
   const ar = lang === "ar";
 
-  const slidesRef = useRef(null);
-  const [{ active }, setSlide] = useState({ active: 0, prev: -1 });
+  const videoRef = useRef(null);
+  const [videoReady, setVideoReady] = useState(false);
 
-  const goTo = (i) => {
-    setSlide((s) =>
-      i === s.active ? s : { active: i, prev: s.active }
-    );
-  };
-
-  // Autoplay
+  // الفيديو يفضل شغال: لو المتصفح وقّفه لأي سبب بنشغله تاني
   useEffect(() => {
-    const id = setTimeout(() => {
-      setSlide((s) => ({
-        active: (s.active + 1) % SLIDES.length,
-        prev: s.active,
-      }));
-    }, SLIDE_MS);
+    const video = videoRef.current;
+    if (!video) return;
 
-    return () => clearTimeout(id);
-  }, [active]);
+    video.muted = true;
+    video.defaultMuted = true;
+    video.playsInline = true;
 
-  // Desktop parallax
-  useEffect(() => {
-    const el = slidesRef.current;
-    if (!el) return;
+    if (video.readyState >= 2) setVideoReady(true);
 
-    const onScroll = () => {
-      if (window.innerWidth < 768) {
-        el.style.transform = "";
-        return;
-      }
-
-      el.style.transform = `translateY(${Math.min(
-        window.scrollY,
-        400
-      ) * 0.04}px) scale(1.08)`;
+    const play = () => {
+      const p = video.play();
+      if (p && typeof p.catch === "function") p.catch(() => {});
     };
 
-    onScroll();
+    const onVisibility = () => {
+      if (!document.hidden) play();
+    };
 
-    window.addEventListener("scroll", onScroll, { passive: true });
+    // لو الـ autoplay اتمنع (مثلاً وضع توفير الطاقة في الآيفون) أول لمسة تشغله
+    const onFirstInteraction = () => play();
 
-    return () => window.removeEventListener("scroll", onScroll);
+    play();
+
+    video.addEventListener("canplay", play);
+    video.addEventListener("ended", play);
+    document.addEventListener("visibilitychange", onVisibility);
+    window.addEventListener("touchstart", onFirstInteraction, {
+      once: true,
+      passive: true,
+    });
+    window.addEventListener("click", onFirstInteraction, { once: true });
+
+    return () => {
+      video.removeEventListener("canplay", play);
+      video.removeEventListener("ended", play);
+      document.removeEventListener("visibilitychange", onVisibility);
+      window.removeEventListener("touchstart", onFirstInteraction);
+      window.removeEventListener("click", onFirstInteraction);
+    };
   }, []);
 
   const copy = ar
@@ -76,13 +75,6 @@ function Hero() {
         sub: "نبني مساحات، نصنع قيمة، ونرسم ملامح المستقبل.",
         btn1: "استكشف مشاريعنا",
         btn2: "تواصل معنا",
-        cardTag: "المشروع المميز",
-        cardTitle: "بالم 2",
-        cardLoc: "كورنيش بلازا — طنطا",
-        cardCta: "اكتشف المشروع",
-        trusted: "موثوقون لدى",
-        families: "عائلة وأكثر",
-        arrow: "←",
       }
     : {
         eyebrow: "DAR DEVELOPMENTS — TANTA",
@@ -91,13 +83,6 @@ function Hero() {
         sub: "Building spaces. Creating lasting value. Shaping tomorrow.",
         btn1: "Explore Projects",
         btn2: "Contact Us",
-        cardTag: "FEATURED PROJECT",
-        cardTitle: "Palm 2",
-        cardLoc: "Corniche Plaza — Tanta",
-        cardCta: "Discover the project",
-        trusted: "Trusted by",
-        families: "Families",
-        arrow: "→",
       };
 
   return (
@@ -125,59 +110,99 @@ function Hero() {
           to { opacity: 1; transform: translateY(0); }
         }
 
-        @keyframes heroZoom {
-          from { transform: scale(1); }
-          to { transform: scale(1.09); }
-        }
-
-        @keyframes heroProgress {
-          from { width: 0; }
-          to { width: 100%; }
-        }
-
         @keyframes heroTicker {
           from { transform: translateX(0); }
           to { transform: translateX(-50%); }
         }
 
+        /* الهيرو بيكبر مع الكلام (min-height) فمفيش حاجة بتتقص */
+
         .dar-hero {
           position: relative;
           width: 100%;
-          height: 88vh;
-          height: 88svh;
-          min-height: 650px;
-          max-height: 1000px;
+          min-height: 700px;
+          min-height: clamp(650px, 88vh, 1000px);
+          min-height: clamp(650px, 88svh, 1000px);
+          display: flex;
+          align-items: center;
           overflow: hidden;
           background: #14212b;
           color: white;
         }
 
-        /* BACKGROUND SLIDER */
+        /* BACKGROUND VIDEO */
 
-        .dar-hero-slides {
+        .dar-hero-media {
           position: absolute;
           inset: 0;
           overflow: hidden;
-          will-change: transform;
+          background: #14212b;
         }
 
-        .dar-hero-slide {
+        .dar-hero-video {
           position: absolute;
           inset: 0;
           width: 100%;
           height: 100%;
           object-fit: cover;
           object-position: center;
+          ${
+            VIDEO_BLUR_PX > 0
+              ? `filter: blur(${VIDEO_BLUR_PX}px); transform: scale(1.06) translateZ(0);`
+              : "transform: translateZ(0);"
+          }
           opacity: 0;
-          transition: opacity 1.3s ease;
+          transition: opacity 1.4s ease;
+          pointer-events: none;
         }
 
-        .dar-hero-slide.active {
+        .dar-hero-video.ready {
           opacity: 1;
-          animation: heroZoom 7s ease-out both;
         }
 
-        /* OVERLAY */
+        /* FROSTED GLASS BEHIND THE TEXT (fades out toward the video) */
+
+        .dar-hero-frost {
+          position: absolute;
+          inset: 0;
+          z-index: 1;
+          pointer-events: none;
+          -webkit-backdrop-filter: blur(${FROST_BLUR_PX}px);
+          backdrop-filter: blur(${FROST_BLUR_PX}px);
+          -webkit-mask-image: linear-gradient(
+            90deg,
+            #000 0%,
+            #000 26%,
+            rgba(0,0,0,.55) 44%,
+            transparent 66%
+          );
+          mask-image: linear-gradient(
+            90deg,
+            #000 0%,
+            #000 26%,
+            rgba(0,0,0,.55) 44%,
+            transparent 66%
+          );
+        }
+
+        .dar-hero[dir="rtl"] .dar-hero-frost {
+          -webkit-mask-image: linear-gradient(
+            270deg,
+            #000 0%,
+            #000 26%,
+            rgba(0,0,0,.55) 44%,
+            transparent 66%
+          );
+          mask-image: linear-gradient(
+            270deg,
+            #000 0%,
+            #000 26%,
+            rgba(0,0,0,.55) 44%,
+            transparent 66%
+          );
+        }
+
+        /* LIGHT OVERLAY (the video stays visible) */
 
         .dar-hero-overlay {
           position: absolute;
@@ -186,51 +211,45 @@ function Hero() {
           background:
             linear-gradient(
               90deg,
-              rgba(5, 14, 23, 0.96) 0%,
-              rgba(5, 14, 23, 0.82) 32%,
-              rgba(5, 14, 23, 0.52) 58%,
-              rgba(5, 14, 23, 0.16) 100%
+              rgba(5, 14, 23, 0.72) 0%,
+              rgba(5, 14, 23, 0.46) 34%,
+              rgba(5, 14, 23, 0.14) 60%,
+              rgba(5, 14, 23, 0) 82%
             ),
             linear-gradient(
               0deg,
-              rgba(5, 14, 23, 0.82) 0%,
-              rgba(5, 14, 23, 0.08) 55%,
-              rgba(5, 14, 23, 0.20) 100%
+              rgba(5, 14, 23, 0.5) 0%,
+              rgba(5, 14, 23, 0) 38%
             );
         }
 
-        /* HERO CONTENT */
+        .dar-hero[dir="rtl"] .dar-hero-overlay {
+          background:
+            linear-gradient(
+              270deg,
+              rgba(5, 14, 23, 0.72) 0%,
+              rgba(5, 14, 23, 0.46) 34%,
+              rgba(5, 14, 23, 0.14) 60%,
+              rgba(5, 14, 23, 0) 82%
+            ),
+            linear-gradient(
+              0deg,
+              rgba(5, 14, 23, 0.5) 0%,
+              rgba(5, 14, 23, 0) 38%
+            );
+        }
+
+        /* HERO CONTENT (في الـ flow العادي، من غير transform للتوسيط) */
 
         .dar-hero-content {
-          position: absolute;
+          position: relative;
           z-index: 2;
-          top: 46%;
-          left: 7%;
-          transform: translateY(-50%);
           width: min(570px, 48%);
-          text-align: left;
+          margin-inline-start: 7%;
+          padding: 112px 0 72px;
+          text-align: start;
           animation: heroFadeUp 1s .2s both;
-          text-shadow: 0 2px 18px rgba(0, 0, 0, .18);
-        }
-
-        .dar-hero-content::before {
-          content: "";
-          position: absolute;
-          z-index: -1;
-          inset: -42px -56px -38px;
-          pointer-events: none;
-          background: radial-gradient(
-            ellipse at center,
-            rgba(5, 13, 22, .30) 0%,
-            rgba(5, 13, 22, .16) 48%,
-            rgba(5, 13, 22, 0) 76%
-          );
-        }
-
-        .dar-hero[dir="rtl"] .dar-hero-content {
-          left: auto;
-          right: 7%;
-          text-align: right;
+          text-shadow: 0 2px 22px rgba(0, 0, 0, .4);
         }
 
         .dar-hero-eyebrow {
@@ -239,7 +258,7 @@ function Hero() {
           gap: 12px;
           color: var(--dar-gold-light);
           font-size: 11px;
-          font-weight: 500;
+          font-weight: 600;
           letter-spacing: 3px;
           margin-bottom: 20px;
         }
@@ -283,13 +302,8 @@ function Hero() {
           max-width: 390px;
           font-size: 14px;
           line-height: 2;
-          color: rgba(255,255,255,.78);
-          font-weight: 300;
-        }
-
-        .dar-hero[dir="rtl"] .dar-hero-description {
-          margin-right: 0;
-          margin-left: auto;
+          color: rgba(255,255,255,.92);
+          font-weight: 400;
         }
 
         /* BUTTONS */
@@ -309,7 +323,7 @@ function Hero() {
           color: white;
           text-decoration: none;
           font-size: 12px;
-          font-weight: 500;
+          font-weight: 600;
           transition: color .3s;
         }
 
@@ -346,10 +360,11 @@ function Hero() {
           justify-content: center;
           min-height: 48px;
           padding: 0 24px;
-          border: 1px solid rgba(255,255,255,.35);
+          border: 1px solid rgba(255,255,255,.5);
           color: white;
           text-decoration: none;
           font-size: 11px;
+          font-weight: 600;
           transition: all .3s;
         }
 
@@ -357,195 +372,6 @@ function Hero() {
           background: white;
           color: var(--dar-navy);
           border-color: white;
-        }
-
-        /* FEATURED PROJECT */
-
-        .dar-hero-card {
-          position: absolute;
-          z-index: 3;
-          bottom: 85px;
-          right: 7%;
-          width: 265px;
-          padding: 23px;
-          color: white;
-          background: rgba(12,25,37,.55);
-          border: 1px solid rgba(255,255,255,.2);
-          backdrop-filter: blur(12px);
-          text-decoration: none;
-          transition: background .3s, transform .3s;
-          animation: heroFadeUp 1s .7s both;
-        }
-
-        .dar-hero[dir="rtl"] .dar-hero-card {
-          right: auto;
-          left: 7%;
-        }
-
-        .dar-hero-card:hover {
-          background: rgba(12,25,37,.8);
-          transform: translateY(-4px);
-        }
-
-        .dar-hero-card-tag {
-          display: flex;
-          align-items: center;
-          gap: 9px;
-          color: var(--dar-gold-light);
-          font-size: 9px;
-          letter-spacing: 2px;
-          margin-bottom: 13px;
-        }
-
-        .dar-hero-card-tag::before {
-          content: "";
-          width: 5px;
-          height: 5px;
-          border-radius: 50%;
-          background: var(--dar-gold-light);
-        }
-
-        .dar-hero-card-title {
-          font-family: 'Playfair Display', serif;
-          font-size: 30px;
-          font-weight: 500;
-          margin: 0;
-        }
-
-        .dar-hero-card-location {
-          font-size: 11px;
-          color: rgba(255,255,255,.7);
-          margin: 8px 0 20px;
-        }
-
-        .dar-hero-card-footer {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding-top: 14px;
-          border-top: 1px solid rgba(255,255,255,.2);
-          font-size: 11px;
-        }
-
-        .dar-hero-card-footer span:last-child {
-          color: var(--dar-gold-light);
-          font-size: 18px;
-        }
-
-        /* SLIDER CONTROLS */
-
-        .dar-hero-slider {
-          position: absolute;
-          z-index: 4;
-          bottom: 32px;
-
-          /* English: RIGHT */
-          left: auto;
-          right: 7%;
-
-          display: flex;
-          flex-direction: row;
-          align-items: center;
-          gap: 16px;
-
-          direction: ltr;
-          text-align: left;
-          unicode-bidi: isolate;
-        }
-
-        /* Arabic: LEFT */
-        .dar-hero[dir="rtl"] .dar-hero-slider {
-          left: 7%;
-          right: auto;
-        }
-
-        .dar-hero-number {
-          direction: ltr;
-          unicode-bidi: isolate;
-          font-family: 'DM Sans', sans-serif;
-          font-size: 10px;
-          letter-spacing: 2px;
-          color: white;
-          white-space: nowrap;
-          flex-shrink: 0;
-        }
-
-        .dar-hero-segments {
-          display: flex;
-          flex-direction: row;
-          direction: ltr;
-          gap: 5px;
-          flex-shrink: 0;
-        }
-
-        .dar-hero-segment {
-          position: relative;
-          width: 30px;
-          height: 18px;
-          padding: 0;
-
-          display: flex;
-          flex-direction: row;
-          align-items: center;
-
-          background: transparent;
-          border: 0;
-          cursor: pointer;
-          flex-shrink: 0;
-        }
-
-        .dar-hero-segment::before {
-          content: "";
-          position: absolute;
-          width: 30px;
-          height: 1px;
-          background: rgba(255,255,255,.35);
-        }
-
-        .dar-hero-segment span {
-          position: relative;
-          display: block;
-          height: 1px;
-          width: 0;
-          background: var(--dar-gold-light);
-        }
-
-        .dar-hero-segment span.done {
-          width: 100%;
-        }
-
-        .dar-hero-segment span.run {
-          animation: heroProgress ${SLIDE_MS}ms linear forwards;
-        }
-
-        .dar-hero-arrows {
-          display: flex;
-          flex-direction: row;
-          direction: ltr;
-          gap: 8px;
-          flex-shrink: 0;
-        }
-
-        .dar-hero-arrow {
-          width: 38px;
-          height: 38px;
-          display: flex;
-          flex-direction: row;
-          align-items: center;
-          justify-content: center;
-          color: white;
-          border: 1px solid rgba(255,255,255,.3);
-          background: transparent;
-          border-radius: 50%;
-          font-size: 16px;
-          cursor: pointer;
-          transition: all .3s;
-          flex-shrink: 0;
-        }
-
-        .dar-hero-arrow:hover {
-          background: white;
-          color: var(--dar-navy);
         }
 
         /* TICKER */
@@ -607,63 +433,86 @@ function Hero() {
           font-style: normal;
         }
 
-        /* MOBILE */
+        /* لاب بارتفاع قصير: الهيرو بياخد ارتفاع الشاشة والكلام بيصغر شوية
+           عشان العنوان والزراير يبانوا كلهم من غير سكرول */
+
+        @media (min-width: 768px) and (max-height: 780px) {
+          .dar-hero {
+            min-height: 100vh;
+            min-height: 100svh;
+          }
+
+          .dar-hero-content {
+            padding: 100px 0 40px;
+          }
+
+          .dar-hero-eyebrow {
+            margin-bottom: 14px;
+          }
+
+          .dar-hero-title {
+            font-size: clamp(42px, 8.5vh, 72px);
+          }
+
+          .dar-hero-title.ar {
+            font-size: clamp(34px, 7vh, 56px);
+          }
+
+          .dar-hero-description {
+            margin: 14px 0 24px;
+          }
+        }
+
+        /* MOBILE: الفيديو واضح فوق، والكلام تحت على gradient */
 
         @media (max-width: 767px) {
           .dar-hero {
-            height: 92vh;
-            height: 92svh;
-            min-height: 720px;
-            max-height: 900px;
+            align-items: flex-end;
+            min-height: 700px;
+            min-height: clamp(700px, 92vh, 900px);
+            min-height: clamp(700px, 92svh, 900px);
           }
 
-          .dar-hero-overlay {
-            background:
-              linear-gradient(
-                0deg,
-                rgba(7, 17, 28, .78) 0%,
-                rgba(7, 17, 28, .46) 52%,
-                rgba(7, 17, 28, .22) 100%
-              );
+          /* الزجاج بيتلغي على الموبايل عشان الأداء */
+          .dar-hero-frost {
+            display: none;
           }
 
-          .dar-hero-content::before {
-            inset: -28px -24px;
-            background: radial-gradient(
-              ellipse at center,
-              rgba(5, 13, 22, .42) 0%,
-              rgba(5, 13, 22, .20) 58%,
-              rgba(5, 13, 22, 0) 82%
+          .dar-hero-overlay,
+          .dar-hero[dir="rtl"] .dar-hero-overlay {
+            background: linear-gradient(
+              0deg,
+              rgba(5, 14, 23, 0.92) 0%,
+              rgba(5, 14, 23, 0.8) 34%,
+              rgba(5, 14, 23, 0.42) 58%,
+              rgba(5, 14, 23, 0) 85%
             );
           }
 
           .dar-hero-content {
-            top: 45%;
-            left: 24px;
-            right: 24px;
-            width: auto;
-            transform: translateY(-50%);
+            width: 100%;
+            margin-inline-start: 0;
+            padding: 120px 24px 44px;
           }
 
-          .dar-hero[dir="rtl"] .dar-hero-content {
-            right: 24px;
-            left: 24px;
+          .dar-hero-eyebrow {
+            margin-bottom: 14px;
           }
 
           .dar-hero-title {
-            font-size: clamp(48px, 13vw, 72px);
+            font-size: clamp(46px, 13vw, 68px);
             letter-spacing: -1px;
           }
 
           .dar-hero-title.ar {
-            font-size: clamp(36px, 10vw, 52px);
+            font-size: clamp(34px, 10vw, 50px);
             line-height: 1.6;
           }
 
           .dar-hero-description {
             font-size: 13px;
             max-width: 100%;
-            margin: 20px 0 26px;
+            margin: 16px 0 24px;
           }
 
           .dar-hero-actions {
@@ -678,44 +527,6 @@ function Hero() {
           .dar-hero-secondary {
             min-height: 44px;
             padding: 0 18px;
-          }
-
-          .dar-hero-card {
-            display: none;
-          }
-
-          /* English Mobile: RIGHT */
-          .dar-hero-slider {
-            left: auto;
-            right: 24px;
-            bottom: 25px;
-            gap: 10px;
-            max-width: calc(100% - 48px);
-            direction: ltr;
-          }
-
-          /* Arabic Mobile: LEFT */
-          .dar-hero[dir="rtl"] .dar-hero-slider {
-            left: 24px;
-            right: auto;
-          }
-
-          .dar-hero-segments {
-            gap: 5px;
-            flex-shrink: 0;
-          }
-
-          .dar-hero-segment {
-            width: 22px;
-            flex-shrink: 0;
-          }
-
-          .dar-hero-segment::before {
-            width: 22px;
-          }
-
-          .dar-hero-arrows {
-            display: none;
           }
 
           .dar-hero-ticker {
@@ -734,17 +545,11 @@ function Hero() {
 
         @media (max-width: 380px) {
           .dar-hero-content {
-            left: 18px;
-            right: 18px;
-          }
-
-          .dar-hero[dir="rtl"] .dar-hero-content {
-            left: 18px;
-            right: 18px;
+            padding: 110px 18px 36px;
           }
 
           .dar-hero-title.ar {
-            font-size: 33px;
+            font-size: 32px;
           }
 
           .dar-hero-secondary {
@@ -765,48 +570,44 @@ function Hero() {
           .dar-hero-ticker-track {
             transform: none !important;
           }
-
-          .dar-hero-slides {
-            transform: none !important;
-          }
         }
       `}</style>
 
       {/* HERO */}
       <section className="dar-hero" dir={ar ? "rtl" : "ltr"}>
 
-        {/* Background Images */}
-        <div className="dar-hero-slides" ref={slidesRef}>
-          {SLIDES.map((src, i) => (
-            <img
-              key={i}
-              src={src}
-              alt=""
-              aria-hidden="true"
-              className={`dar-hero-slide ${
-                i === active ? "active" : ""
-              }`}
-            />
-          ))}
+        {/* Background Video */}
+        <div className="dar-hero-media" aria-hidden="true">
+          <video
+            ref={videoRef}
+            className={`dar-hero-video ${videoReady ? "ready" : ""}`}
+            src={heroVideo}
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            disablePictureInPicture
+            disableRemotePlayback
+            tabIndex={-1}
+            onLoadedData={() => setVideoReady(true)}
+          />
         </div>
 
-        <div className="dar-hero-overlay" />
+        {/* Frosted glass behind text + light overlay */}
+        <div className="dar-hero-frost" aria-hidden="true" />
+        <div className="dar-hero-overlay" aria-hidden="true" />
 
         {/* Main Content */}
         <div className="dar-hero-content">
-
-          <div className="dar-hero-eyebrow">
-            {copy.eyebrow}
-          </div>
+          <div className="dar-hero-eyebrow">{copy.eyebrow}</div>
 
           <h1 className={`dar-hero-title ${ar ? "ar" : ""}`}>
             {copy.line1}
             <span>{copy.line2}</span>
           </h1>
 
-          <p className="dar-hero-description">
-            {copy.sub}
-          </p>
+          <p className="dar-hero-description">{copy.sub}</p>
 
           <div className="dar-hero-actions">
             <a href="#projects" className="dar-hero-primary">
@@ -819,61 +620,6 @@ function Hero() {
             <a href="#contact" className="dar-hero-secondary">
               {copy.btn2}
             </a>
-          </div>
-        </div>
-
-        {/* Slider Controls - Always LTR */}
-        <div className="dar-hero-slider" dir="ltr">
-
-          <span className="dar-hero-number" aria-live="off">
-            0{active + 1} / 0{SLIDES.length}
-          </span>
-
-          <div className="dar-hero-segments">
-            {SLIDES.map((_, i) => (
-              <button
-                key={i}
-                type="button"
-                className="dar-hero-segment"
-                onClick={() => goTo(i)}
-                aria-label={`Slide ${i + 1}`}
-                aria-current={i === active ? "true" : undefined}
-              >
-                <span
-                  className={
-                    i === active
-                      ? "run"
-                      : i < active
-                      ? "done"
-                      : ""
-                  }
-                />
-              </button>
-            ))}
-          </div>
-
-          <div className="dar-hero-arrows">
-            <button
-              type="button"
-              className="dar-hero-arrow"
-              onClick={() =>
-                goTo((active - 1 + SLIDES.length) % SLIDES.length)
-              }
-              aria-label="Previous slide"
-            >
-              ←
-            </button>
-
-            <button
-              type="button"
-              className="dar-hero-arrow"
-              onClick={() =>
-                goTo((active + 1) % SLIDES.length)
-              }
-              aria-label="Next slide"
-            >
-              →
-            </button>
           </div>
         </div>
       </section>
@@ -892,10 +638,7 @@ function Hero() {
             >
               {[...TICKER, ...TICKER, ...TICKER].map((p, i) => (
                 <span className="dar-hero-ticker-item" key={i}>
-                  <Link
-                    to={p.to}
-                    tabIndex={g === 1 ? -1 : 0}
-                  >
+                  <Link to={p.to} tabIndex={g === 1 ? -1 : 0}>
                     {ar ? p.labelAr : p.labelEn}
                   </Link>
                   <i aria-hidden="true">◆</i>

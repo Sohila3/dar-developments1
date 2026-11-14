@@ -3,9 +3,20 @@ import logo from "../assets/logodar.jpeg";
 import { Link, useLocation } from "react-router-dom";
 import { useLanguage } from "../context/LanguageContext";
 
+/* روابط القائمة بالترتيب (ديسكتوب + سايد بار) */
+const NAV_LINKS = [
+  { key: "home", to: "/", hash: "", ar: "الرئيسية", en: "Home" },
+  { key: "about", to: "/#about", hash: "#about", ar: "عن دار", en: "About DAR" },  
+  { key: "mission", to: "/#Mission", hash: "#Mission", ar: "رسالتنا ورؤيتنا", en: "Mission & Vision" },
+  { key: "partners", to: "/#partners", hash: "#partners", ar: "شركاء النجاح", en: "Partners" },
+    { key: "faq", to: "/#faq", hash: "#faq", ar: "الأسئلة الشائعة", en: "FAQ" },
+  { key: "projects", to: "/#projects", hash: "#projects", ar: "مشاريعنا", en: "Projects" },
+  { key: "contact", to: "/#contact", hash: "#contact", ar: "تواصل معنا", en: "Contact Us" },
+];
+
 function Navbar() {
   const [open, setOpen] = useState(false);
-  const { lang, toggleLang, t } = useLanguage();
+  const { lang, toggleLang } = useLanguage();
   const { pathname, hash } = useLocation();
 
   const menuBtnRef = useRef(null);
@@ -13,6 +24,10 @@ function Navbar() {
   const wasOpen = useRef(false);
 
   const ar = lang === "ar";
+
+  const links = NAV_LINKS.map((l) => ({ ...l, label: ar ? l.ar : l.en }));
+  const homeLink = links[0];
+  const contactLink = links.find((l) => l.key === "contact");
 
   /* اللغة على مستوى الصفحة (قارئات الشاشة + نطق الخطوط) */
   useEffect(() => {
@@ -45,41 +60,6 @@ function Navbar() {
       wasOpen.current = false;
     }
   }, [open]);
-
-  /* ================= الروابط ================= */
-
-  const mainLinks = [
-    {
-      key: "home",
-      to: "/",
-      hash: "",
-      label: t("navbar", "home") || (ar ? "الرئيسية" : "Home"),
-    },
-    {
-      key: "projects",
-      to: "/#projects",
-      hash: "#projects",
-      label: t("navbar", "projects") || (ar ? "مشاريعنا" : "Projects"),
-    },
-    {
-      key: "about",
-      to: "/#about",
-      hash: "#about",
-      label: t("navbar", "about") || (ar ? "من نحن" : "About Us"),
-    },
-    {
-      key: "contact",
-      to: "/#contact",
-      hash: "#contact",
-      label: t("navbar", "contact") || (ar ? "تواصل معنا" : "Contact"),
-    },
-  ];
-
-  const moreLinks = [
-    { key: "Mission", to: "/#Mission", hash: "#Mission", label: t("navbar", "Mission") },
-    { key: "faq", to: "/#faq", hash: "#faq", label: t("navbar", "FAQSection") },
-    { key: "partners", to: "/#partners", hash: "#partners", label: t("navbar", "partners") },
-  ];
 
   const isActive = (link) => {
     if (link.key === "home") return pathname === "/" && !hash;
@@ -201,7 +181,7 @@ function Navbar() {
           letter-spacing: 6px;
         }
 
-        /* ================= DESKTOP LINKS ================= */
+        /* ================= DESKTOP LINKS (7 روابط) ================= */
 
         .dar-nav-links {
           display: none;
@@ -213,7 +193,7 @@ function Navbar() {
         .dar-nav-links ul {
           display: flex;
           align-items: center;
-          gap: 30px;
+          gap: 26px;
 
           list-style: none;
           margin: 0;
@@ -233,7 +213,7 @@ function Navbar() {
           font-family: ${ar ? "'Alexandria', sans-serif" : "'DM Sans', sans-serif"};
           font-size: ${ar ? "13.5px" : "13px"};
           font-weight: 500;
-          letter-spacing: ${ar ? "0" : "1.2px"};
+          letter-spacing: ${ar ? "0" : "1px"};
 
           transition: color .3s ease;
         }
@@ -267,24 +247,28 @@ function Navbar() {
           color: var(--dar-gold-light);
         }
 
-        @media (min-width: 1024px) {
+        /* الروابط بتظهر من 1100px، وتحت كده بتختفي ويفضل زرار القائمة */
+        @media (min-width: 1100px) {
           .dar-nav-links {
             display: flex;
           }
         }
 
-        @media (min-width: 1024px) and (max-width: 1199px) {
+        /* شاشات لاب أصغر: مسافات وخط أصغر عشان الروابط ميدخلوش في بعض */
+        @media (min-width: 1100px) and (max-width: 1399px) {
           .dar-nav-inner {
             padding: 0 3.5%;
           }
+        }
 
+        @media (min-width: 1100px) and (max-width: 1279px) {
           .dar-nav-links ul {
-            gap: 20px;
+            gap: 18px;
           }
 
           .dar-nav-link {
             font-size: ${ar ? "12.5px" : "12px"};
-            letter-spacing: ${ar ? "0" : ".8px"};
+            letter-spacing: ${ar ? "0" : ".6px"};
           }
         }
 
@@ -846,7 +830,7 @@ function Navbar() {
             to="/"
             className="dar-nav-logo"
             aria-label={ar ? "دار للتطوير العقاري — الرئيسية" : "DAR Developments — Home"}
-            onClick={handleLinkClick(mainLinks[0])}
+            onClick={handleLinkClick(homeLink)}
           >
             <img src={logo} alt="" />
             <span>DAR</span>
@@ -856,7 +840,7 @@ function Navbar() {
 
           <div className="dar-nav-links">
             <ul dir={ar ? "rtl" : "ltr"}>
-              {mainLinks.map((link) => {
+              {links.map((link) => {
                 const active = isActive(link);
 
                 return (
@@ -975,7 +959,7 @@ function Navbar() {
             {ar ? "اكتشف دار" : "Discover DAR"}
           </span>
 
-          {[...mainLinks.slice(0, 3), ...moreLinks, mainLinks[3]].map((link) => {
+          {links.map((link) => {
             const active = isActive(link);
 
             return (
@@ -995,7 +979,7 @@ function Navbar() {
           <Link
             to="/#contact"
             className="dar-sidebar-contact"
-            onClick={handleLinkClick(mainLinks[3])}
+            onClick={handleLinkClick(contactLink)}
             tabIndex={open ? 0 : -1}
           >
             {ar ? "تواصل معنا" : "Contact Us"}
